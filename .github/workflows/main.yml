@@ -17,4 +17,4 @@ jobs:
           bun install
       - name: 'Test'
         run: |
-          bun test **/*.test.ts --coverage
+          bun test **/**/*.test.ts --coverage
