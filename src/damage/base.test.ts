@@ -1,5 +1,5 @@
 import {test, expect} from "bun:test"
-import { getBasePower, type BattleFieldStatus, type Move, type Pokemon, type Stat, type StatStage } from "."
+import { getBasePower, type Move, type Pokemon, type Stat, type StatStage } from "."
 
 function genTestStat(partial?: Partial<Stat>): Stat {
     return Object.assign({
