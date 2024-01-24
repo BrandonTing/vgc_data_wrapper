@@ -1,65 +1,7 @@
 import { expect, test } from "bun:test";
-import {
-	type Move,
-	type Pokemon,
-	type Stat,
-	type StatStage,
-	getBasePower,
-} from "./basePower";
-
-type RecursivePartial<T> = {
-	[P in keyof T]?: RecursivePartial<T[P]>;
-};
-
-function genTestStat(partial?: Partial<Stat>): Stat {
-	return Object.assign(
-		{
-			hp: 100,
-			attack: 100,
-			defense: 100,
-			specialAttack: 100,
-			specialDefense: 100,
-			speed: 100,
-		} satisfies Stat,
-		partial,
-	);
-}
-
-function genTestStatStage(partial?: Partial<StatStage>): StatStage {
-	return Object.assign(
-		{
-			attack: 0,
-			defense: 0,
-			specialAttack: 0,
-			specialDefense: 0,
-			speed: 0,
-		} satisfies StatStage,
-		partial,
-	);
-}
-
-function genTestMon(partial?: RecursivePartial<Pokemon>): Pokemon {
-	return {
-		id: 0,
-		stat: genTestStat(partial?.stat),
-		statStage: genTestStatStage(partial?.statStage),
-		weight: partial?.weight ?? 0,
-		abilityId: partial?.abilityId ?? 0,
-		itemId: partial?.itemId ?? 0,
-		teraType: partial?.teraType,
-	};
-}
-
-function genTestMove(partial?: Partial<Move>): Move {
-	return Object.assign(
-		{
-			id: 0,
-			base: 100,
-			type: "Normal",
-		} satisfies Move,
-		partial,
-	);
-}
+import { getBasePower } from "../basePower";
+import { type Move } from "../config";
+import { genTestMon, genTestMove } from "./utils";
 
 test("correctly calculate base power", () => {
 	const testPokemon = genTestMon();

@@ -1,25 +1,4 @@
-const types = [
-	"Normal",
-	"Fire",
-	"Water",
-	"Grass",
-	"Electric",
-	"Ice",
-	"Fighting",
-	"Poison",
-	"Ground",
-	"Flying",
-	"Psychic",
-	"Bug",
-	"Rock",
-	"Ghost",
-	"Dragon",
-	"Dark",
-	"Steel",
-	"Fairy",
-] as const;
-
-export type Type = (typeof types)[number];
+import type { Type } from "./config";
 
 export type Effectiveness = 2 | 1 | 0.5 | 0;
 

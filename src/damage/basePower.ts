@@ -1,44 +1,5 @@
-import { type Type } from "./config";
+import type { BattleFieldStatus, Move, Pokemon } from "./config";
 
-const statProps = [
-	"hp",
-	"attack",
-	"defense",
-	"specialAttack",
-	"specialDefense",
-	"speed",
-] as const;
-
-export type Stat = {
-	[key in (typeof statProps)[number]]: number;
-};
-
-export type StatStage = Omit<Stat, "hp">;
-
-export type Pokemon = {
-	id: number;
-	stat: Stat;
-	statStage: StatStage;
-	weight: number;
-	abilityId: number;
-	itemId: number;
-	teraType?: Type | "stellar";
-};
-
-export type Move = {
-	id: number;
-	base: number;
-	type: Type;
-};
-
-type Weather = "Sun" | "Rain" | "Sand" | "Snow";
-
-type Terrain = "Electric" | "Grassy" | "Misty" | "Psychic";
-
-export type BattleFieldStatus = {
-	weather?: Weather;
-	terrain?: Terrain;
-};
 export function getBasePower(
 	attacker: Pokemon,
 	defender: Pokemon,
@@ -69,12 +30,12 @@ export function getBasePower(
 	if (move.id === 486) {
 		const attackerSpeed = speedModifier(
 			attacker.stat.speed,
-			attacker.itemId,
+			attacker.item ?? "",
 			attacker.statStage.speed,
 		);
 		const defenderSpeed = speedModifier(
 			defender.stat.speed,
-			defender.itemId,
+			defender.item ?? "",
 			defender.statStage.speed,
 		);
 		const ratio = attackerSpeed / defenderSpeed;
@@ -96,12 +57,12 @@ export function getBasePower(
 	if (move.id === 360) {
 		const attackerSpeed = speedModifier(
 			attacker.stat.speed,
-			attacker.itemId,
+			attacker.item ?? "",
 			attacker.statStage.speed,
 		);
 		const defenderSpeed = speedModifier(
 			defender.stat.speed,
-			defender.itemId,
+			defender.item ?? "",
 			defender.statStage.speed,
 		);
 		return Math.min(
@@ -162,18 +123,14 @@ export function getBasePower(
 	return move.base;
 }
 
-function speedModifier(
-	baseSpeed: number,
-	itemId: number,
-	stage: number,
-): number {
+function speedModifier(baseSpeed: number, item: string, stage: number): number {
 	const stageMultiplier = getStageMultiplier(stage);
 	const itemModifier =
 		// Choice Scarf
-		itemId === 1
+		item === "Choice Scarf"
 			? 1.5
 			: // iron ball
-			  itemId === 2
+			  item === "Iron Ball"
 			  ? 0.5
 			  : 1;
 	return Math.round(
