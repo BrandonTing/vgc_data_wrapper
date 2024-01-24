@@ -1,1 +1,1 @@
-export * from "./damage";
+export * as damage from "./damage";

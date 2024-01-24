@@ -1,13 +1,5 @@
 import { type Type } from "./config";
 
-// export function getEffectiveness(atkType: Type, targetPokemonTypes: Array<Type>):number {
-//     return targetPokemonTypes
-//         .map(type => typeAttackEffectivenessMap[atkType][type])
-//         .reduce(function (pre, cur) {
-//             return pre*cur
-//         }, 1 as number)
-// }
-
 const statProps = [
 	"hp",
 	"attack",
