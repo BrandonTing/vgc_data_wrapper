@@ -2,7 +2,12 @@
   "name": "vgc_data_wrapper",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "lint": "bunx @biomejs/biome check --apply .",
+    "test": "bun test **/**/*.test.ts --coverage"
+  },
   "devDependencies": {
+    "@biomejs/biome": "1.5.3",
     "@types/bun": "latest"
   },
   "peerDependencies": {

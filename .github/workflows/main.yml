@@ -1,8 +1,20 @@
-on:
-  push:
-    branches:
-      - main
+on: push
 jobs:
+  lint: 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: 'Install Dependencies'
+        run: |
+          bun install
+      - name: 'Lint'
+        run: |
+          bun lint  
   test:
     runs-on: ubuntu-latest
     steps:
@@ -17,4 +29,4 @@ jobs:
           bun install
       - name: 'Test'
         run: |
-          bun test **/**/*.test.ts --coverage
+          bun test

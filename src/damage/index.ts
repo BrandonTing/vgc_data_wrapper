@@ -1,3 +1,1 @@
-export {
-    getBasePower
-} from "./basePower";
+export { getBasePower } from "./basePower";
