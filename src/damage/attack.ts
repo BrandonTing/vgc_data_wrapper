@@ -1,16 +1,16 @@
-import type { BattleFieldStatus, BattleStatus, Move, Pokemon } from "./config";
+import type { BattleStatus } from "./config";
 import {
 	checkAtkIsHighest,
 	modifyStatByStageChange,
 	pipeModifierHelper,
 } from "./utils";
 
-export function getAttack(
-	attacker: Pokemon,
-	defender: Pokemon,
-	move: Move,
-	field: BattleFieldStatus,
-): number {
+export function getAttack({
+	attacker,
+	defender,
+	move,
+	field,
+}: BattleStatus): number {
 	let atkStat =
 		move.category === "Physical"
 			? attacker.stat.attack
@@ -30,24 +30,29 @@ export function getAttack(
 		stageChanges = defender.stat.attack;
 	}
 
-	if (!attacker.flags?.criticalHit) {
+	if (!move.flags?.isCriticalHit) {
 		atkStat = modifyStatByStageChange(atkStat, stageChanges);
 	}
 	const result = Math.round(
 		(atkStat *
 			pipeModifierHelper(
-				4096,
+				4096 as number,
 				[
 					modifyAtkByAttackAbility,
 					modifyByDefenderAbility,
 					modifyByItem,
 					modifyByRuin,
 				],
-				{
-					attacker,
-					defender,
-					move,
-					field,
+				(pre, cur) => {
+					return Math.round(
+						pre *
+							cur({
+								attacker,
+								defender,
+								move,
+								field,
+							}),
+					);
 				},
 			)) /
 			4096 -

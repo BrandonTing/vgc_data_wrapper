@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
-import { getBasePower } from "../basePower";
-import { type Move } from "../config";
+import { getBasePower } from "../../src/damage/basePower";
+import { type Move } from "../../src/damage/config";
 import { genTestMon, genTestMove } from "./utils";
 
 test("correctly calculate base power", () => {
@@ -282,7 +282,7 @@ test("base power of tera blast", () => {
 	const teraBlast = genTestMove({ id: 851, base: 80 });
 	let basePower = getBasePower(testMon, testMon, teraBlast);
 	expect(basePower).toBe(80);
-	const testTeraStellarMon = genTestMon({ teraType: "stellar" });
+	const testTeraStellarMon = genTestMon({ teraType: "Stellar" });
 	basePower = getBasePower(testTeraStellarMon, testMon, teraBlast);
 	expect(basePower).toBe(100);
 });

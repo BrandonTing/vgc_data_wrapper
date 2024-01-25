@@ -15,6 +15,10 @@ jobs:
       - name: 'Lint'
         run: |
           bun lint  
+      - name: 'Knip'
+        run: |
+          bun knip 
+
   test:
     runs-on: ubuntu-latest
     steps:

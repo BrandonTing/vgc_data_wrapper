@@ -1,13 +1,12 @@
-import type { BattleStatus, Pokemon, Stat, Type } from "./config";
+import type { Pokemon, Stat, Type, TypesWithStellar } from "./config";
 
-export function pipeModifierHelper(
-	initValue: number,
-	modifiers: Array<(arg: BattleStatus) => number>,
-	options: BattleStatus,
-): number {
-	return modifiers.reduce((pre, cur) => {
-		return Math.round(pre * cur(options));
-	}, initValue);
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export function pipeModifierHelper<T, U extends (...args: any) => T>(
+	initValue: T,
+	modifiers: Array<U>,
+	operation: (value: T, modifier: U) => T,
+): T {
+	return modifiers.reduce(operation, initValue);
 }
 
 export function checkAtkIsHighest(stat: Stat, target: keyof Stat) {
@@ -25,4 +24,10 @@ export function modifyStatByStageChange(
 
 export function checkMatchType(pokemon: Pokemon, type: Type): boolean {
 	return pokemon.type.includes(type) || pokemon.teraType === type;
+}
+
+export function getPokemonCurrentType(
+	pokemon: Pokemon,
+): Array<TypesWithStellar> {
+	return pokemon.teraType ? [pokemon.teraType] : pokemon.type;
 }

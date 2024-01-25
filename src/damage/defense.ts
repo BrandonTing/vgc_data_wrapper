@@ -1,4 +1,4 @@
-import type { BattleFieldStatus, BattleStatus, Move, Pokemon } from "./config";
+import type { BattleStatus, Move } from "./config";
 import {
 	checkAtkIsHighest,
 	checkMatchType,
@@ -10,12 +10,12 @@ function checkUsePhysicalHelper(move: Move): boolean {
 	return move.category === "Physical" || move.id === 473 || move.id === 540; // Psyshock & Psystrike
 }
 
-export function getDefense(
-	attacker: Pokemon,
-	defender: Pokemon,
-	move: Move,
-	field: BattleFieldStatus,
-): number {
+export function getDefense({
+	attacker,
+	defender,
+	move,
+	field,
+}: BattleStatus): number {
 	const usePhysicalDef = checkUsePhysicalHelper(move);
 	let defStat = usePhysicalDef
 		? defender.stat.defense
@@ -24,7 +24,7 @@ export function getDefense(
 		? defender.statStage.defense
 		: defender.statStage.specialDefense;
 	if (
-		!attacker.flags?.criticalHit &&
+		!move.flags?.isCriticalHit &&
 		move.id !== 533 // sacred sword
 	) {
 		defStat = modifyStatByStageChange(defStat, stageChanges);
@@ -33,13 +33,17 @@ export function getDefense(
 	const result = Math.round(
 		(defStat *
 			pipeModifierHelper(
-				4096,
+				4096 as number,
 				[modifyByWeather, modifyByDefenderAbility, modifyByItem, modifyByRuin],
-				{
-					attacker,
-					defender,
-					move,
-					field,
+				(pre, cur) => {
+					return Math.round(
+						pre *
+							cur({
+								defender,
+								move,
+								field,
+							}),
+					);
 				},
 			)) /
 			4096 -

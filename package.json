@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "lint": "bunx @biomejs/biome check --apply .",
-    "test": "bun test **/**/*.test.ts --coverage"
+    "test": "bun test **/**/*.test.ts",
+    "knip": "bunx knip"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",

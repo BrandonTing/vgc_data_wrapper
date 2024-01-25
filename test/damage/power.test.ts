@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { getPower } from "../power";
+import { getPower } from "../../src/damage/power";
 import { genTestMon, genTestMove } from "./utils";
 
 test("get power without any modifiers", () => {

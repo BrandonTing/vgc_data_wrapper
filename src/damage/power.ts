@@ -10,7 +10,7 @@ export function getPower(option: BattleStatus): number {
 		option.field,
 	);
 	const modifierAfterModification = pipeModifierHelper(
-		4096,
+		4096 as number,
 		[
 			modifyByAttackerAbility,
 			modifyByDefenderAbility,
@@ -23,7 +23,9 @@ export function getPower(option: BattleStatus): number {
 			modifyByTerrain,
 			modifyByAura,
 		],
-		option,
+		(pre, cur) => {
+			return Math.round(pre * cur(option));
+		},
 	);
 	const result = Math.round(
 		(basePower * modifierAfterModification) / 4096 - 0.001,

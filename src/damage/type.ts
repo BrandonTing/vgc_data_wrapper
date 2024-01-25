@@ -1,6 +1,6 @@
-import type { Type } from "./config";
+import type { Type, TypesWithStellar } from "./config";
 
-export type Effectiveness = 2 | 1 | 0.5 | 0;
+type Effectiveness = 2 | 1 | 0.5 | 0;
 
 type TypeEffectiveness = Record<Type, Effectiveness>;
 type TypeEffectivenessMap = Record<Type, TypeEffectiveness>;
@@ -370,9 +370,11 @@ const typeAttackEffectivenessMap: TypeEffectivenessMap = {
 
 export function getEffectivenessOnPokemon(
 	atkType: Type,
-	targetPokemonTypes: Array<Type>,
+	targetPokemonTypes: Array<TypesWithStellar>,
 ): number {
 	return targetPokemonTypes
-		.map((type) => typeAttackEffectivenessMap[atkType][type])
+		.map((type) =>
+			type === "Stellar" ? 1 : typeAttackEffectivenessMap[atkType][type],
+		)
 		.reduce((pre, cur) => pre * cur, 1 as number);
 }

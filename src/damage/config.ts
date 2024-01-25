@@ -11,7 +11,7 @@ export type Stat = {
 	[key in (typeof statProps)[number]]: number;
 };
 
-export type StatStage = Omit<Stat, "hp">;
+type StatStage = Omit<Stat, "hp">;
 const types = [
 	"Normal",
 	"Fire",
@@ -34,6 +34,7 @@ const types = [
 ] as const;
 
 export type Type = (typeof types)[number];
+export type TypesWithStellar = Type | "Stellar";
 
 type Gender = "Male" | "Female" | "Unknown";
 
@@ -52,13 +53,14 @@ type Flags<T extends string> = {
 
 export type Pokemon = {
 	id: number;
+	level: number;
 	stat: Stat;
 	type: Array<Type>;
 	statStage: StatStage;
 	weight: number;
 	abilityId: number;
 	item?: string;
-	teraType?: Type | "stellar";
+	teraType?: TypesWithStellar;
 	gender: Gender;
 	status: Status;
 	flags?: Flags<
@@ -66,12 +68,16 @@ export type Pokemon = {
 		| "powerSpot"
 		| "steelySpirit"
 		| "charge"
-		| "criticalHit"
 		| "hasEvolution"
+		| "lightScreen"
+		| "reflect"
+		| "hasFriendGuard"
 	>;
 };
 
-export type MoveCategory = "Special" | "Physical";
+type MoveCategory = "Special" | "Physical";
+
+type MoveTarget = "normal" | "allAdjacentFoes" | "allAdjacent";
 
 export type Move = {
 	id: number;
@@ -88,8 +94,11 @@ export type Move = {
 		| "isPulse"
 		| "isMultihit"
 		| "isPriority"
+		| "isCriticalHit"
 	>;
+	target: MoveTarget;
 	category: MoveCategory;
+	repeatTimes?: number;
 };
 
 type Weather = "Sun" | "Rain" | "Sand" | "Snow";
@@ -106,6 +115,7 @@ export type BattleFieldStatus = {
 	downCounts?: number;
 	aura?: Aura;
 	ruin?: Ruin;
+	isDouble?: boolean;
 };
 
 export type BattleStatus = {

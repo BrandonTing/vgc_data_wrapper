@@ -108,7 +108,7 @@ export function getBasePower(
 		return 100;
 	}
 	// tera blast
-	if (move.id === 851 && attacker.teraType === "stellar") {
+	if (move.id === 851 && attacker.teraType === "Stellar") {
 		return 100;
 	}
 	// Power Trip & Stored Power

@@ -1,4 +1,4 @@
-import type { Move, Pokemon, Stat, StatStage } from "../config";
+import type { Move, Pokemon, Stat } from "../../src/damage/config";
 
 type RecursivePartial<T> = {
 	[P in keyof T]?: RecursivePartial<T[P]>;
@@ -18,7 +18,9 @@ export function genTestStat(partial?: Partial<Stat>): Stat {
 	);
 }
 
-export function genTestStatStage(partial?: Partial<StatStage>): StatStage {
+export function genTestStatStage(
+	partial?: Partial<Pokemon["statStage"]>,
+): Pokemon["statStage"] {
 	return Object.assign(
 		{
 			attack: 0,
@@ -26,7 +28,7 @@ export function genTestStatStage(partial?: Partial<StatStage>): StatStage {
 			specialAttack: 0,
 			specialDefense: 0,
 			speed: 0,
-		} satisfies StatStage,
+		} satisfies Pokemon["statStage"],
 		partial,
 	);
 }
@@ -36,6 +38,7 @@ export function genTestMon(partial?: RecursivePartial<Pokemon>): Pokemon {
 		id: 0,
 		stat: genTestStat(partial?.stat),
 		type: ["Normal"],
+		level: 50,
 		statStage: genTestStatStage(partial?.statStage),
 		weight: partial?.weight ?? 0,
 		abilityId: partial?.abilityId ?? 0,
@@ -53,6 +56,7 @@ export function genTestMove(partial?: Partial<Move>): Move {
 			base: 100,
 			type: "Normal",
 			category: "Physical",
+			target: "normal",
 		} satisfies Move,
 		partial,
 	);
