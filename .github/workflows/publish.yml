@@ -21,6 +21,6 @@ jobs:
       - name: "Create PR or Publish"
         id: changesets
         uses: changesets/action@v1
-        with: |
-            bun run build
+        with: 
+            publish: bun run build
 
