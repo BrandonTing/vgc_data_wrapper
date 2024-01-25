@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.0.3
+
+### Patch Changes
+
+- b406b83: fix publish script
+
 ## 0.0.5
 
 ### Patch Changes
