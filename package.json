@@ -8,7 +8,7 @@
     "lint": "bunx @biomejs/biome check --apply .",
     "test": "bun test **/**/*.test.ts",
     "knip": "bunx knip",
-    "build": "tsup ./src/index.ts --format esm --dts"
+    "publish": "tsup ./src/index.ts --format esm --dts && bun changeset release"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
