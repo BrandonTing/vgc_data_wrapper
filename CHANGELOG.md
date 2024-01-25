@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.0.5
+
+### Patch Changes
+
+- dfb481f: fix publish script
+
 ## 0.0.4
 
 ### Patch Changes
