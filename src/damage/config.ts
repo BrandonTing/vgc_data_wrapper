@@ -61,8 +61,17 @@ export type Pokemon = {
 	teraType?: Type | "stellar";
 	gender: Gender;
 	status: Status;
-	flags?: Flags<"helpingHand" | "powerSpot" | "steelySpirit" | "charge">;
+	flags?: Flags<
+		| "helpingHand"
+		| "powerSpot"
+		| "steelySpirit"
+		| "charge"
+		| "criticalHit"
+		| "hasEvolution"
+	>;
 };
+
+export type MoveCategory = "Special" | "Physical";
 
 export type Move = {
 	id: number;
@@ -80,16 +89,28 @@ export type Move = {
 		| "isMultihit"
 		| "isPriority"
 	>;
-	category: "Special" | "Physical";
+	category: MoveCategory;
 };
 
 type Weather = "Sun" | "Rain" | "Sand" | "Snow";
 
 type Terrain = "Electric" | "Grassy" | "Misty" | "Psychic";
 
+type Aura = "Fairy" | "Dark";
+
+type Ruin = "Tablets" | "Sword" | "Vessel" | "Beads";
+
 export type BattleFieldStatus = {
 	weather?: Weather;
 	terrain?: Terrain;
 	downCounts?: number;
-	aura?: "Fairy" | "Dark";
+	aura?: Aura;
+	ruin?: Ruin;
+};
+
+export type BattleStatus = {
+	attacker: Pokemon;
+	defender: Pokemon;
+	move: Move;
+	field: BattleFieldStatus;
 };

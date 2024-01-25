@@ -1,26 +1,19 @@
 import { getBasePower } from "./basePower";
-import type { BattleFieldStatus, Move, Pokemon } from "./config";
+import type { BattleStatus } from "./config";
+import { checkMatchType, pipeModifierHelper } from "./utils";
 
-type Param = {
-	attacker: Pokemon;
-	defender: Pokemon;
-	move: Move;
-	field: BattleFieldStatus;
-};
-export function getPower(option: Param): number {
+export function getPower(option: BattleStatus): number {
 	const basePower = getBasePower(
 		option.attacker,
 		option.defender,
 		option.move,
 		option.field,
 	);
-	const modifierAfterModifyByAbility = Math.round(
-		Math.round(4096 * modifyByAttackerAbility(option)) *
-			modifyByDefenderAbility({ defender: option.defender, move: option.move }),
-	);
 	const modifierAfterModification = pipeModifierHelper(
-		modifierAfterModifyByAbility,
+		4096,
 		[
+			modifyByAttackerAbility,
+			modifyByDefenderAbility,
 			modifyByItem,
 			modifyByMoveEffect,
 			modifyByHelpingHand,
@@ -47,22 +40,12 @@ export function getPower(option: Param): number {
 	return result;
 }
 
-function pipeModifierHelper(
-	initValue: number,
-	modifiers: Array<(arg: Param) => number>,
-	options: Param,
-): number {
-	return modifiers.reduce((pre, cur) => {
-		return Math.round(pre * cur(options));
-	}, initValue);
-}
-
 function modifyByAttackerAbility({
 	attacker,
 	defender,
 	move,
 	field,
-}: Param): number {
+}: BattleStatus): number {
 	// Rivalry
 	if (attacker.abilityId === 79) {
 		if (defender.gender === "Unknown") return 1;
@@ -158,7 +141,7 @@ function modifyByAttackerAbility({
 function modifyByDefenderAbility({
 	defender,
 	move,
-}: Pick<Param, "defender" | "move">): number {
+}: Pick<BattleStatus, "defender" | "move">): number {
 	if (defender.abilityId === 87 && move.type === "Fire") {
 		return 1.25;
 	}
@@ -171,7 +154,7 @@ function modifyByDefenderAbility({
 function modifyByItem({
 	attacker: { item },
 	move,
-}: Pick<Param, "attacker" | "move">): number {
+}: Pick<BattleStatus, "attacker" | "move">): number {
 	if (item === "Muscle Band" && move.category === "Physical") {
 		return 1.1;
 	}
@@ -195,7 +178,7 @@ function modifyByMoveEffect({
 	defender,
 	move,
 	field,
-}: Param): number {
+}: BattleStatus): number {
 	// Expanding Force
 	if (move.id === 797 && field.terrain === "Psychic") {
 		return 1.5;
@@ -218,7 +201,7 @@ function modifyByMoveEffect({
 	}
 	// Rising Voltage
 	if (move.id === 804 && field.terrain === "Electric") {
-		if (defender.type.includes("Flying") || defender.teraType === "Flying") {
+		if (checkMatchType(defender, "Flying")) {
 			return 1;
 		}
 		return 2;
@@ -226,29 +209,35 @@ function modifyByMoveEffect({
 	return 1;
 }
 
-function modifyByHelpingHand({ attacker }: Pick<Param, "attacker">): number {
+function modifyByHelpingHand({
+	attacker,
+}: Pick<BattleStatus, "attacker">): number {
 	return attacker.flags?.helpingHand ? 1.5 : 1;
 }
 
-function modifyByPowerSpot({ attacker }: Pick<Param, "attacker">): number {
+function modifyByPowerSpot({
+	attacker,
+}: Pick<BattleStatus, "attacker">): number {
 	return attacker.flags?.powerSpot ? 1.3 : 1;
 }
 
-function modifyBySteelySpirit({ attacker }: Pick<Param, "attacker">): number {
+function modifyBySteelySpirit({
+	attacker,
+}: Pick<BattleStatus, "attacker">): number {
 	return attacker.flags?.steelySpirit ? 1.5 : 1;
 }
 
 function modifyByCharge({
 	attacker,
 	move,
-}: Pick<Param, "attacker" | "move">): number {
+}: Pick<BattleStatus, "attacker" | "move">): number {
 	return attacker.flags?.charge && move.type === "Electric" ? 2 : 1;
 }
 
 function modifyByTerrain({
 	move,
 	field: { terrain },
-}: Pick<Param, "move" | "field">): number {
+}: Pick<BattleStatus, "move" | "field">): number {
 	if (
 		(move.type === "Electric" && terrain === "Electric") ||
 		(move.type === "Psychic" && terrain === "Psychic") ||
@@ -265,7 +254,7 @@ function modifyByTerrain({
 function modifyByAura({
 	move,
 	field: { aura },
-}: Pick<Param, "move" | "field">): number {
+}: Pick<BattleStatus, "move" | "field">): number {
 	return (move.type === "Dark" && aura === "Dark") ||
 		(move.type === "Fairy" && aura === "Fairy")
 		? 1.33
