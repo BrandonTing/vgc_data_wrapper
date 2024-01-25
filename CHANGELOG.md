@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.0.4
+
+### Patch Changes
+
+- 3a8e821: add publish script
+
 ## 0.0.3
 
 ### Patch Changes
