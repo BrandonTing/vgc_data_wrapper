@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.0.6
+
+### Patch Changes
+
+- 0996c7d: fix publish script
+
 ## 0.0.3
 
 ### Patch Changes
