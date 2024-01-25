@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.0.7
+
+### Patch Changes
+
+- 5488c56: add dist folder
+
 ## 0.0.6
 
 ### Patch Changes
