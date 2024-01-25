@@ -70,9 +70,9 @@ function modifyAtkByAttackAbility({
 	// Quark Drive & Protosynthesis
 	if (
 		((abilityId === 282 &&
-			(attacker.item === "Booster Energy" || field.terrain === "Electric")) ||
+			(attacker.item === "Booster Energy" || field?.terrain === "Electric")) ||
 			(abilityId === 281 &&
-				(attacker.item === "Booster Energy" || field.weather === "Sun"))) &&
+				(attacker.item === "Booster Energy" || field?.weather === "Sun"))) &&
 		((move.category === "Physical" &&
 			checkAtkIsHighest(attacker.stat, "attack")) ||
 			(move.category === "Special" &&
@@ -84,7 +84,7 @@ function modifyAtkByAttackAbility({
 	if (
 		abilityId === 288 &&
 		move.category === "Physical" &&
-		field.weather === "Sun"
+		field?.weather === "Sun"
 	) {
 		return 1.333;
 	}
@@ -92,7 +92,7 @@ function modifyAtkByAttackAbility({
 	if (
 		abilityId === 289 &&
 		move.category === "Special" &&
-		field.terrain === "Electric"
+		field?.terrain === "Electric"
 	) {
 		return 1.333;
 	}
@@ -116,7 +116,7 @@ function modifyAtkByAttackAbility({
 	// Solar power
 	if (
 		abilityId === 94 &&
-		field.weather === "Sun" &&
+		field?.weather === "Sun" &&
 		move.category === "Special"
 	) {
 		return 1.5;
@@ -149,6 +149,10 @@ function modifyAtkByAttackAbility({
 	if (abilityId === 198) {
 		return 2;
 	}
+	// Water Bubble
+	if (abilityId === 199 && move.type === "Water") {
+		return 2;
+	}
 	return 1;
 }
 function modifyByDefenderAbility({
@@ -161,6 +165,10 @@ function modifyByDefenderAbility({
 	}
 	// Purifying Salt
 	if (abilityId === 272 && type === "Ghost") {
+		return 0.5;
+	}
+	// Water Bubble
+	if (abilityId === 199 && type === "Fire") {
 		return 0.5;
 	}
 	return 1;
@@ -190,7 +198,7 @@ function modifyByRuin({
 	// ruin ability doesn't affect owner
 	// Tablets
 	if (
-		field.ruin === "Tablets" &&
+		field?.ruin === "Tablets" &&
 		move.category === "Physical" &&
 		attacker.abilityId !== 286
 	) {
@@ -198,7 +206,7 @@ function modifyByRuin({
 	}
 	// Vessel
 	if (
-		field.ruin === "Vessel" &&
+		field?.ruin === "Vessel" &&
 		move.category === "Special" &&
 		attacker.abilityId !== 284
 	) {

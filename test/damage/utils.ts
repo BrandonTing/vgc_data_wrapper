@@ -32,12 +32,17 @@ export function genTestStatStage(
 		partial,
 	);
 }
-
+function getTypeHelper(
+	partialTypes?: RecursivePartial<Pokemon["type"]>,
+): Pokemon["type"] {
+	if (!partialTypes) return ["Normal"];
+	return partialTypes.filter(Boolean);
+}
 export function genTestMon(partial?: RecursivePartial<Pokemon>): Pokemon {
 	return {
 		id: 0,
 		stat: genTestStat(partial?.stat),
-		type: ["Normal"],
+		type: getTypeHelper(partial?.type),
 		level: 50,
 		statStage: genTestStatStage(partial?.statStage),
 		weight: partial?.weight ?? 0,

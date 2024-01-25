@@ -56,7 +56,7 @@ function modifyByAttackerAbility({
 	}
 	// Supreme Overlord
 	if (attacker.abilityId === 293) {
-		return 1 + 0.1 * (field.downCounts ?? 0);
+		return 1 + 0.1 * (field?.downCounts ?? 0);
 	}
 	// skins
 	if (
@@ -97,7 +97,7 @@ function modifyByAttackerAbility({
 	if (
 		attacker.abilityId === 159 &&
 		(move.type === "Rock" || move.type === "Steel" || move.type === "Ground") &&
-		field.weather === "Sand"
+		field?.weather === "Sand"
 	) {
 		return 1.3;
 	}
@@ -182,14 +182,14 @@ function modifyByMoveEffect({
 	field,
 }: BattleStatus): number {
 	// Expanding Force
-	if (move.id === 797 && field.terrain === "Psychic") {
+	if (move.id === 797 && field?.terrain === "Psychic") {
 		return 1.5;
 	}
 	// solar beam & solar blade
 	if (
 		(move.id === 76 || move.id === 669) &&
-		field.weather &&
-		field.weather !== "Sun"
+		field?.weather &&
+		field?.weather !== "Sun"
 	) {
 		return 0.5;
 	}
@@ -202,7 +202,7 @@ function modifyByMoveEffect({
 		return 1.5;
 	}
 	// Rising Voltage
-	if (move.id === 804 && field.terrain === "Electric") {
+	if (move.id === 804 && field?.terrain === "Electric") {
 		if (checkMatchType(defender, "Flying")) {
 			return 1;
 		}
@@ -238,16 +238,16 @@ function modifyByCharge({
 
 function modifyByTerrain({
 	move,
-	field: { terrain },
+	field,
 }: Pick<BattleStatus, "move" | "field">): number {
 	if (
-		(move.type === "Electric" && terrain === "Electric") ||
-		(move.type === "Psychic" && terrain === "Psychic") ||
-		(move.type === "Grass" && terrain === "Grassy")
+		(move.type === "Electric" && field?.terrain === "Electric") ||
+		(move.type === "Psychic" && field?.terrain === "Psychic") ||
+		(move.type === "Grass" && field?.terrain === "Grassy")
 	) {
 		return 1.3;
 	}
-	if (move.type === "Dragon" && terrain === "Misty") {
+	if (move.type === "Dragon" && field?.terrain === "Misty") {
 		return 0.5;
 	}
 	return 1;
@@ -255,10 +255,10 @@ function modifyByTerrain({
 
 function modifyByAura({
 	move,
-	field: { aura },
+	field,
 }: Pick<BattleStatus, "move" | "field">): number {
-	return (move.type === "Dark" && aura === "Dark") ||
-		(move.type === "Fairy" && aura === "Fairy")
+	return (move.type === "Dark" && field?.aura === "Dark") ||
+		(move.type === "Fairy" && field?.aura === "Fairy")
 		? 1.33
 		: 1;
 }

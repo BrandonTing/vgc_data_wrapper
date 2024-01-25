@@ -55,13 +55,13 @@ export function getDefense({
 
 function modifyByWeather({
 	defender,
-	field: { weather },
+	field,
 	move: { category },
 }: Pick<BattleStatus, "defender" | "field" | "move">): number {
 	// Snow
 	if (
 		checkMatchType(defender, "Ice") &&
-		weather === "Snow" &&
+		field?.weather === "Snow" &&
 		category === "Physical"
 	) {
 		return 1.5;
@@ -69,7 +69,7 @@ function modifyByWeather({
 	// Sand
 	if (
 		checkMatchType(defender, "Rock") &&
-		weather === "Sand" &&
+		field?.weather === "Sand" &&
 		category === "Special"
 	) {
 		return 1.5;
@@ -98,10 +98,10 @@ function modifyByDefenderAbility({
 	if (
 		// Quark Drive
 		((abilityId === 282 &&
-			(defender.item === "Booster Energy" || field.terrain === "Electric")) ||
+			(defender.item === "Booster Energy" || field?.terrain === "Electric")) ||
 			// Protosynthesis
 			(abilityId === 281 &&
-				(defender.item === "Booster Energy" || field.weather === "Sun"))) &&
+				(defender.item === "Booster Energy" || field?.weather === "Sun"))) &&
 		((move.category === "Physical" &&
 			checkAtkIsHighest(defender.stat, "defense")) ||
 			(move.category === "Special" &&
@@ -133,11 +133,15 @@ function modifyByRuin({
 	// ruin ability doesn't affect owner
 	const usePhysicalDef = checkUsePhysicalHelper(move);
 	// Sword
-	if (field.ruin === "Sword" && usePhysicalDef && defender.abilityId !== 285) {
+	if (field?.ruin === "Sword" && usePhysicalDef && defender.abilityId !== 285) {
 		return 0.75;
 	}
 	// Beads
-	if (field.ruin === "Beads" && !usePhysicalDef && defender.abilityId !== 287) {
+	if (
+		field?.ruin === "Beads" &&
+		!usePhysicalDef &&
+		defender.abilityId !== 287
+	) {
 		return 0.75;
 	}
 	return 1;

@@ -122,5 +122,5 @@ export type BattleStatus = {
 	attacker: Pokemon;
 	defender: Pokemon;
 	move: Move;
-	field: BattleFieldStatus;
+	field?: BattleFieldStatus;
 };

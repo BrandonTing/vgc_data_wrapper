@@ -31,7 +31,7 @@ export function getDamage(option: BattleStatus): Array<number> {
 	return results;
 }
 
-function getBasicDamage(option: BattleStatus) {
+function getBasicDamage(option: BattleStatus): number {
 	const power = getPower(option);
 	const attack = getAttack(option);
 	const defense = getDefense(option);
@@ -55,7 +55,7 @@ function modifyBySpreadDamage(
 			(attacker.id === 1024 &&
 				attacker.teraType === "Stellar" &&
 				move.id === 906)) &&
-		field.isDouble
+		field?.isDouble
 	) {
 		modifier = 0.75;
 	}
@@ -67,7 +67,7 @@ function modifyByWeather(
 	{ field, move }: Pick<BattleStatus, "field" | "move">,
 ): number {
 	let modifier = 1;
-	if (field.weather === "Rain") {
+	if (field?.weather === "Rain") {
 		if (move.type === "Fire") {
 			modifier = 0.5;
 		}
@@ -75,7 +75,7 @@ function modifyByWeather(
 			modifier = 1.5;
 		}
 	}
-	if (field.weather === "Sun") {
+	if (field?.weather === "Sun") {
 		if (move.type === "Fire") {
 			modifier = 1.5;
 		}
@@ -265,7 +265,6 @@ function modifyByBurn(
 	value: number,
 	{ move, attacker }: Pick<BattleStatus, "move" | "attacker">,
 ): number {
-	// TODO
 	let modifier = 1;
 	if (
 		attacker.status === "Burned" &&
@@ -311,10 +310,10 @@ function modifyByWall({
 		return 1;
 	}
 	if (move.category === "Physical" && defender.flags?.reflect) {
-		return field.isDouble ? 0.667 : 0.5;
+		return field?.isDouble ? 0.667 : 0.5;
 	}
 	if (move.category === "Special" && defender.flags?.lightScreen) {
-		return field.isDouble ? 0.667 : 0.5;
+		return field?.isDouble ? 0.667 : 0.5;
 	}
 	return 1;
 }
