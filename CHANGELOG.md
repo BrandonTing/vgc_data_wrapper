@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.0.2
+
+### Patch Changes
+
+- f2695c4: init publish
+
 ## 0.0.1
 
 ### Patch Changes
