@@ -11,7 +11,6 @@ export type Stat = {
 	[key in (typeof statProps)[number]]: number;
 };
 
-type StatStage = Omit<Stat, "hp">;
 const types = [
 	"Normal",
 	"Fire",
@@ -47,9 +46,11 @@ type Status =
 	| "Frozen"
 	| "Paralyzed";
 
-type Flags<T extends string> = {
+export type Flags<T extends string> = {
 	[P in T]?: boolean;
 };
+
+type StatStage = Omit<Stat, "hp">;
 
 export type Pokemon = {
 	id: number;
@@ -123,4 +124,12 @@ export type BattleStatus = {
 	defender: Pokemon;
 	move: Move;
 	field?: BattleFieldStatus;
+};
+
+export type DamageResult = {
+	rolls: Array<{
+		number: number;
+		percentage: number;
+	}>;
+	koChance: number;
 };

@@ -1,11 +1,12 @@
 import { getAttack } from "./attack";
-import type { BattleStatus } from "./config";
+import type { BattleStatus, DamageResult } from "./config";
 import { getDefense } from "./defense";
 import { getPower } from "./power";
 import { getEffectivenessOnPokemon } from "./type";
 import { getPokemonCurrentType, pipeModifierHelper } from "./utils";
+const dmgRollCounts = 16;
 
-export function getDamage(option: BattleStatus): Array<number> {
+export function getDamage(option: BattleStatus): DamageResult {
 	function pipeOperator(
 		pre: number,
 		cur: (value: number, option: BattleStatus) => number,
@@ -18,8 +19,8 @@ export function getDamage(option: BattleStatus): Array<number> {
 		pipeOperator,
 	);
 	const possibleDamages = modifyByRandomNum(preRandomResult);
-	const results = possibleDamages.map((damage) => {
-		return pipeModifierHelper(
+	const results: DamageResult["rolls"] = possibleDamages.map((damage) => {
+		const damageNum = pipeModifierHelper(
 			damage,
 			[
 				modifyBySameType,
@@ -29,8 +30,26 @@ export function getDamage(option: BattleStatus): Array<number> {
 			],
 			pipeOperator,
 		);
+		const damagePercentage =
+			Math.round((damageNum / option.defender.stat.hp) * 1000) / 10;
+		return {
+			number: damageNum,
+			percentage: damagePercentage,
+		};
 	});
-	return results;
+	const minKoIndex = results.findIndex((dm) => dm.percentage >= 1);
+
+	const koChance =
+		minKoIndex === 0
+			? 100
+			: minKoIndex === -1
+			  ? 0
+			  : ((dmgRollCounts - minKoIndex) / 16) * 100;
+
+	return {
+		rolls: results,
+		koChance,
+	};
 }
 
 function getBasicDamage(option: BattleStatus): number {
@@ -97,8 +116,6 @@ function modifyByCriticalHit(
 }
 
 function modifyByRandomNum(value: number): Array<number> {
-	const dmgRollCounts = 16;
-
 	return Array.from({ length: dmgRollCounts }, (v, i) => (85 + i) / 100).map(
 		(roll) => Math.trunc(roll * value),
 	);

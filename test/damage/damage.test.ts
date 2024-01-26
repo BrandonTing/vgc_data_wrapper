@@ -29,7 +29,7 @@ test("test STAB", () => {
 		defender: incineroar,
 		move: thunderbolt,
 	});
-	expect(actual).toEqual(expected);
+	expect(actual.rolls.map(({ number }) => number)).toEqual(expected);
 
 	const moonblast = genTestMove({
 		type: "Fairy",
@@ -44,7 +44,9 @@ test("test STAB", () => {
 		defender: incineroar,
 		move: moonblast,
 	});
-	expect(actualWithSTAB).toEqual(expectedWithSTAB);
+	expect(actualWithSTAB.rolls.map(({ number }) => number)).toEqual(
+		expectedWithSTAB,
+	);
 });
 
 test("test stage changes", () => {
@@ -79,7 +81,9 @@ test("test stage changes", () => {
 		defender: incineroar,
 		move: moonblast,
 	});
-	expect(actualWhenPlus1C).toEqual(expectedWhenPlus1C);
+	expect(actualWhenPlus1C.rolls.map(({ number }) => number)).toEqual(
+		expectedWhenPlus1C,
+	);
 
 	// test -c
 	flutterMane.statStage.specialAttack = -1;
@@ -91,7 +95,9 @@ test("test stage changes", () => {
 		defender: incineroar,
 		move: moonblast,
 	});
-	expect(actualWhenMinus1C).toEqual(expectedWhenMinus1C);
+	expect(actualWhenMinus1C.rolls.map(({ number }) => number)).toEqual(
+		expectedWhenMinus1C,
+	);
 	flutterMane.statStage.specialAttack = 0;
 
 	// test +d from defender
@@ -104,7 +110,9 @@ test("test stage changes", () => {
 		defender: incineroar,
 		move: moonblast,
 	});
-	expect(expectedWhenPlus1D).toEqual(actualWhenPlus1D);
+	expect(actualWhenPlus1D.rolls.map(({ number }) => number)).toEqual(
+		expectedWhenPlus1D,
+	);
 
 	// test d from defender
 	incineroar.statStage.specialDefense = -1;
@@ -117,5 +125,7 @@ test("test stage changes", () => {
 		defender: incineroar,
 		move: moonblast,
 	});
-	expect(actualWhenMinus1D).toEqual(expectedWhenMinus1D);
+	expect(actualWhenMinus1D.rolls.map(({ number }) => number)).toEqual(
+		expectedWhenMinus1D,
+	);
 });

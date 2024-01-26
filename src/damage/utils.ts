@@ -23,7 +23,7 @@ export function modifyStatByStageChange(
 }
 
 export function checkMatchType(pokemon: Pokemon, type: Type): boolean {
-	return pokemon.type.includes(type) || pokemon.teraType === type;
+	return getPokemonCurrentType(pokemon).includes(type);
 }
 
 export function getPokemonCurrentType(pokemon: Pokemon): Array<TeraTypes> {

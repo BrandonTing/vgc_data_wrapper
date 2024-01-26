@@ -61,7 +61,7 @@ export function genTestMove(partial?: Partial<Move>): Move {
 			base: 100,
 			type: "Normal",
 			category: "Physical",
-			target: "normal",
+			target: "selectedTarget",
 		} satisfies Move,
 		partial,
 	);
