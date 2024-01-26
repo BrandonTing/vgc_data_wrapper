@@ -1,3 +1,6 @@
+import type { Flags } from "../typeUtils";
+import type { Pokemon } from "./pokemon";
+
 const statProps = [
 	"hp",
 	"attack",
@@ -34,47 +37,6 @@ const types = [
 
 export type Type = (typeof types)[number];
 export type TeraTypes = Type | "Stellar";
-
-type Gender = "Male" | "Female" | "Unknown";
-
-type Status =
-	| "Healthy"
-	| "Burned"
-	| "Poisoned"
-	| "Badly Poisoned"
-	| "Asleep"
-	| "Frozen"
-	| "Paralyzed";
-
-export type Flags<T extends string> = {
-	[P in T]?: boolean;
-};
-
-type StatStage = Omit<Stat, "hp">;
-
-export type Pokemon = {
-	id: number;
-	level: number;
-	stat: Stat;
-	type: Array<Type>;
-	statStage: StatStage;
-	weight: number;
-	abilityId: number;
-	item?: string;
-	teraType?: TeraTypes;
-	gender: Gender;
-	status: Status;
-	flags?: Flags<
-		| "helpingHand"
-		| "powerSpot"
-		| "steelySpirit"
-		| "charge"
-		| "hasEvolution"
-		| "lightScreen"
-		| "reflect"
-		| "hasFriendGuard"
-	>;
-};
 
 type MoveCategory = "Special" | "Physical";
 

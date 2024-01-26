@@ -11,13 +11,13 @@ function checkUsePhysicalHelper(move: Move): boolean {
 }
 
 export function getDefense(
-	option: Pick<BattleStatus, "defender" | "move" | "field">,
+	option: Pick<BattleStatus, "defender" | "move">,
 ): number {
-	const { move, defender, field } = option;
+	const { move, defender } = option;
 	const usePhysicalDef = checkUsePhysicalHelper(move);
 	let defStat = usePhysicalDef
-		? defender.stat.defense
-		: defender.stat.specialDefense; // Psyshock & Psystrike
+		? defender.getStat("defense")
+		: defender.getStat("specialDefense");
 	const stageChanges = usePhysicalDef
 		? defender.statStage.defense
 		: defender.statStage.specialDefense;
@@ -94,9 +94,9 @@ function modifyByDefenderAbility({
 			(abilityId === 281 &&
 				(defender.item === "Booster Energy" || field?.weather === "Sun"))) &&
 		((move.category === "Physical" &&
-			checkAtkIsHighest(defender.stat, "defense")) ||
+			checkAtkIsHighest(defender.getStats(), "defense")) ||
 			(move.category === "Special" &&
-				checkAtkIsHighest(defender.stat, "specialDefense")))
+				checkAtkIsHighest(defender.getStats(), "specialDefense")))
 	) {
 		return 1.3;
 	}

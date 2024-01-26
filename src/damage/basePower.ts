@@ -1,4 +1,5 @@
-import type { BattleFieldStatus, Move, Pokemon } from "./config";
+import type { BattleFieldStatus, Move } from "./config";
+import type { Pokemon } from "./pokemon";
 
 export function getBasePower(
 	attacker: Pokemon,
@@ -29,12 +30,12 @@ export function getBasePower(
 	// electric ball
 	if (move.id === 486) {
 		const attackerSpeed = speedModifier(
-			attacker.stat.speed,
+			attacker.getStat("speed"),
 			attacker.item ?? "",
 			attacker.statStage.speed,
 		);
 		const defenderSpeed = speedModifier(
-			defender.stat.speed,
+			defender.getStat("speed"),
 			defender.item ?? "",
 			defender.statStage.speed,
 		);
@@ -56,12 +57,12 @@ export function getBasePower(
 	// Gyro ball
 	if (move.id === 360) {
 		const attackerSpeed = speedModifier(
-			attacker.stat.speed,
+			attacker.getStat("speed"),
 			attacker.item ?? "",
 			attacker.statStage.speed,
 		);
 		const defenderSpeed = speedModifier(
-			defender.stat.speed,
+			defender.getStat("speed"),
 			defender.item ?? "",
 			defender.statStage.speed,
 		);

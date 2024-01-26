@@ -31,7 +31,7 @@ export function getDamage(option: BattleStatus): DamageResult {
 			pipeOperator,
 		);
 		const damagePercentage =
-			Math.round((damageNum / option.defender.stat.hp) * 1000) / 10;
+			Math.round((damageNum / option.defender.getStat("hp")) * 1000) / 10;
 		return {
 			number: damageNum,
 			percentage: damagePercentage,
@@ -131,7 +131,7 @@ function modifyBySameType(
 		if (
 			attacker.teraType &&
 			attacker.teraType !== "Stellar" &&
-			attacker.type.includes(attacker.teraType)
+			attacker.types.includes(attacker.teraType)
 		) {
 			modifier = 2;
 		} else {
@@ -141,38 +141,38 @@ function modifyBySameType(
 	// Pixilate
 	if (attacker.abilityId === 182) {
 		if (attacker.teraType === "Stellar") {
-			if (attacker.type.includes("Fairy") && move.type === "Normal") {
+			if (attacker.types.includes("Fairy") && move.type === "Normal") {
 				modifier = 2;
 			} else {
 				modifier = 1.2;
 			}
 		}
 		if (attacker.teraType === "Fairy" && move.type === "Normal") {
-			modifier = attacker.type.includes("Fairy") ? 2 : 1.5;
+			modifier = attacker.types.includes("Fairy") ? 2 : 1.5;
 		}
-		if (attacker.type.includes("Fairy") && move.type === "Normal") {
+		if (attacker.types.includes("Fairy") && move.type === "Normal") {
 			modifier = 1.5;
 		}
 	}
 	// Galvanize
 	if (attacker.abilityId === 206) {
 		if (attacker.teraType === "Stellar") {
-			if (attacker.type.includes("Electric") && move.type === "Normal") {
+			if (attacker.types.includes("Electric") && move.type === "Normal") {
 				modifier = 2;
 			} else {
 				modifier = 1.2;
 			}
 		}
 		if (attacker.teraType === "Electric" && move.type === "Normal") {
-			modifier = attacker.type.includes("Electric") ? 2 : 1.5;
+			modifier = attacker.types.includes("Electric") ? 2 : 1.5;
 		}
-		if (attacker.type.includes("Electric") && move.type === "Normal") {
+		if (attacker.types.includes("Electric") && move.type === "Normal") {
 			modifier = 1.5;
 		}
 	}
 	// Stellar tera
 	if (attacker.teraType === "Stellar") {
-		if (attacker.type.includes(move.type)) {
+		if (attacker.types.includes(move.type)) {
 			modifier = 2;
 		} else {
 			modifier = 1.2;
@@ -180,7 +180,7 @@ function modifyBySameType(
 	}
 	// Adaptability
 	if (attacker.abilityId === 91) {
-		if (attacker.type.includes(move.type)) {
+		if (attacker.types.includes(move.type)) {
 			if (attacker.teraType === move.type) {
 				modifier = 2.25;
 			} else {
@@ -189,7 +189,7 @@ function modifyBySameType(
 		}
 	}
 	// Normal stab
-	if (attacker.type.includes(move.type)) {
+	if (attacker.types.includes(move.type)) {
 		if (attacker.teraType === move.type) {
 			modifier = 2;
 		} else {
@@ -215,7 +215,7 @@ function getTypeModifier({
 		attacker.item === "Iron Ball" &&
 		(defender.teraType === "Flying" ||
 			((!defender.teraType || defender.teraType === "Stellar") &&
-				defender.type.includes("Flying")))
+				defender.types.includes("Flying")))
 	) {
 		return 1;
 	}
@@ -223,14 +223,14 @@ function getTypeModifier({
 	if (attacker.abilityId === 182) {
 		if (!defender.teraType || defender.teraType === "Stellar") {
 			// use original type
-			return getEffectivenessOnPokemon("Fairy", defender.type);
+			return getEffectivenessOnPokemon("Fairy", defender.types);
 		}
 		return getEffectivenessOnPokemon("Fairy", [defender.teraType]);
 	}
 	if (attacker.abilityId === 206) {
 		if (!defender.teraType || defender.teraType === "Stellar") {
 			// use original type
-			return getEffectivenessOnPokemon("Electric", defender.type);
+			return getEffectivenessOnPokemon("Electric", defender.types);
 		}
 		return getEffectivenessOnPokemon("Electric", [defender.teraType]);
 	}
@@ -238,8 +238,8 @@ function getTypeModifier({
 	if (move.id === 560) {
 		if (defender.teraType === "Stellar") {
 			return (
-				getEffectivenessOnPokemon("Flying", defender.type) *
-				getEffectivenessOnPokemon("Fighting", defender.type)
+				getEffectivenessOnPokemon("Flying", defender.types) *
+				getEffectivenessOnPokemon("Fighting", defender.types)
 			);
 		}
 		const curDefenderType = getPokemonCurrentType(defender);
@@ -251,12 +251,12 @@ function getTypeModifier({
 	// Freeze Dry
 	if (move.id === 573) {
 		if (defender.teraType === "Stellar") {
-			if (defender.type.includes("Water")) {
+			if (defender.types.includes("Water")) {
 				return (
 					2 *
 					getEffectivenessOnPokemon(
 						move.type,
-						defender.type.filter((type) => type === "Water"),
+						defender.types.filter((type) => type === "Water"),
 					)
 				);
 			}
@@ -267,7 +267,7 @@ function getTypeModifier({
 	}
 	// use original type when tera stellar
 	if (defender.teraType === "Stellar") {
-		return getEffectivenessOnPokemon(move.type, defender.type);
+		return getEffectivenessOnPokemon(move.type, defender.types);
 	}
 	return getEffectivenessOnPokemon(move.type, getPokemonCurrentType(defender));
 }
@@ -406,7 +406,7 @@ function modifyByDefenderAbility({
 	// Solid Rock && Filter
 	const effectiveness = getEffectivenessOnPokemon(
 		move.type,
-		defender.teraType ? [defender.teraType] : defender.type,
+		defender.teraType ? [defender.teraType] : defender.types,
 	);
 
 	if (

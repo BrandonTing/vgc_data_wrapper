@@ -1,4 +1,5 @@
-import type { Pokemon, Stat, TeraTypes, Type } from "./config";
+import type { Stat, TeraTypes, Type } from "./config";
+import type { Pokemon } from "./pokemon";
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export function pipeModifierHelper<T, U extends (...args: any) => T>(
@@ -27,5 +28,5 @@ export function checkMatchType(pokemon: Pokemon, type: Type): boolean {
 }
 
 export function getPokemonCurrentType(pokemon: Pokemon): Array<TeraTypes> {
-	return pokemon.teraType ? [pokemon.teraType] : pokemon.type;
+	return pokemon.teraType ? [pokemon.teraType] : pokemon.types;
 }

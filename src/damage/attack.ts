@@ -13,21 +13,21 @@ export function getAttack({
 }: BattleStatus): number {
 	let atkStat =
 		move.category === "Physical"
-			? attacker.stat.attack
-			: attacker.stat.specialAttack;
+			? attacker.getStat("attack")
+			: attacker.getStat("specialAttack");
 	let stageChanges =
 		move.category === "Physical"
 			? attacker.statStage.attack
 			: attacker.statStage.specialAttack;
 	// body press
 	if (move.id === 776) {
-		atkStat = attacker.stat.defense;
+		atkStat = attacker.getStat("defense");
 		stageChanges = attacker.statStage.defense;
 	}
 	// foul play
 	if (move.id === 492) {
-		atkStat = defender.stat.attack;
-		stageChanges = defender.stat.attack;
+		atkStat = defender.getStat("attack");
+		stageChanges = defender.statStage.attack;
 	}
 
 	if (!move.flags?.isCriticalHit) {
@@ -72,9 +72,9 @@ function modifyAtkByAttackAbility({
 			(abilityId === 281 &&
 				(attacker.item === "Booster Energy" || field?.weather === "Sun"))) &&
 		((move.category === "Physical" &&
-			checkAtkIsHighest(attacker.stat, "attack")) ||
+			checkAtkIsHighest(attacker.getStats(), "attack")) ||
 			(move.category === "Special" &&
-				checkAtkIsHighest(attacker.stat, "specialAttack")))
+				checkAtkIsHighest(attacker.getStats(), "specialAttack")))
 	) {
 		return 1.3;
 	}

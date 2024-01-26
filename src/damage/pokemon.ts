@@ -1,4 +1,5 @@
-import type { Flags, Stat, TeraTypes, Type } from "./config";
+import type { Flags } from "../typeUtils";
+import type { Stat, TeraTypes, Type } from "./config";
 
 type Gender = "Male" | "Female" | "Unknown";
 
@@ -33,6 +34,7 @@ interface PokemonInfo {
 	};
 	effortValues: Stat;
 	individualValues: Stat;
+	stats?: Stat;
 	statStage: Omit<Stat, "hp">;
 	weight: number;
 	abilityId: number;
@@ -57,10 +59,10 @@ export class Pokemon implements IPokemon {
 	abilityId: number;
 	gender: Gender;
 	status: Status;
-
 	baseStat: Stat;
 	effortValues: Stat;
 	individualValues: Stat;
+	stats?: Stat;
 	statStage: Omit<Stat, "hp">;
 	nature: {
 		plus?: keyof Omit<Stat, "hp">;
@@ -117,25 +119,30 @@ export class Pokemon implements IPokemon {
 		};
 		this.nature = info.nature ?? {};
 	}
+	getStat(key: keyof Stat): number {
+		// support manually set stat, if so, ignore base stat, iv and ev
+		if (this.stats?.[key]) return this.stats[key];
+		if (key === "hp") {
+			return this.getHp(
+				this.baseStat[key],
+				this.individualValues[key],
+				this.effortValues[key],
+			);
+		}
+
+		return this.getTargetStat(
+			key,
+			this.baseStat[key],
+			this.individualValues[key],
+			this.effortValues[key],
+		);
+	}
 	getStats(): Stat {
-		const baseStatEntries = Object.entries(this.baseStat) as Array<
-			[keyof Stat, number]
-		>;
-		return baseStatEntries.reduce((pre, [key, value]) => {
-			if (key === "hp") {
-				pre[key] = this.getHp(
-					value,
-					this.individualValues[key],
-					this.effortValues[key],
-				);
-			} else {
-				pre[key] = this.getTargetStat(
-					key,
-					value,
-					this.individualValues[key],
-					this.effortValues[key],
-				);
-			}
+		// support manually set stat, if so, ignore base stat, iv and ev
+		if (this.stats) return this.stats;
+		const baseStatEntries = Object.keys(this.baseStat) as Array<keyof Stat>;
+		return baseStatEntries.reduce((pre, key) => {
+			pre[key] = this.getStat(key);
 			return pre;
 		}, {} as Stat);
 	}
