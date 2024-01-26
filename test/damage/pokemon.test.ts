@@ -36,10 +36,6 @@ test("252 ha investmented incineroar should have 202 hp & 167 attack", () => {
 		effortValues: {
 			hp: 252,
 			attack: 252,
-			defense: 0,
-			specialAttack: 0,
-			specialDefense: 0,
-			speed: 0,
 		},
 	});
 	const expectedHP = 202;

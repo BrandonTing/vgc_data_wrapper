@@ -47,6 +47,9 @@ interface PokemonInfo {
 
 interface IPokemon extends PokemonInfo {
 	getStats: () => Stat;
+	getStat: (key: keyof Stat) => number;
+	setFlags: (flags: PokemonFlags) => void;
+	toggleTera: ((tera: true, type: TeraTypes) => void) | ((tera: false) => void);
 }
 
 export class Pokemon implements IPokemon {
@@ -75,7 +78,23 @@ export class Pokemon implements IPokemon {
 	constructor(
 		info: {
 			id: number;
-		} & Partial<Omit<PokemonInfo, "id">>,
+		} & Partial<
+			Omit<
+				PokemonInfo,
+				| "id"
+				| "stats"
+				| "baseStat"
+				| "individualValues"
+				| "effortValues"
+				| "statStage"
+			>
+		> & {
+				stats?: Partial<Stat>;
+				baseStat?: Partial<Stat>;
+				individualValues?: Partial<Stat>;
+				effortValues?: Partial<Stat>;
+				statStage?: Partial<Omit<Stat, "hp">>;
+			},
 	) {
 		this.id = info.id;
 		this.level = info.level ?? 50;
@@ -90,38 +109,13 @@ export class Pokemon implements IPokemon {
 		this.status = info.status ?? "Healthy";
 		this.item = info.item;
 		// stats
-		this.stats = info.stats;
-		this.baseStat = info.baseStat ?? {
-			hp: 100,
-			attack: 100,
-			defense: 100,
-			specialAttack: 100,
-			specialDefense: 100,
-			speed: 100,
-		};
-		this.individualValues = info.individualValues ?? {
-			hp: 31,
-			attack: 31,
-			defense: 31,
-			specialAttack: 31,
-			specialDefense: 31,
-			speed: 31,
-		};
-		this.effortValues = info.effortValues ?? {
-			hp: 0,
-			attack: 0,
-			defense: 0,
-			specialAttack: 0,
-			specialDefense: 0,
-			speed: 0,
-		};
-		this.statStage = info.statStage ?? {
-			attack: 0,
-			defense: 0,
-			specialAttack: 0,
-			specialDefense: 0,
-			speed: 0,
-		};
+		if (info.stats) {
+			this.stats = genDefaultStat(info.stats);
+		}
+		this.baseStat = genDefaultBaseStat(info.baseStat);
+		this.individualValues = genDefaultIV(info.individualValues);
+		this.effortValues = genDefaultEv(info.effortValues);
+		this.statStage = genDefaultStage(info.statStage);
 		this.nature = info.nature ?? {};
 	}
 	getStat(key: keyof Stat): number {
@@ -151,6 +145,18 @@ export class Pokemon implements IPokemon {
 			return pre;
 		}, {} as Stat);
 	}
+	setFlags(flags: PokemonFlags) {
+		this.flags = this.flags ? Object.assign(this.flags, flags) : flags;
+	}
+	toggleTera:
+		| ((tera: true, type: TeraTypes) => void)
+		| ((tera: false) => void) = (tera, type) => {
+		if (tera) {
+			this.teraType = type;
+			return;
+		}
+		this.teraType = undefined;
+	};
 	private getHp(base: number, iv: number, ev: number): number {
 		// Shedinja
 		if (this.id === 292) return 1;
@@ -177,4 +183,75 @@ export class Pokemon implements IPokemon {
 		if (key === this.nature.minus) return 0.9;
 		return 1;
 	}
+}
+
+function genDefaultStat(partial?: Partial<Stat>): Stat {
+	return Object.assign(
+		{
+			hp: 100,
+			attack: 100,
+			defense: 100,
+			specialAttack: 100,
+			specialDefense: 100,
+			speed: 100,
+		} satisfies Stat,
+		partial,
+	);
+}
+
+function genDefaultBaseStat(partial?: Partial<Stat>): Stat {
+	return Object.assign(
+		{
+			hp: 100,
+			attack: 100,
+			defense: 100,
+			specialAttack: 100,
+			specialDefense: 100,
+			speed: 100,
+		} satisfies Stat,
+		partial,
+	);
+}
+
+function genDefaultIV(partial?: Partial<Stat>): Stat {
+	return Object.assign(
+		{
+			hp: 31,
+			attack: 31,
+			defense: 31,
+			specialAttack: 31,
+			specialDefense: 31,
+			speed: 31,
+		} satisfies Stat,
+		partial,
+	);
+}
+
+function genDefaultEv(partial?: Partial<Stat>): Stat {
+	return Object.assign(
+		{
+			hp: 0,
+			attack: 0,
+			defense: 0,
+			specialAttack: 0,
+			specialDefense: 0,
+			speed: 0,
+		} satisfies Stat,
+		partial,
+	);
+}
+
+function genDefaultStage(
+	partial?: Partial<Omit<Stat, "hp">>,
+): Omit<Stat, "hp"> {
+	return Object.assign(
+		{
+			attack: 0,
+			defense: 0,
+			specialAttack: 0,
+			specialDefense: 0,
+			speed: 0,
+		} satisfies Omit<Stat, "hp">,
+		partial,
+	);
 }

@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { getDamage } from "../../src/damage/damage";
+import { Battle } from "../../src/damage/bettle";
 import { genTestMon, genTestMove } from "./utils";
 
 test("test STAB", () => {
@@ -24,11 +24,12 @@ test("test STAB", () => {
 	const expected = [
 		48, 49, 49, 50, 50, 51, 51, 52, 53, 53, 54, 54, 55, 55, 56, 57,
 	];
-	const actual = getDamage({
+	const battle = new Battle({
 		attacker: flutterMane,
 		defender: incineroar,
 		move: thunderbolt,
 	});
+	const actual = battle.getDamage();
 	expect(actual.rolls.map(({ number }) => number)).toEqual(expected);
 
 	const moonblast = genTestMove({
@@ -36,14 +37,11 @@ test("test STAB", () => {
 		base: 95,
 		category: "Special",
 	});
+	battle.move = moonblast;
 	const expectedWithSTAB = [
 		76, 76, 78, 78, 79, 81, 81, 82, 82, 84, 85, 85, 87, 87, 88, 90,
 	];
-	const actualWithSTAB = getDamage({
-		attacker: flutterMane,
-		defender: incineroar,
-		move: moonblast,
-	});
+	const actualWithSTAB = battle.getDamage();
 	expect(actualWithSTAB.rolls.map(({ number }) => number)).toEqual(
 		expectedWithSTAB,
 	);
@@ -71,16 +69,17 @@ test("test stage changes", () => {
 		base: 95,
 		category: "Special",
 	});
+	const battle = new Battle({
+		attacker: flutterMane,
+		defender: incineroar,
+		move: moonblast,
+	});
 	// test +c
 	const expectedWhenPlus1C = [
 		114, 115, 117, 118, 120, 121, 121, 123, 124, 126, 127, 129, 130, 132, 133,
 		135,
 	];
-	const actualWhenPlus1C = getDamage({
-		attacker: flutterMane,
-		defender: incineroar,
-		move: moonblast,
-	});
+	const actualWhenPlus1C = battle.getDamage();
 	expect(actualWhenPlus1C.rolls.map(({ number }) => number)).toEqual(
 		expectedWhenPlus1C,
 	);
@@ -90,11 +89,7 @@ test("test stage changes", () => {
 	const expectedWhenMinus1C = [
 		51, 52, 52, 54, 54, 54, 55, 55, 57, 57, 57, 58, 58, 60, 60, 61,
 	];
-	const actualWhenMinus1C = getDamage({
-		attacker: flutterMane,
-		defender: incineroar,
-		move: moonblast,
-	});
+	const actualWhenMinus1C = battle.getDamage();
 	expect(actualWhenMinus1C.rolls.map(({ number }) => number)).toEqual(
 		expectedWhenMinus1C,
 	);
@@ -105,11 +100,7 @@ test("test stage changes", () => {
 	const expectedWhenPlus1D = [
 		51, 52, 52, 54, 54, 54, 55, 55, 57, 57, 57, 58, 58, 60, 60, 61,
 	];
-	const actualWhenPlus1D = getDamage({
-		attacker: flutterMane,
-		defender: incineroar,
-		move: moonblast,
-	});
+	const actualWhenPlus1D = battle.getDamage();
 	expect(actualWhenPlus1D.rolls.map(({ number }) => number)).toEqual(
 		expectedWhenPlus1D,
 	);
@@ -120,11 +111,7 @@ test("test stage changes", () => {
 		114, 115, 117, 118, 120, 121, 121, 123, 124, 126, 127, 129, 130, 132, 133,
 		135,
 	];
-	const actualWhenMinus1D = getDamage({
-		attacker: flutterMane,
-		defender: incineroar,
-		move: moonblast,
-	});
+	const actualWhenMinus1D = battle.getDamage();
 	expect(actualWhenMinus1D.rolls.map(({ number }) => number)).toEqual(
 		expectedWhenMinus1D,
 	);

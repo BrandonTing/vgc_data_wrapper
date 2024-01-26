@@ -1,12 +1,72 @@
 import { getAttack } from "./attack";
-import type { BattleStatus, DamageResult } from "./config";
+import type {
+	BattleFieldStatus,
+	BattleStatus,
+	DamageResult,
+	Move,
+} from "./config";
 import { getDefense } from "./defense";
+import type { Pokemon } from "./pokemon";
 import { getPower } from "./power";
 import { getEffectivenessOnPokemon } from "./type";
 import { getPokemonCurrentType, pipeModifierHelper } from "./utils";
+
+interface IBattle extends Partial<BattleStatus> {
+	getDamage: () => DamageResult;
+	setField: (field: Partial<BattleFieldStatus>) => void;
+	setPokemon: (type: "attacker" | "defender", pokemon: Pokemon) => void;
+	swapPokemons: () => void;
+}
+
+export class Battle implements IBattle {
+	field: BattleFieldStatus = {};
+	attacker?: Pokemon;
+	defender?: Pokemon;
+	move?: Move;
+	constructor(option: Partial<BattleStatus>) {
+		if (option.attacker) {
+			this.attacker = option.attacker;
+		}
+		if (option.defender) {
+			this.defender = option.defender;
+		}
+		if (option.move) {
+			this.move = option.move;
+		}
+		if (option.field) {
+			this.field = option.field;
+		}
+	}
+	getDamage(): DamageResult {
+		if (!this.attacker || !this.defender) {
+			throw new Error("Attacker or Defender is not set");
+		}
+		if (!this.move) {
+			throw new Error("Move is not set");
+		}
+		return getDamage({
+			attacker: this.attacker,
+			defender: this.defender,
+			move: this.move,
+			field: this.field,
+		});
+	}
+	setField(field: Partial<BattleFieldStatus>) {
+		this.field = this.field ? Object.assign(this.field, field) : field;
+	}
+	setPokemon(type: "attacker" | "defender", pokemon: Pokemon) {
+		this[type] = pokemon;
+	}
+	swapPokemons() {
+		const curAttacker = this.attacker;
+		this.attacker = this.defender;
+		this.defender = curAttacker;
+	}
+}
+
 const dmgRollCounts = 16;
 
-export function getDamage(option: BattleStatus): DamageResult {
+function getDamage(option: BattleStatus): DamageResult {
 	function pipeOperator(
 		pre: number,
 		cur: (value: number, option: BattleStatus) => number,
@@ -37,7 +97,7 @@ export function getDamage(option: BattleStatus): DamageResult {
 			percentage: damagePercentage,
 		};
 	});
-	const minKoIndex = results.findIndex((dm) => dm.percentage >= 1);
+	const minKoIndex = results.findIndex((dm) => dm.percentage >= 100);
 
 	const koChance =
 		minKoIndex === 0
