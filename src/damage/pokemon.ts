@@ -81,11 +81,16 @@ export class Pokemon implements IPokemon {
 		this.level = info.level ?? 50;
 		// fetch pokemon infomation by id
 		this.types = info.types ?? ["Normal"];
+		this.teraType = info.teraType;
+
 		this.weight = info.weight ?? 0;
 		this.abilityId = info.weight ?? 0;
 		this.gender = info.gender ?? "Unknown";
+
 		this.status = info.status ?? "Healthy";
+		this.item = info.item;
 		// stats
+		this.stats = info.stats;
 		this.baseStat = info.baseStat ?? {
 			hp: 100,
 			attack: 100,

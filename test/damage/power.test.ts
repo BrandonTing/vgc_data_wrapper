@@ -25,6 +25,7 @@ test("get power with type enhancing item", () => {
 	const testMove = genTestMove({
 		base: expected,
 	});
+	console.log(testMon.item);
 	const power = getPower({
 		attacker: testMon,
 		defender: testMon,

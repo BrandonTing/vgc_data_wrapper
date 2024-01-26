@@ -1,4 +1,5 @@
-import type { Move, Pokemon, Stat } from "../../src/damage/config";
+import { Pokemon } from "../../src/damage";
+import type { Move, Stat } from "../../src/damage/config";
 
 type RecursivePartial<T> = {
 	[P in keyof T]?: RecursivePartial<T[P]>;
@@ -33,16 +34,16 @@ export function genTestStatStage(
 	);
 }
 function getTypeHelper(
-	partialTypes?: RecursivePartial<Pokemon["type"]>,
-): Pokemon["type"] {
+	partialTypes?: RecursivePartial<Pokemon["types"]>,
+): Pokemon["types"] {
 	if (!partialTypes) return ["Normal"];
 	return partialTypes.filter(Boolean);
 }
 export function genTestMon(partial?: RecursivePartial<Pokemon>): Pokemon {
-	return {
+	return new Pokemon({
 		id: 0,
-		stat: genTestStat(partial?.stat),
-		type: getTypeHelper(partial?.type),
+		stats: genTestStat(partial?.stats),
+		types: getTypeHelper(partial?.types),
 		level: 50,
 		statStage: genTestStatStage(partial?.statStage),
 		weight: partial?.weight ?? 0,
@@ -51,7 +52,7 @@ export function genTestMon(partial?: RecursivePartial<Pokemon>): Pokemon {
 		teraType: partial?.teraType,
 		gender: "Unknown",
 		status: "Healthy",
-	};
+	});
 }
 
 export function genTestMove(partial?: Partial<Move>): Move {

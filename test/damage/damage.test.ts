@@ -4,14 +4,14 @@ import { genTestMon, genTestMove } from "./utils";
 
 test("test STAB", () => {
 	const flutterMane = genTestMon({
-		type: ["Fairy", "Ghost"],
-		stat: {
+		types: ["Fairy", "Ghost"],
+		stats: {
 			specialAttack: 155,
 		},
 	});
 	const incineroar = genTestMon({
-		type: ["Dark", "Fire"],
-		stat: {
+		types: ["Dark", "Fire"],
+		stats: {
 			hp: 170,
 			specialDefense: 110,
 		},
@@ -51,8 +51,8 @@ test("test STAB", () => {
 
 test("test stage changes", () => {
 	const flutterMane = genTestMon({
-		type: ["Fairy", "Ghost"],
-		stat: {
+		types: ["Fairy", "Ghost"],
+		stats: {
 			specialAttack: 155,
 		},
 		statStage: {
@@ -60,8 +60,8 @@ test("test stage changes", () => {
 		},
 	});
 	const incineroar = genTestMon({
-		type: ["Dark", "Fire"],
-		stat: {
+		types: ["Dark", "Fire"],
+		stats: {
 			hp: 170,
 			specialDefense: 110,
 		},
