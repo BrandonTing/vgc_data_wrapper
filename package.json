@@ -3,7 +3,7 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "scripts": {
     "lint": "bunx @biomejs/biome check --apply .",
     "test": "bun test **/**/*.test.ts",

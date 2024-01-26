@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.1.0
+
+### Minor Changes
+
+- be54bef: use battle and pokemon class to generate damage calc
+
 ## 0.0.7
 
 ### Patch Changes
