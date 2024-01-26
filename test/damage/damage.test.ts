@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { getDamage } from "../../src/damage";
+import { getDamage } from "../../src/damage/damage";
 import { genTestMon, genTestMove } from "./utils";
 
 test("test STAB", () => {

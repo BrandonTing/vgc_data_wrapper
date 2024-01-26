@@ -34,7 +34,7 @@ const types = [
 ] as const;
 
 export type Type = (typeof types)[number];
-export type TypesWithStellar = Type | "Stellar";
+export type TeraTypes = Type | "Stellar";
 
 type Gender = "Male" | "Female" | "Unknown";
 
@@ -60,7 +60,7 @@ export type Pokemon = {
 	weight: number;
 	abilityId: number;
 	item?: string;
-	teraType?: TypesWithStellar;
+	teraType?: TeraTypes;
 	gender: Gender;
 	status: Status;
 	flags?: Flags<
@@ -77,7 +77,7 @@ export type Pokemon = {
 
 type MoveCategory = "Special" | "Physical";
 
-type MoveTarget = "normal" | "allAdjacentFoes" | "allAdjacent";
+type MoveTarget = "selectedTarget" | "allAdjacentFoes" | "allAdjacent";
 
 export type Move = {
 	id: number;

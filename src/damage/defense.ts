@@ -10,12 +10,10 @@ function checkUsePhysicalHelper(move: Move): boolean {
 	return move.category === "Physical" || move.id === 473 || move.id === 540; // Psyshock & Psystrike
 }
 
-export function getDefense({
-	attacker,
-	defender,
-	move,
-	field,
-}: BattleStatus): number {
+export function getDefense(
+	option: Pick<BattleStatus, "defender" | "move" | "field">,
+): number {
+	const { move, defender, field } = option;
 	const usePhysicalDef = checkUsePhysicalHelper(move);
 	let defStat = usePhysicalDef
 		? defender.stat.defense
@@ -36,14 +34,7 @@ export function getDefense({
 				4096 as number,
 				[modifyByWeather, modifyByDefenderAbility, modifyByItem, modifyByRuin],
 				(pre, cur) => {
-					return Math.round(
-						pre *
-							cur({
-								defender,
-								move,
-								field,
-							}),
-					);
+					return Math.round(pre * cur(option));
 				},
 			)) /
 			4096 -

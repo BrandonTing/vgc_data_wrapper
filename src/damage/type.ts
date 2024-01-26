@@ -1,4 +1,4 @@
-import type { Type, TypesWithStellar } from "./config";
+import type { TeraTypes, Type } from "./config";
 
 type Effectiveness = 2 | 1 | 0.5 | 0;
 
@@ -370,7 +370,7 @@ const typeAttackEffectivenessMap: TypeEffectivenessMap = {
 
 export function getEffectivenessOnPokemon(
 	atkType: Type,
-	targetPokemonTypes: Array<TypesWithStellar>,
+	targetPokemonTypes: Array<TeraTypes>,
 ): number {
 	return targetPokemonTypes
 		.map((type) =>

@@ -33,6 +33,12 @@ export function getAttack({
 	if (!move.flags?.isCriticalHit) {
 		atkStat = modifyStatByStageChange(atkStat, stageChanges);
 	}
+	const option = {
+		attacker,
+		defender,
+		move,
+		field,
+	};
 	const result = Math.round(
 		(atkStat *
 			pipeModifierHelper(
@@ -44,15 +50,7 @@ export function getAttack({
 					modifyByRuin,
 				],
 				(pre, cur) => {
-					return Math.round(
-						pre *
-							cur({
-								attacker,
-								defender,
-								move,
-								field,
-							}),
-					);
+					return Math.round(pre * cur(option));
 				},
 			)) /
 			4096 -
