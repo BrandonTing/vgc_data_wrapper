@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.1.1
+
+### Patch Changes
+
+- 5d67174: enable fetch pokemon info from pokeapi instead of manually set
+
 ## 0.1.0
 
 ### Minor Changes
