@@ -12,7 +12,7 @@
     "publish": "bun run build && changeset publish"
   },
   "exports": {
-    ".": "./dist",
+    ".": "./dist/index.js",
     "./ability.json": "./assets/ability.json",
     "./item.json": "./assets/item.json"
   },
