@@ -1,3 +1,4 @@
+import type { Pokemon } from "../pokemon";
 import { getAttack } from "./attack";
 import type {
 	BattleFieldStatus,
@@ -6,7 +7,6 @@ import type {
 	Move,
 } from "./config";
 import { getDefense } from "./defense";
-import type { Pokemon } from "./pokemon";
 import { getPower } from "./power";
 import { getEffectivenessOnPokemon } from "./type";
 import { getPokemonCurrentType, pipeModifierHelper } from "./utils";

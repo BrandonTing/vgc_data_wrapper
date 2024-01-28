@@ -1,1 +1,2 @@
-export * as damage from "./damage";
+export * from "./damage";
+export * from "./pokemon";

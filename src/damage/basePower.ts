@@ -1,5 +1,5 @@
+import type { Pokemon } from "../pokemon";
 import type { BattleFieldStatus, Move } from "./config";
-import type { Pokemon } from "./pokemon";
 
 export function getBasePower(
 	attacker: Pokemon,

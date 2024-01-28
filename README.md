@@ -1,6 +1,8 @@
 # vgc_data_wrapper
 
 ```
+import {Pokemon, Battle} from 'vgc_data_wrapper'
+
 const flutterMane = new Pokemon({
     id: 987,
     types: ["Fairy", "Ghost"],
