@@ -1,4 +1,4 @@
-import type { Move, Stat } from "../../src/damage/config";
+import type { Stat } from "../../src/damage/config";
 import { Pokemon } from "../../src/pokemon";
 
 type RecursivePartial<T> = {
@@ -50,17 +50,4 @@ export function genTestMon(partial?: RecursivePartial<Pokemon>): Pokemon {
 		item: partial?.item,
 		teraType: partial?.teraType,
 	});
-}
-
-export function genTestMove(partial?: Partial<Move>): Move {
-	return Object.assign(
-		{
-			id: 0,
-			base: 100,
-			type: "Normal",
-			category: "Physical",
-			target: "selectedTarget",
-		} satisfies Move,
-		partial,
-	);
 }

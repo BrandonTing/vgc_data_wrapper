@@ -1,12 +1,15 @@
 import { expect, test } from "bun:test";
+import { createMove } from "../../src";
 import { getPower } from "../../src/damage/power";
-import { genTestMon, genTestMove } from "./utils";
+import { genTestMon } from "./utils";
 
 test("get power without any modifiers", () => {
 	const expected = 95;
 	const testMon = genTestMon();
-	const testMove = genTestMove({
+	const testMove = createMove({
 		base: expected,
+		type: "Normal",
+		category: "Physical",
 	});
 	const power = getPower({
 		attacker: testMon,
@@ -22,8 +25,10 @@ test("get power with type enhancing item", () => {
 	const testMon = genTestMon({
 		item: "Type Enhancing",
 	});
-	const testMove = genTestMove({
+	const testMove = createMove({
 		base: expected,
+		type: "Normal",
+		category: "Physical",
 	});
 	console.log(testMon.item);
 	const power = getPower({

@@ -1,7 +1,7 @@
 # vgc_data_wrapper
 
 ```
-import { Pokemon, Battle } from 'vgc_data_wrapper'
+import { Pokemon, Battle, createMove } from 'vgc_data_wrapper'
 
 const flutterMane = new Pokemon({
     types: ["Fairy", "Ghost"],
@@ -13,11 +13,11 @@ const flutterMane = new Pokemon({
 const incineroar = new Pokemon()
 await incineroar.initWithId(727)
 
-const moonblast = {
+const moonblast = createMove({
     type: "Fairy",
     base: 95,
     category: "Special",
-}
+})
 
 const battle = new Battle({
     attacker: flutterMane,

@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
+import { createMove } from "../../src";
 import { Battle } from "../../src/damage/bettle";
-import { genTestMon, genTestMove } from "./utils";
+import { genTestMon } from "./utils";
 
 test("test STAB", () => {
 	const flutterMane = genTestMon({
@@ -16,7 +17,7 @@ test("test STAB", () => {
 			specialDefense: 110,
 		},
 	});
-	const thunderbolt = genTestMove({
+	const thunderbolt = createMove({
 		type: "Electric",
 		base: 90,
 		category: "Special",
@@ -32,7 +33,7 @@ test("test STAB", () => {
 	const actual = battle.getDamage();
 	expect(actual.rolls.map(({ number }) => number)).toEqual(expected);
 
-	const moonblast = genTestMove({
+	const moonblast = createMove({
 		type: "Fairy",
 		base: 95,
 		category: "Special",
@@ -64,7 +65,7 @@ test("test stage changes", () => {
 			specialDefense: 110,
 		},
 	});
-	const moonblast = genTestMove({
+	const moonblast = createMove({
 		type: "Fairy",
 		base: 95,
 		category: "Special",

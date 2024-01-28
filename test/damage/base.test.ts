@@ -1,18 +1,21 @@
 import { expect, test } from "bun:test";
+import { createMove } from "../../src";
 import { getBasePower } from "../../src/damage/basePower";
 import { type Move } from "../../src/damage/config";
-import { genTestMon, genTestMove } from "./utils";
+import { genTestMon } from "./utils";
 
 test("correctly calculate base power", () => {
 	const testPokemon = genTestMon();
-	const testMove: Move = genTestMove();
+	const testMove: Move = createMove({
+		base: 100,
+	});
 	const basePower = getBasePower(testPokemon, testPokemon, testMove);
 	expect(basePower).toBe(100);
 });
 
 test("correctly calculate base power for terrain related moves", () => {
 	const testPokemon = genTestMon();
-	const testHydroSteam = genTestMove({
+	const testHydroSteam = createMove({
 		id: 875,
 		base: 80,
 	});
@@ -26,7 +29,7 @@ test("correctly calculate base power for terrain related moves", () => {
 	);
 	expect(basePowerHydroSteam).toBe(120);
 
-	const testPsyblade = genTestMove({
+	const testPsyblade = createMove({
 		id: 876,
 		base: 80,
 	});
@@ -40,7 +43,7 @@ test("correctly calculate base power for terrain related moves", () => {
 	);
 	expect(basePowerPsyblade).toBe(120);
 
-	const testMistyExplosion = genTestMove({
+	const testMistyExplosion = createMove({
 		id: 802,
 		base: 100,
 	});
@@ -54,7 +57,7 @@ test("correctly calculate base power for terrain related moves", () => {
 	);
 	expect(basePowerMistyExplosion).toBe(150);
 
-	const testEarthQuake = genTestMove({
+	const testEarthQuake = createMove({
 		id: 89,
 		base: 100,
 	});
@@ -67,7 +70,7 @@ test("correctly calculate base power for terrain related moves", () => {
 		},
 	);
 	expect(baseEarthQuake).toBe(50);
-	const testBulldoze = genTestMove({
+	const testBulldoze = createMove({
 		id: 523,
 		base: 60,
 	});
@@ -76,7 +79,7 @@ test("correctly calculate base power for terrain related moves", () => {
 	});
 	expect(baseBulldoze).toBe(30);
 
-	const testTerrainPulse = genTestMove({
+	const testTerrainPulse = createMove({
 		id: 805,
 		base: 50,
 	});
@@ -102,7 +105,7 @@ test("correctly calculate base power for speed related moves", () => {
 			speed: 50,
 		},
 	});
-	const testElectricBall = genTestMove({
+	const testElectricBall = createMove({
 		id: 486,
 	});
 	console.log(testFastPokemon.getStat("speed"));
@@ -146,7 +149,7 @@ test("correctly calculate base power for speed related moves", () => {
 	expect(basePowerElectricBall).toBe(40);
 
 	if (testFastPokemon.stats) testFastPokemon.stats.speed = 300;
-	const testGyroBall = genTestMove({
+	const testGyroBall = createMove({
 		id: 360,
 	});
 	let basePowerGyroBall = getBasePower(
@@ -167,10 +170,10 @@ test("correctly calculate base power for speed related moves", () => {
 
 test("correctly calculate base power for Grass knot and Low kick", () => {
 	const testPokemon = genTestMon();
-	const lowKick = genTestMove({
+	const lowKick = createMove({
 		id: 67,
 	});
-	const grassKnot = genTestMove({
+	const grassKnot = createMove({
 		id: 447,
 	});
 	const testHaavyPokemon = genTestMon({
@@ -223,10 +226,10 @@ test("correctly calculate base power for heavy slam & heat crash", () => {
 	const testAttacker = genTestMon({
 		weight: 15,
 	});
-	const heavySlam = genTestMove({
+	const heavySlam = createMove({
 		id: 484,
 	});
-	const heatcrash = genTestMove({
+	const heatcrash = createMove({
 		id: 535,
 	});
 	let basePowerHeavySlam = getBasePower(testAttacker, testDefender, heavySlam);
@@ -261,7 +264,7 @@ test("correctly calculate base power for heavy slam & heat crash", () => {
 
 test("base power of weather ball", () => {
 	const testMon = genTestMon();
-	const weatherBall = genTestMove({ id: 311, base: 50 });
+	const weatherBall = createMove({ id: 311, base: 50 });
 	let basePower = getBasePower(testMon, testMon, weatherBall);
 	expect(basePower).toBe(50);
 	// sun
@@ -280,7 +283,7 @@ test("base power of weather ball", () => {
 
 test("base power of tera blast", () => {
 	const testMon = genTestMon();
-	const teraBlast = genTestMove({ id: 851, base: 80 });
+	const teraBlast = createMove({ id: 851, base: 80 });
 	let basePower = getBasePower(testMon, testMon, teraBlast);
 	expect(basePower).toBe(80);
 	const testTeraStellarMon = genTestMon({ teraType: "Stellar" });
@@ -299,8 +302,8 @@ test("base power of Power Trip & Stored Power", () => {
 			speed: -2,
 		},
 	});
-	const powerTrip = genTestMove({ id: 500 });
-	const storedPower = genTestMove({ id: 681 });
+	const powerTrip = createMove({ id: 500 });
+	const storedPower = createMove({ id: 681 });
 	const basePowerPowerTrip = getBasePower(testMon, testMon, powerTrip);
 	const basePowerStoredPower = getBasePower(testMon, testMon, storedPower);
 	const expected = 20 + (6 + 5 + 4) * 20;
