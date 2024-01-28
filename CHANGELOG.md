@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.1.3
+
+### Patch Changes
+
+- 05e038c: add createMove funciton
+
 ## 0.1.2
 
 ### Patch Changes
