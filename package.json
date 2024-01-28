@@ -13,13 +13,13 @@
   },
   "exports": {
     ".": "./dist",
-    "./ability.json": "./src/pokemon/ability.json",
-    "./item.json": "./src/pokemon/item.json"
+    "./ability.json": "./assets/ability.json",
+    "./item.json": "./assets/item.json"
   },
   "files": [
     "dist",
-    "./src/pokemon/ability.json",
-    "./src/pokemon/item.json"
+    "./assets/ability.json",
+    "./assets/item.json"
   ],
   "devDependencies": {
     "@biomejs/biome": "1.5.3",

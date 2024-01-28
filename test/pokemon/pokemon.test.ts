@@ -3,8 +3,6 @@ import { Pokemon } from "../../src/pokemon";
 
 test("0 investmented incineroar should have 170 hp & 135 attack", () => {
 	const incineroar = new Pokemon({
-		id: 727,
-		level: 50,
 		baseStat: {
 			hp: 95,
 			attack: 115,
@@ -23,7 +21,6 @@ test("0 investmented incineroar should have 170 hp & 135 attack", () => {
 
 test("252 ha investmented incineroar should have 202 hp & 167 attack", () => {
 	const incineroar = new Pokemon({
-		level: 50,
 		baseStat: {
 			hp: 95,
 			attack: 115,
@@ -42,7 +39,6 @@ test("252 ha investmented incineroar should have 202 hp & 167 attack", () => {
 
 test("252a investmented +a nature incineroar should have 183 attack", () => {
 	const incineroar = new Pokemon({
-		level: 50,
 		baseStat: {
 			attack: 115,
 		},
@@ -59,8 +55,6 @@ test("252a investmented +a nature incineroar should have 183 attack", () => {
 });
 test("0a investmented -a nature incineroar should have 121 attack", () => {
 	const incineroar = new Pokemon({
-		id: 727,
-		level: 50,
 		baseStat: {
 			attack: 115,
 		},
@@ -70,5 +64,15 @@ test("0a investmented -a nature incineroar should have 121 attack", () => {
 	});
 	const expectedAtk = 121;
 	const actualStat = incineroar.getStats();
+	expect(actualStat.attack).toBe(expectedAtk);
+});
+
+test("get base stat from pokeapi if id is provided", async () => {
+	const incineroar = new Pokemon();
+	await incineroar.initWithId(727);
+	const expectedHP = 170;
+	const expectedAtk = 135;
+	const actualStat = incineroar.getStats();
+	expect(actualStat.hp).toBe(expectedHP);
 	expect(actualStat.attack).toBe(expectedAtk);
 });

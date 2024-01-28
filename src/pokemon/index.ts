@@ -192,23 +192,12 @@ export class Pokemon implements IPokemon {
 			effortValues?: Partial<Stat>;
 			individualValues?: Partial<Stat>;
 			statStage: Partial<StatStages>;
-			item?: Item;
-			teraType?: TeraTypes;
-			status?: Status;
-			flags?: PokemonFlags;
-			nature?: Nature;
-			level?: number;
-			gender?: Gender;
 		},
 	) {
 		this.id = id;
 		try {
 			const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
 			const data = (await response.json()) as {
-				// TODO use ability name or id?
-				abilities: Array<{
-					name: string;
-				}>;
 				stats: Array<{ base_stat: number; stat: { name: string } }>;
 				types: Array<{ type: { name: string } }>;
 				weight: number;
@@ -246,29 +235,8 @@ export class Pokemon implements IPokemon {
 					option.individualValues,
 				);
 			}
-			if (option?.flags) {
-				this.flags = Object.assign(this.flags || {}, option.flags);
-			}
-			if (option?.nature) {
-				this.nature = Object.assign(this.nature || {}, option.nature);
-			}
 			if (option?.statStage) {
 				this.statStage = Object.assign(this.statStage, option.statStage);
-			}
-			if (option?.teraType) {
-				this.teraType = option.teraType;
-			}
-			if (option?.item) {
-				this.item = option.item;
-			}
-			if (option?.status) {
-				this.status = option.status;
-			}
-			if (option?.level) {
-				this.level = option.level;
-			}
-			if (option?.gender) {
-				this.gender = option.gender;
 			}
 		} catch (err) {
 			console.log("Failed to init pokemon from pokeapi: ", err);
