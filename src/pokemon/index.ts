@@ -1,5 +1,6 @@
 import type { Stat, TeraTypes, Type } from "../damage/config";
 import type { Flags } from "../typeUtils";
+import type { Ability, Item } from "./typeHelper";
 
 type Gender = "Male" | "Female" | "Unknown";
 
@@ -41,8 +42,8 @@ type PokemonInfo = {
 	stats?: Stat;
 	statStage: StatStages;
 	weight: number;
-	abilityId: number;
-	item?: string;
+	ability?: Ability;
+	item?: Item;
 	teraType?: TeraTypes;
 	gender: Gender;
 	status: Status;
@@ -61,7 +62,7 @@ interface IPokemon extends PokemonInfo {
 			individualValues?: Partial<Stat>;
 			statStage: Partial<StatStages>;
 			nature?: Nature;
-			item?: string;
+			item?: Item;
 			teraType?: TeraTypes;
 			status?: Status;
 			level?: number;
@@ -79,7 +80,7 @@ export class Pokemon implements IPokemon {
 	teraType?: TeraTypes;
 
 	weight: number;
-	abilityId: number;
+	ability?: Ability;
 	gender: Gender;
 	status: Status;
 	baseStat: Stat;
@@ -92,7 +93,7 @@ export class Pokemon implements IPokemon {
 		minus?: keyof StatStages;
 	};
 
-	item?: string;
+	item?: Item;
 	flags?: PokemonFlags;
 
 	constructor(
@@ -121,7 +122,7 @@ export class Pokemon implements IPokemon {
 		this.types = info?.types ?? ["Normal"];
 		this.teraType = info?.teraType;
 		this.weight = info?.weight ?? 0;
-		this.abilityId = info?.weight ?? 0;
+		this.ability = info?.ability;
 		this.gender = info?.gender ?? "Unknown";
 		this.status = info?.status ?? "Healthy";
 		this.item = info?.item;
@@ -191,7 +192,7 @@ export class Pokemon implements IPokemon {
 			effortValues?: Partial<Stat>;
 			individualValues?: Partial<Stat>;
 			statStage: Partial<StatStages>;
-			item?: string;
+			item?: Item;
 			teraType?: TeraTypes;
 			status?: Status;
 			flags?: PokemonFlags;
@@ -371,9 +372,6 @@ function genDefaultStage(partial?: Partial<StatStages>): StatStages {
 	);
 }
 
-const capitalize = <T extends string>(s: T) =>
-	(s[0]?.toUpperCase() + s.slice(1)) as Capitalize<typeof s>;
-
-const pikachu = new Pokemon();
-await pikachu.initWithId(25);
-console.log(pikachu.types);
+function capitalize<T extends string>(s: T) {
+	return (s[0]?.toUpperCase() + s.slice(1)) as Capitalize<typeof s>;
+}

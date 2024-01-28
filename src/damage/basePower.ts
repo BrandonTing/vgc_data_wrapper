@@ -1,4 +1,5 @@
 import type { Pokemon } from "../pokemon";
+import type { Ability } from "../pokemon/typeHelper";
 import type { BattleFieldStatus, Move } from "./config";
 
 export function getBasePower(
@@ -74,7 +75,7 @@ export function getBasePower(
 	// ====== Weight related
 	// grass knot & low kick
 	if (move.id === 447 || move.id === 67) {
-		const defenderWeight = weightModifier(defender.weight, defender.abilityId);
+		const defenderWeight = weightModifier(defender.weight, defender.ability);
 		if (defenderWeight >= 200) {
 			return 120;
 		}
@@ -99,8 +100,8 @@ export function getBasePower(
 		// heavy slam
 		move.id === 484
 	) {
-		const attackerWeight = weightModifier(attacker.weight, attacker.abilityId);
-		const defenderWeight = weightModifier(defender.weight, defender.abilityId);
+		const attackerWeight = weightModifier(attacker.weight, attacker.ability);
+		const defenderWeight = weightModifier(defender.weight, defender.ability);
 		return 20 + Math.min(Math.floor(attackerWeight / defenderWeight), 5) * 20;
 	}
 	// ====== others
@@ -147,13 +148,13 @@ function getStageMultiplier(stage: number) {
 	return 2 / (2 - stage);
 }
 
-function weightModifier(base: number, abilityId: number) {
+function weightModifier(base: number, ability?: Ability) {
 	const abilityModifier =
 		// Heavy Metal
-		abilityId === 1
+		ability === "Heavy Metal"
 			? 2
 			: // Light Metal
-			  abilityId === 2
+			  ability === "Light Metal"
 			  ? 0.5
 			  : 1;
 	return base * abilityModifier;

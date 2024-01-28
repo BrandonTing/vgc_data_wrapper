@@ -11,8 +11,15 @@
     "build": "tsup ./src/index.ts --format esm --dts ",
     "publish": "bun run build && changeset publish"
   },
+  "exports": {
+    ".": "./dist",
+    "./ability.json": "./src/pokemon/ability.json",
+    "./item.json": "./src/pokemon/item.json"
+  },
   "files": [
-    "dist"
+    "dist",
+    "./src/pokemon/ability.json",
+    "./src/pokemon/item.json"
   ],
   "devDependencies": {
     "@biomejs/biome": "1.5.3",

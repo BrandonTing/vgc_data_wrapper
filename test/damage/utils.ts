@@ -46,7 +46,7 @@ export function genTestMon(partial?: RecursivePartial<Pokemon>): Pokemon {
 		level: 50,
 		statStage: genTestStatStage(partial?.statStage),
 		weight: partial?.weight,
-		abilityId: partial?.abilityId,
+		ability: partial?.ability,
 		item: partial?.item,
 		teraType: partial?.teraType,
 	});

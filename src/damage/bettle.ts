@@ -187,7 +187,7 @@ function modifyBySameType(
 ): number {
 	let modifier = 1;
 	// Protean
-	if (attacker.abilityId === 168) {
+	if (attacker.ability === "Protean") {
 		if (
 			attacker.teraType &&
 			attacker.teraType !== "Stellar" &&
@@ -199,7 +199,7 @@ function modifyBySameType(
 		}
 	}
 	// Pixilate
-	if (attacker.abilityId === 182) {
+	if (attacker.ability === "Pixilate") {
 		if (attacker.teraType === "Stellar") {
 			if (attacker.types.includes("Fairy") && move.type === "Normal") {
 				modifier = 2;
@@ -215,7 +215,7 @@ function modifyBySameType(
 		}
 	}
 	// Galvanize
-	if (attacker.abilityId === 206) {
+	if (attacker.ability === "Galvanize") {
 		if (attacker.teraType === "Stellar") {
 			if (attacker.types.includes("Electric") && move.type === "Normal") {
 				modifier = 2;
@@ -239,7 +239,7 @@ function modifyBySameType(
 		}
 	}
 	// Adaptability
-	if (attacker.abilityId === 91) {
+	if (attacker.ability === "Adaptability") {
 		if (attacker.types.includes(move.type)) {
 			if (attacker.teraType === move.type) {
 				modifier = 2.25;
@@ -280,14 +280,14 @@ function getTypeModifier({
 		return 1;
 	}
 	// skins
-	if (attacker.abilityId === 182) {
+	if (attacker.ability === "Pixilate") {
 		if (!defender.teraType || defender.teraType === "Stellar") {
 			// use original type
 			return getEffectivenessOnPokemon("Fairy", defender.types);
 		}
 		return getEffectivenessOnPokemon("Fairy", [defender.teraType]);
 	}
-	if (attacker.abilityId === 206) {
+	if (attacker.ability === "Galvanize") {
 		if (!defender.teraType || defender.teraType === "Stellar") {
 			// use original type
 			return getEffectivenessOnPokemon("Electric", defender.types);
@@ -350,7 +350,7 @@ function modifyByBurn(
 		move.category === "Physical" &&
 		// Facade
 		move.id !== 263 &&
-		attacker.abilityId !== 62
+		attacker.ability !== "Guts"
 	) {
 		modifier = 0.5;
 	}
@@ -421,17 +421,16 @@ function modifyByAttackerAbility({
 	move,
 }: Pick<BattleStatus, "attacker" | "defender" | "move">): number {
 	// Sniper
-	if (attacker.abilityId === 97 && move.flags?.isCriticalHit) {
+	if (attacker.ability === "Sniper" && move.flags?.isCriticalHit) {
 		return 1.5;
 	}
-	// Tinted Lens
 
+	// Tinted Lens
 	const effectiveness = getEffectivenessOnPokemon(
 		move.type,
 		getPokemonCurrentType(defender),
 	);
-
-	if (attacker.abilityId === 110 && effectiveness < 1) {
+	if (attacker.ability === "Tinted Lens" && effectiveness < 1) {
 		return 2;
 	}
 	return 1;
@@ -442,7 +441,7 @@ function modifyByDefenderAbility({
 	move,
 }: Pick<BattleStatus, "defender" | "move">): number {
 	// Fluffy
-	if (defender.abilityId === 218) {
+	if (defender.ability === "Fluffy") {
 		if (move.type === "Fire") {
 			return 2;
 		}
@@ -451,15 +450,15 @@ function modifyByDefenderAbility({
 		}
 	}
 	// Multiscale
-	if (defender.abilityId === 136) {
+	if (defender.ability === "Multiscale") {
 		return 0.5;
 	}
 	// Punk Rock
-	if (defender.abilityId === 244 && move.flags?.isSound) {
+	if (defender.ability === "Punk Rock" && move.flags?.isSound) {
 		return 0.5;
 	}
 	// Ice Scales
-	if (defender.abilityId === 246 && move.category === "Special") {
+	if (defender.ability === "Ice Scales" && move.category === "Special") {
 		return 0.5;
 	}
 
@@ -468,9 +467,8 @@ function modifyByDefenderAbility({
 		move.type,
 		defender.teraType ? [defender.teraType] : defender.types,
 	);
-
 	if (
-		(defender.abilityId === 116 || defender.abilityId === 111) &&
+		(defender.ability === "Solid Rock" || defender.ability === "Filter") &&
 		effectiveness > 1
 	) {
 		return 0.75;
