@@ -25,15 +25,17 @@ type PokemonFlags = Flags<
 
 type StatStages = Omit<Stat, "hp">;
 
+type Nature = {
+	plus?: keyof StatStages;
+	minus?: keyof StatStages;
+};
+
 type PokemonInfo = {
 	id?: number;
 	level: number;
 	types: Array<Type>;
 	baseStat: Stat;
-	nature?: {
-		plus?: keyof StatStages;
-		minus?: keyof StatStages;
-	};
+	nature?: Nature;
 	effortValues: Stat;
 	individualValues: Stat;
 	stats?: Stat;
@@ -52,7 +54,22 @@ interface IPokemon extends PokemonInfo {
 	getStat: (key: keyof Stat) => number;
 	setFlags: (flags: PokemonFlags) => void;
 	toggleTera: ((tera: true, type: TeraTypes) => void) | ((tera: false) => void);
-	initWithId: (id: number) => void;
+	initWithId: (
+		id: number,
+		option?: {
+			effortValues?: Partial<Stat>;
+			individualValues?: Partial<Stat>;
+			statStage: Partial<StatStages>;
+			nature?: Nature;
+			item?: string;
+			teraType?: TeraTypes;
+			status?: Status;
+			level?: number;
+			gender?: Gender;
+			flags?: PokemonFlags;
+		},
+	) => void;
+	setNature: (nature: Nature) => void;
 }
 
 export class Pokemon implements IPokemon {
@@ -156,6 +173,9 @@ export class Pokemon implements IPokemon {
 	setFlags(flags: PokemonFlags) {
 		this.flags = this.flags ? Object.assign(this.flags, flags) : flags;
 	}
+	setNature(nature: Nature) {
+		this.nature = this.nature ? Object.assign(this.nature, nature) : nature;
+	}
 	toggleTera:
 		| ((tera: true, type: TeraTypes) => void)
 		| ((tera: false) => void) = (tera, type) => {
@@ -165,7 +185,21 @@ export class Pokemon implements IPokemon {
 		}
 		this.teraType = undefined;
 	};
-	async initWithId(id: number) {
+	async initWithId(
+		id: number,
+		option?: {
+			effortValues?: Partial<Stat>;
+			individualValues?: Partial<Stat>;
+			statStage: Partial<StatStages>;
+			item?: string;
+			teraType?: TeraTypes;
+			status?: Status;
+			flags?: PokemonFlags;
+			nature?: Nature;
+			level?: number;
+			gender?: Gender;
+		},
+	) {
 		this.id = id;
 		try {
 			const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
@@ -199,6 +233,42 @@ export class Pokemon implements IPokemon {
 			}
 			this.weight = data.weight;
 			this.types = data.types.map((type) => capitalize(type.type.name) as Type);
+			if (option?.effortValues) {
+				this.effortValues = Object.assign(
+					this.effortValues,
+					option.effortValues,
+				);
+			}
+			if (option?.individualValues) {
+				this.individualValues = Object.assign(
+					this.individualValues,
+					option.individualValues,
+				);
+			}
+			if (option?.flags) {
+				this.flags = Object.assign(this.flags || {}, option.flags);
+			}
+			if (option?.nature) {
+				this.nature = Object.assign(this.nature || {}, option.nature);
+			}
+			if (option?.statStage) {
+				this.statStage = Object.assign(this.statStage, option.statStage);
+			}
+			if (option?.teraType) {
+				this.teraType = option.teraType;
+			}
+			if (option?.item) {
+				this.item = option.item;
+			}
+			if (option?.status) {
+				this.status = option.status;
+			}
+			if (option?.level) {
+				this.level = option.level;
+			}
+			if (option?.gender) {
+				this.gender = option.gender;
+			}
 		} catch (err) {
 			console.log("Failed to init pokemon from pokeapi: ", err);
 			throw new Error("Failed to init pokemon from pokeapi");
