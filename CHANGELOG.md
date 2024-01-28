@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.1.4
+
+### Patch Changes
+
+- 9432477: expose type chart
+
 ## 0.1.3
 
 ### Patch Changes
