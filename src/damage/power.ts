@@ -49,81 +49,80 @@ function modifyByAttackerAbility({
 	field,
 }: BattleStatus): number {
 	// Rivalry
-	if (attacker.abilityId === 79) {
+	if (attacker.ability === "Rivalry") {
 		if (defender.gender === "Unknown") return 1;
 		if (attacker.gender === defender.gender) return 1.25;
 		return 0.75;
 	}
 	// Supreme Overlord
-	if (attacker.abilityId === 293) {
+	if (attacker.ability === "Supreme Overlord") {
 		return 1 + 0.1 * (field?.downCounts ?? 0);
 	}
 	// skins
 	if (
-		// Normalize
-		attacker.abilityId === 96 ||
 		// Refrigerate
-		attacker.abilityId === 174 ||
-		// Pixilate
-		attacker.abilityId === 182 ||
-		// Aerilate
-		attacker.abilityId === 184 ||
-		// Galvanize
-		attacker.abilityId === 206
+		(attacker.ability === "Refrigerate" ||
+			// Pixilate
+			attacker.ability === "Pixilate" ||
+			// Aerilate
+			attacker.ability === "Aerilate" ||
+			// Galvanize
+			attacker.ability === "Galvanize") &&
+		move.type === "Normal"
 	) {
 		return 1.2;
 	}
 	// iron fist
-	if (attacker.abilityId === 89 && move.flags?.isPunch) {
+	if (attacker.ability === "Iron Fist" && move.flags?.isPunch) {
 		return 1.2;
 	}
 	// reckless
-	if (attacker.abilityId === 120 && move.flags?.hasRecoil) {
+	if (attacker.ability === "Reckless" && move.flags?.hasRecoil) {
 		return 1.2;
 	}
 	// Analytic
-	if (attacker.abilityId === 148) {
+	if (attacker.ability === "Analytic") {
 		return 1.3;
 	}
 	// sheer force
-	if (attacker.abilityId === 125 && move.flags?.hasSecondary) {
+	if (attacker.ability === "Sheer Force" && move.flags?.hasSecondary) {
 		return 1.3;
 	}
 	// Tough Claws
-	if (attacker.abilityId === 181 && move.flags?.isContact) {
+	if (attacker.ability === "Tough Claws" && move.flags?.isContact) {
 		return 1.3;
 	}
 	// Sand Force
 	if (
-		attacker.abilityId === 159 &&
+		attacker.ability === "Sand Force" &&
 		(move.type === "Rock" || move.type === "Steel" || move.type === "Ground") &&
 		field?.weather === "Sand"
 	) {
 		return 1.3;
 	}
 	// Punk Rock
-	if (attacker.abilityId === 244 && move.flags?.isSound) {
+	if (attacker.ability === "Punk Rock" && move.flags?.isSound) {
 		return 1.3;
 	}
 	// Sharpness
-	if (attacker.abilityId === 292 && move.flags?.isSlicing) {
+	if (attacker.ability === "Sharpness" && move.flags?.isSlicing) {
 		return 1.5;
 	}
 	// Technician
-	if (attacker.abilityId === 101 && move.base <= 60) {
+	if (attacker.ability === "Technician" && move.base <= 60) {
 		return 1.5;
 	}
 	// Strong Jaw
-	if (attacker.abilityId === 173 && move.flags?.isBite) {
+	if (attacker.ability === "Strong Jaw" && move.flags?.isBite) {
 		return 1.5;
 	}
 	// Mega Launcher
-	if (attacker.abilityId === 178 && move.flags?.isPulse) {
+	if (attacker.ability === "Mega Launcher" && move.flags?.isPulse) {
 		return 1.5;
 	}
 	// Flare Boost
 	if (
-		attacker.abilityId === 138 &&
+		attacker.ability === "Flare Boost" &&
 		attacker.status === "Burned" &&
 		move.category === "Special"
 	) {
@@ -131,7 +130,7 @@ function modifyByAttackerAbility({
 	}
 	// Toxic Boost
 	if (
-		attacker.abilityId === 137 &&
+		attacker.ability === "Toxic Boost" &&
 		(attacker.status === "Poisoned" || attacker.status === "Badly Poisoned") &&
 		move.category === "Physical"
 	) {
@@ -144,10 +143,11 @@ function modifyByDefenderAbility({
 	defender,
 	move,
 }: Pick<BattleStatus, "defender" | "move">): number {
-	if (defender.abilityId === 87 && move.type === "Fire") {
+	// Fluffy
+	if (defender.ability === "Fluffy" && move.type === "Fire") {
 		return 1.25;
 	}
-	if (defender.abilityId === 85 && move.type === "Fire") {
+	if (defender.ability === "Heatproof" && move.type === "Fire") {
 		return 0.5;
 	}
 	return 1;

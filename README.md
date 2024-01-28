@@ -1,21 +1,18 @@
 # vgc_data_wrapper
 
 ```
+import { Pokemon, Battle } from 'vgc_data_wrapper'
+
 const flutterMane = new Pokemon({
-    id: 987,
     types: ["Fairy", "Ghost"],
     stats: {
         specialAttack: 155,
     },
 })
-const incineroar = new Pokemon({
-    id: 727,
-    types: ["Dark", "Fire"],
-    stats: {
-        hp: 170,
-        specialDefense: 110,
-    },
-})
+
+const incineroar = new Pokemon()
+await incineroar.initWithId(727)
+
 const moonblast = {
     type: "Fairy",
     base: 95,

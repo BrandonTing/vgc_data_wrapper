@@ -1,5 +1,5 @@
+import type { Pokemon } from "../pokemon";
 import type { Stat, TeraTypes, Type } from "./config";
-import type { Pokemon } from "./pokemon";
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export function pipeModifierHelper<T, U extends (...args: any) => T>(

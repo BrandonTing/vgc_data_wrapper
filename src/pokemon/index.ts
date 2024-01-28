@@ -1,5 +1,6 @@
+import type { Stat, TeraTypes, Type } from "../damage/config";
 import type { Flags } from "../typeUtils";
-import type { Stat, TeraTypes, Type } from "./config";
+import type { Ability, Item } from "./typeHelper";
 
 type Gender = "Male" | "Female" | "Unknown";
 
@@ -23,61 +24,81 @@ type PokemonFlags = Flags<
 	| "hasFriendGuard"
 >;
 
-interface PokemonInfo {
-	id: number;
+type StatStages = Omit<Stat, "hp">;
+
+type Nature = {
+	plus?: keyof StatStages;
+	minus?: keyof StatStages;
+};
+
+type PokemonInfo = {
+	id?: number;
 	level: number;
 	types: Array<Type>;
 	baseStat: Stat;
-	nature?: {
-		plus?: keyof Omit<Stat, "hp">;
-		minus?: keyof Omit<Stat, "hp">;
-	};
+	nature?: Nature;
 	effortValues: Stat;
 	individualValues: Stat;
 	stats?: Stat;
-	statStage: Omit<Stat, "hp">;
+	statStage: StatStages;
 	weight: number;
-	abilityId: number;
-	item?: string;
+	ability?: Ability;
+	item?: Item;
 	teraType?: TeraTypes;
 	gender: Gender;
 	status: Status;
 	flags?: PokemonFlags;
-}
+};
 
 interface IPokemon extends PokemonInfo {
 	getStats: () => Stat;
 	getStat: (key: keyof Stat) => number;
 	setFlags: (flags: PokemonFlags) => void;
 	toggleTera: ((tera: true, type: TeraTypes) => void) | ((tera: false) => void);
+	initWithId: (
+		id: number,
+		option?: {
+			effortValues?: Partial<Stat>;
+			individualValues?: Partial<Stat>;
+			statStage: Partial<StatStages>;
+			nature?: Nature;
+			item?: Item;
+			teraType?: TeraTypes;
+			status?: Status;
+			level?: number;
+			gender?: Gender;
+			flags?: PokemonFlags;
+		},
+	) => void;
+	setNature: (nature: Nature) => void;
 }
 
 export class Pokemon implements IPokemon {
-	id: number;
+	id?: number;
 	level: number;
 	types: Array<Type>;
 	teraType?: TeraTypes;
 
 	weight: number;
-	abilityId: number;
+	ability?: Ability;
 	gender: Gender;
 	status: Status;
 	baseStat: Stat;
 	effortValues: Stat;
 	individualValues: Stat;
 	stats?: Stat;
-	statStage: Omit<Stat, "hp">;
+	statStage: StatStages;
 	nature: {
-		plus?: keyof Omit<Stat, "hp">;
-		minus?: keyof Omit<Stat, "hp">;
+		plus?: keyof StatStages;
+		minus?: keyof StatStages;
 	};
 
-	item?: string;
+	item?: Item;
 	flags?: PokemonFlags;
 
 	constructor(
-		info: {
-			id: number;
+		info?: {
+			id?: number;
 		} & Partial<
 			Omit<
 				PokemonInfo,
@@ -93,32 +114,34 @@ export class Pokemon implements IPokemon {
 				baseStat?: Partial<Stat>;
 				individualValues?: Partial<Stat>;
 				effortValues?: Partial<Stat>;
-				statStage?: Partial<Omit<Stat, "hp">>;
+				statStage?: Partial<StatStages>;
 			},
 	) {
-		this.id = info.id;
-		this.level = info.level ?? 50;
+		this.level = info?.level ?? 50;
 		// fetch pokemon infomation by id
-		this.types = info.types ?? ["Normal"];
-		this.teraType = info.teraType;
-
-		this.weight = info.weight ?? 0;
-		this.abilityId = info.weight ?? 0;
-		this.gender = info.gender ?? "Unknown";
-
-		this.status = info.status ?? "Healthy";
-		this.item = info.item;
+		this.types = info?.types ?? ["Normal"];
+		this.teraType = info?.teraType;
+		this.weight = info?.weight ?? 0;
+		this.ability = info?.ability;
+		this.gender = info?.gender ?? "Unknown";
+		this.status = info?.status ?? "Healthy";
+		this.item = info?.item;
 		// stats
-		if (info.stats) {
-			this.stats = genDefaultStat(info.stats);
+		if (info?.stats) {
+			this.stats = genDefaultStat(info?.stats);
 		}
-		this.baseStat = genDefaultBaseStat(info.baseStat);
-		this.individualValues = genDefaultIV(info.individualValues);
-		this.effortValues = genDefaultEv(info.effortValues);
-		this.statStage = genDefaultStage(info.statStage);
-		this.nature = info.nature ?? {};
+		this.baseStat = genDefaultBaseStat(info?.baseStat);
+		this.individualValues = genDefaultIV(info?.individualValues);
+		this.effortValues = genDefaultEv(info?.effortValues);
+		this.statStage = genDefaultStage(info?.statStage);
+		this.nature = info?.nature ?? {};
 	}
+
 	getStat(key: keyof Stat): number {
+		// before init
+		if (!this.stats && !this.baseStat) {
+			throw new Error("Please init pokemon with ID or manually set stats");
+		}
 		// support manually set stat, if so, ignore base stat, iv and ev
 		if (this.stats?.[key]) return this.stats[key];
 		if (key === "hp") {
@@ -137,6 +160,9 @@ export class Pokemon implements IPokemon {
 		);
 	}
 	getStats(): Stat {
+		if (!this.stats && !this.baseStat) {
+			throw new Error("Please init pokemon with ID or manually set stats");
+		}
 		// support manually set stat, if so, ignore base stat, iv and ev
 		if (this.stats) return this.stats;
 		const baseStatEntries = Object.keys(this.baseStat) as Array<keyof Stat>;
@@ -148,6 +174,9 @@ export class Pokemon implements IPokemon {
 	setFlags(flags: PokemonFlags) {
 		this.flags = this.flags ? Object.assign(this.flags, flags) : flags;
 	}
+	setNature(nature: Nature) {
+		this.nature = this.nature ? Object.assign(this.nature, nature) : nature;
+	}
 	toggleTera:
 		| ((tera: true, type: TeraTypes) => void)
 		| ((tera: false) => void) = (tera, type) => {
@@ -157,6 +186,63 @@ export class Pokemon implements IPokemon {
 		}
 		this.teraType = undefined;
 	};
+	async initWithId(
+		id: number,
+		option?: {
+			effortValues?: Partial<Stat>;
+			individualValues?: Partial<Stat>;
+			statStage: Partial<StatStages>;
+		},
+	) {
+		this.id = id;
+		try {
+			const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+			const data = (await response.json()) as {
+				stats: Array<{ base_stat: number; stat: { name: string } }>;
+				types: Array<{ type: { name: string } }>;
+				weight: number;
+			};
+			for (let i = 0; i < data.stats.length; i++) {
+				const stat = data.stats[i];
+				switch (stat?.stat.name) {
+					case "hp":
+					case "attack":
+					case "defense":
+					case "speed":
+						this.baseStat[stat.stat.name] = stat.base_stat;
+						break;
+					case "special-attack":
+						this.baseStat.specialAttack = stat.base_stat;
+						break;
+					case "special-defense":
+						this.baseStat.specialDefense = stat.base_stat;
+						break;
+					default:
+						return;
+				}
+			}
+			this.weight = data.weight;
+			this.types = data.types.map((type) => capitalize(type.type.name) as Type);
+			if (option?.effortValues) {
+				this.effortValues = Object.assign(
+					this.effortValues,
+					option.effortValues,
+				);
+			}
+			if (option?.individualValues) {
+				this.individualValues = Object.assign(
+					this.individualValues,
+					option.individualValues,
+				);
+			}
+			if (option?.statStage) {
+				this.statStage = Object.assign(this.statStage, option.statStage);
+			}
+		} catch (err) {
+			console.log("Failed to init pokemon from pokeapi: ", err);
+			throw new Error("Failed to init pokemon from pokeapi");
+		}
+	}
 	private getHp(base: number, iv: number, ev: number): number {
 		// Shedinja
 		if (this.id === 292) return 1;
@@ -167,7 +253,7 @@ export class Pokemon implements IPokemon {
 		);
 	}
 	private getTargetStat(
-		key: keyof Omit<Stat, "hp">,
+		key: keyof StatStages,
 		base: number,
 		iv: number,
 		ev: number,
@@ -178,7 +264,7 @@ export class Pokemon implements IPokemon {
 				this.getNatureModifer(key),
 		);
 	}
-	private getNatureModifer(key: keyof Omit<Stat, "hp">): number {
+	private getNatureModifer(key: keyof StatStages): number {
 		if (key === this.nature.plus) return 1.1;
 		if (key === this.nature.minus) return 0.9;
 		return 1;
@@ -241,9 +327,7 @@ function genDefaultEv(partial?: Partial<Stat>): Stat {
 	);
 }
 
-function genDefaultStage(
-	partial?: Partial<Omit<Stat, "hp">>,
-): Omit<Stat, "hp"> {
+function genDefaultStage(partial?: Partial<StatStages>): StatStages {
 	return Object.assign(
 		{
 			attack: 0,
@@ -251,7 +335,11 @@ function genDefaultStage(
 			specialAttack: 0,
 			specialDefense: 0,
 			speed: 0,
-		} satisfies Omit<Stat, "hp">,
+		} satisfies StatStages,
 		partial,
 	);
+}
+
+function capitalize<T extends string>(s: T) {
+	return (s[0]?.toUpperCase() + s.slice(1)) as Capitalize<typeof s>;
 }

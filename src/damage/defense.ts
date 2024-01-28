@@ -73,14 +73,14 @@ function modifyByDefenderAbility({
 	move,
 	field,
 }: Pick<BattleStatus, "defender" | "move" | "field">): number {
-	const { abilityId } = defender;
+	const { ability } = defender;
 	// Fur Coat
-	if (abilityId === 169 && move.category === "Physical") {
+	if (ability === "Fur Coat" && move.category === "Physical") {
 		return 2;
 	}
 	// Marvel Scale
 	if (
-		abilityId === 63 &&
+		ability === "Marvel Scale" &&
 		defender.status === "Burned" &&
 		move.category === "Physical"
 	) {
@@ -88,10 +88,10 @@ function modifyByDefenderAbility({
 	}
 	if (
 		// Quark Drive
-		((abilityId === 282 &&
+		((ability === "Quark Drive" &&
 			(defender.item === "Booster Energy" || field?.terrain === "Electric")) ||
 			// Protosynthesis
-			(abilityId === 281 &&
+			(ability === "Protosynthesis" &&
 				(defender.item === "Booster Energy" || field?.weather === "Sun"))) &&
 		((move.category === "Physical" &&
 			checkAtkIsHighest(defender.getStats(), "defense")) ||
@@ -124,14 +124,18 @@ function modifyByRuin({
 	// ruin ability doesn't affect owner
 	const usePhysicalDef = checkUsePhysicalHelper(move);
 	// Sword
-	if (field?.ruin === "Sword" && usePhysicalDef && defender.abilityId !== 285) {
+	if (
+		field?.ruin === "Sword" &&
+		usePhysicalDef &&
+		defender.ability !== "Sword of Ruin"
+	) {
 		return 0.75;
 	}
 	// Beads
 	if (
 		field?.ruin === "Beads" &&
 		!usePhysicalDef &&
-		defender.abilityId !== 287
+		defender.ability !== "Beads of Ruin"
 	) {
 		return 0.75;
 	}

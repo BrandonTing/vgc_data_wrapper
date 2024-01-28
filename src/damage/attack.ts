@@ -64,12 +64,12 @@ function modifyAtkByAttackAbility({
 	move,
 	field,
 }: Pick<BattleStatus, "attacker" | "field" | "move">) {
-	const { abilityId } = attacker;
+	const { ability } = attacker;
 	// Quark Drive & Protosynthesis
 	if (
-		((abilityId === 282 &&
+		((ability === "Quark Drive" &&
 			(attacker.item === "Booster Energy" || field?.terrain === "Electric")) ||
-			(abilityId === 281 &&
+			(ability === "Protosynthesis" &&
 				(attacker.item === "Booster Energy" || field?.weather === "Sun"))) &&
 		((move.category === "Physical" &&
 			checkAtkIsHighest(attacker.getStats(), "attack")) ||
@@ -80,7 +80,7 @@ function modifyAtkByAttackAbility({
 	}
 	// Orichalcum Pulse
 	if (
-		abilityId === 288 &&
+		ability === "Orichalcum Pulse" &&
 		move.category === "Physical" &&
 		field?.weather === "Sun"
 	) {
@@ -88,85 +88,88 @@ function modifyAtkByAttackAbility({
 	}
 	// Hadron Engine
 	if (
-		abilityId === 289 &&
+		ability === "Hadron Engine" &&
 		move.category === "Special" &&
 		field?.terrain === "Electric"
 	) {
 		return 1.333;
 	}
 	// Transistor
-	if (abilityId === 262 && move.type === "Electric") {
+	if (ability === "Transistor" && move.type === "Electric") {
 		return 1.33;
 	}
 	// Overgrow & Blaze & Torrent & Swarm
 	if (
-		(abilityId === 65 && move.type === "Grass") ||
-		(abilityId === 66 && move.type === "Fire") ||
-		(abilityId === 67 && move.type === "Water") ||
-		(abilityId === 68 && move.type === "Bug")
+		(ability === "Overgrow" && move.type === "Grass") ||
+		(ability === "Blaze" && move.type === "Fire") ||
+		(ability === "Torrent" && move.type === "Water") ||
+		(ability === "Swarm" && move.type === "Bug")
 	) {
 		return 1.5;
 	}
 	// Flash Fire
-	if (abilityId === 18 && move.type === "Fire") {
+	if (ability === "Flash Fire" && move.type === "Fire") {
 		return 1.5;
 	}
 	// Solar power
 	if (
-		abilityId === 94 &&
+		ability === "Solar Power" &&
 		field?.weather === "Sun" &&
 		move.category === "Special"
 	) {
 		return 1.5;
 	}
 	// Plus / Minus
-	if ((abilityId === 57 || abilityId === 58) && move.category === "Special") {
+	if (ability === "Plus Minus" && move.category === "Special") {
 		return 1.5;
 	}
 	// Guts
 	if (
-		abilityId === 62 &&
+		ability === "Guts" &&
 		move.category === "Physical" &&
 		attacker.status === "Burned"
 	) {
 		return 1.5;
 	}
 	// Rocky Payload
-	if (abilityId === 276 && move.type === "Rock") {
+	if (ability === "Rocky Payload" && move.type === "Rock") {
 		return 1.5;
 	}
 	// Dragon Maw
-	if (abilityId === 263 && move.type === "Dragon") {
+	if (ability === "Dragon's Maw" && move.type === "Dragon") {
 		return 1.5;
 	}
 	// Huge Power & Pure Power
-	if ((abilityId === 37 || abilityId === 74) && move.category === "Physical") {
+	if (
+		(ability === "Huge Power" || ability === "Pure Power") &&
+		move.category === "Physical"
+	) {
 		return 2;
 	}
 	// Stakeout
-	if (abilityId === 198) {
+	if (ability === "Stakeout") {
 		return 2;
 	}
 	// Water Bubble
-	if (abilityId === 199 && move.type === "Water") {
+	if (ability === "Water Bubble" && move.type === "Water") {
 		return 2;
 	}
 	return 1;
 }
 function modifyByDefenderAbility({
-	defender: { abilityId },
+	defender: { ability },
 	move: { type },
 }: Pick<BattleStatus, "defender" | "move">): number {
 	// Thick Fat
-	if (abilityId === 47 && (type === "Fire" || type === "Ice")) {
+	if (ability === "Thick Fat" && (type === "Fire" || type === "Ice")) {
 		return 0.5;
 	}
 	// Purifying Salt
-	if (abilityId === 272 && type === "Ghost") {
+	if (ability === "Purifying Salt" && type === "Ghost") {
 		return 0.5;
 	}
 	// Water Bubble
-	if (abilityId === 199 && type === "Fire") {
+	if (ability === "Water Bubble" && type === "Fire") {
 		return 0.5;
 	}
 	return 1;
@@ -198,7 +201,7 @@ function modifyByRuin({
 	if (
 		field?.ruin === "Tablets" &&
 		move.category === "Physical" &&
-		attacker.abilityId !== 286
+		attacker.ability !== "Tablets of Ruin"
 	) {
 		return 0.75;
 	}
@@ -206,7 +209,7 @@ function modifyByRuin({
 	if (
 		field?.ruin === "Vessel" &&
 		move.category === "Special" &&
-		attacker.abilityId !== 284
+		attacker.ability !== "Vessel of Ruin"
 	) {
 		return 0.75;
 	}

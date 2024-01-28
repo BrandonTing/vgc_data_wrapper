@@ -1,5 +1,5 @@
+import type { Pokemon } from "../pokemon";
 import type { Flags } from "../typeUtils";
-import type { Pokemon } from "./pokemon";
 
 const statProps = [
 	"hp",
