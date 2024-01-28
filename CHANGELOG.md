@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.1.2
+
+### Patch Changes
+
+- 4165b6b: fix export config to access correct path
+
 ## 0.1.1
 
 ### Patch Changes
