@@ -3,7 +3,7 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "scripts": {
     "lint": "bunx @biomejs/biome check --apply .",
     "test": "bun test **/**/*.test.ts",
@@ -34,5 +34,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "vgc_data_wrapper": "0.1.5"
+  }
 }
