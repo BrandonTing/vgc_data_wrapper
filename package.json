@@ -13,13 +13,11 @@
   },
   "exports": {
     ".": "./dist/index.js",
-    "./ability.json": "./assets/ability.json",
-    "./item.json": "./assets/item.json"
+    "./data": "./data"
   },
   "files": [
     "dist",
-    "./assets/ability.json",
-    "./assets/item.json"
+    "data"
   ],
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
