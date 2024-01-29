@@ -37,7 +37,10 @@ jobs:
       - name: 'Install Dependencies'
         run: |
           bun install
-      - name: 'Test'
+      - name: 'Test Pokemon'
         run: |
-          bun test
+          bun test-pokemon
+      - name: 'Test Damage'
+        run: |
+          bun test-damage
 

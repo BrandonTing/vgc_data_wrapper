@@ -1,15 +1,16 @@
 {
   "name": "vgc_data_wrapper",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "type": "module",
   "version": "0.1.5",
-  "scripts": {
-    "lint": "bunx @biomejs/biome check --apply .",
-    "test": "bun test **/**/*.test.ts",
-    "knip": "bunx knip",
-    "build": "tsup ./src/index.ts --format esm --dts ",
-    "publish": "bun run build && changeset publish"
+  "module": "dist/index.js",
+  "devDependencies": {
+    "@biomejs/biome": "1.5.3",
+    "@changesets/cli": "^2.27.1",
+    "@total-typescript/ts-reset": "^0.5.1",
+    "@types/bun": "latest",
+    "tsup": "^8.0.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
   },
   "exports": {
     ".": "./dist/index.js",
@@ -21,21 +22,18 @@
     "dist",
     "data"
   ],
-  "devDependencies": {
-    "@biomejs/biome": "1.5.3",
-    "@changesets/cli": "^2.27.1",
-    "@total-typescript/ts-reset": "^0.5.1",
-    "@types/bun": "latest",
-    "tsup": "^8.0.1"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
+  "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
-  "license": "MIT",
-  "dependencies": {
-    "vgc_data_wrapper": "0.1.5"
-  }
+  "scripts": {
+    "lint": "bunx @biomejs/biome check --apply .",
+    "test-damage": "bun test test/damage/*.test.ts",
+    "test-pokemon": "bun test test/pokemon/*.test.ts",
+    "knip": "bunx knip",
+    "build": "tsup ./src/index.ts --format esm --dts ",
+    "publish": "bun run build && changeset publish"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts"
 }
