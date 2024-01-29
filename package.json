@@ -28,8 +28,8 @@
   },
   "scripts": {
     "lint": "bunx @biomejs/biome check --apply .",
-    "test-damage": "bun test test/damage/*.test.ts",
-    "test-pokemon": "bun test test/pokemon/*.test.ts",
+    "test-damage": "bun test **/damage/*.test.ts",
+    "test-pokemon": "bun test **/pokemon/*.test.ts",
     "knip": "bunx knip",
     "build": "tsup ./src/index.ts --format esm --dts ",
     "publish": "bun run build && changeset publish"
