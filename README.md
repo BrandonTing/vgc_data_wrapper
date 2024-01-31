@@ -1,5 +1,7 @@
 # vgc_data_wrapper
 
+*Documents are still WIP. If faced any problem please leave an issue.* 
+
 ```
 import { Pokemon, Battle, createMove } from 'vgc_data_wrapper'
 
