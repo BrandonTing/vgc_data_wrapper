@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.1.6
+
+### Patch Changes
+
+- 2a27b8a: add documents
+
 ## 0.1.4
 
 ### Patch Changes
