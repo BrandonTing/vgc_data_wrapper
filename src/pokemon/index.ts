@@ -31,20 +31,21 @@ type Nature = {
 	minus?: keyof StatStages;
 };
 
+type PokemonType = [Type] | [Type, Type];
 type PokemonInfo = {
-	id?: number;
-	level: number;
-	types: Array<Type>;
+	id?: number; // ID from national dex
+	level: number; // affect stat & damage calculation; default 50;
+	types: PokemonType; // Fire, Water, etc.
 	baseStat: Stat;
-	nature?: Nature;
 	effortValues: Stat;
 	individualValues: Stat;
-	stats?: Stat;
+	nature?: Nature;
+	stats?: Stat; // can be set manually or derived from baseStat & EV & IV & nature. If this is set manually then other inputs are ignored.
 	statStage: StatStages;
-	weight: number;
+	weight: number; // affect related damage calculation like Grass Knot.
 	ability?: Ability;
 	item?: Item;
-	teraType?: TeraTypes;
+	teraType?: TeraTypes | null; // null mean not in tera form.
 	gender: Gender;
 	status: Status;
 	flags?: PokemonFlags;
@@ -76,8 +77,8 @@ interface IPokemon extends PokemonInfo {
 export class Pokemon implements IPokemon {
 	id?: number;
 	level: number;
-	types: Array<Type>;
-	teraType?: TeraTypes;
+	types: PokemonType;
+	teraType?: TeraTypes | null;
 
 	weight: number;
 	ability?: Ability;
@@ -120,7 +121,7 @@ export class Pokemon implements IPokemon {
 		this.level = info?.level ?? 50;
 		// fetch pokemon infomation by id
 		this.types = info?.types ?? ["Normal"];
-		this.teraType = info?.teraType;
+		this.teraType = info?.teraType ?? null;
 		this.weight = info?.weight ?? 0;
 		this.ability = info?.ability;
 		this.gender = info?.gender ?? "Unknown";
@@ -184,7 +185,7 @@ export class Pokemon implements IPokemon {
 			this.teraType = type;
 			return;
 		}
-		this.teraType = undefined;
+		this.teraType = null;
 	};
 	async initWithId(
 		id: number,
@@ -199,7 +200,9 @@ export class Pokemon implements IPokemon {
 			const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
 			const data = (await response.json()) as {
 				stats: Array<{ base_stat: number; stat: { name: string } }>;
-				types: Array<{ type: { name: string } }>;
+				types:
+					| [{ type: { name: string } }]
+					| [{ type: { name: string } }, { type: { name: string } }];
 				weight: number;
 			};
 			for (let i = 0; i < data.stats.length; i++) {
@@ -222,7 +225,9 @@ export class Pokemon implements IPokemon {
 				}
 			}
 			this.weight = data.weight;
-			this.types = data.types.map((type) => capitalize(type.type.name) as Type);
+			this.types = data.types.map((type) =>
+				capitalize(type.type.name),
+			) as PokemonType;
 			if (option?.effortValues) {
 				this.effortValues = Object.assign(
 					this.effortValues,
