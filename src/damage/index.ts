@@ -1,3 +1,3 @@
-export { Battle } from "./bettle";
+export { Battle } from "./battle";
 export { createMove } from "./move";
 export { getEffectivenessOnPokemon } from "./type";

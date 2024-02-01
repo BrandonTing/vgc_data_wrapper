@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import { createMove } from "../../src";
-import { Battle } from "../../src/damage/bettle";
+import { Battle } from "../../src/damage/battle";
 import { genTestMon } from "./utils";
 
 test("test STAB", () => {
