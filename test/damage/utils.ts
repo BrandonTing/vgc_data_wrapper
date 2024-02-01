@@ -37,7 +37,7 @@ function getTypeHelper(
 	partialTypes?: RecursivePartial<Pokemon["types"]>,
 ): Pokemon["types"] {
 	if (!partialTypes) return ["Normal"];
-	return partialTypes.filter(Boolean);
+	return partialTypes.filter(Boolean) as Pokemon["types"];
 }
 export function genTestMon(partial?: RecursivePartial<Pokemon>): Pokemon {
 	return new Pokemon({
