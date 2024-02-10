@@ -1,8 +1,8 @@
 import { expect, test } from "bun:test";
-import { createMove } from "../../src";
-import { getBasePower } from "../../src/damage/basePower";
-import { type Move } from "../../src/damage/config";
-import { genTestMon } from "./utils";
+import { createMove } from "../../../src";
+import { getBasePower } from "../../../src/damage/basePower";
+import { type Move } from "../../../src/damage/config";
+import { genTestMon } from "../utils";
 
 test("correctly calculate base power", () => {
 	const testPokemon = genTestMon();

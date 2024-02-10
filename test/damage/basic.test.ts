@@ -1,14 +1,17 @@
 import { expect, test } from "bun:test";
 import { createMove } from "../../src";
 import { Battle } from "../../src/damage/battle";
-import type { DamageResult } from "../../src/damage/config";
-import { genTestMon } from "./utils";
+import { genTestMon, getDamangeNumberFromResult } from "./utils";
 
 test("test STAB", () => {
+	// test init with bs/ev & the other init with stat
 	const flutterMane = genTestMon({
 		types: ["Fairy", "Ghost"],
-		stats: {
-			specialAttack: 155,
+		baseStat: {
+			specialAttack: 135,
+		},
+		effortValues: {
+			specialAttack: 252,
 		},
 	});
 	const incineroar = genTestMon({
@@ -24,7 +27,7 @@ test("test STAB", () => {
 		category: "Special",
 	});
 	const expected = [
-		48, 49, 49, 50, 50, 51, 51, 52, 53, 53, 54, 54, 55, 55, 56, 57,
+		58, 59, 60, 60, 61, 62, 62, 63, 64, 64, 65, 66, 66, 67, 68, 69,
 	];
 	const battle = new Battle({
 		attacker: flutterMane,
@@ -41,7 +44,7 @@ test("test STAB", () => {
 	});
 	battle.move = moonblast;
 	const expectedWithSTAB = [
-		76, 76, 78, 78, 79, 81, 81, 82, 82, 84, 85, 85, 87, 87, 88, 90,
+		93, 93, 94, 96, 96, 97, 99, 100, 100, 102, 103, 105, 105, 106, 108, 109,
 	];
 	const actualWithSTAB = battle.getDamage();
 	expect(getDamangeNumberFromResult(actualWithSTAB)).toEqual(expectedWithSTAB);
@@ -116,7 +119,8 @@ test("test stage changes", () => {
 		expectedWhenMinus1D,
 	);
 });
-test("test tera", () => {
+
+test("test offensive tera", () => {
 	const flutterMane = genTestMon({
 		types: ["Fairy", "Ghost"],
 		stats: {
@@ -163,6 +167,36 @@ test("test tera", () => {
 	expect(getDamangeNumberFromResult(actualTbolt)).toEqual(expectedTbolt);
 });
 
-function getDamangeNumberFromResult(result: DamageResult): Array<number> {
-	return result.rolls.map((roll) => roll.number);
-}
+test("defensive tera", () => {
+	const flutterMane = genTestMon({
+		types: ["Fairy", "Ghost"],
+		stats: {
+			specialAttack: 155,
+		},
+	});
+	const incineroar = genTestMon({
+		types: ["Dark", "Fire"],
+		stats: {
+			hp: 170,
+			specialDefense: 110,
+		},
+	});
+	incineroar.toggleTera({ isTera: true, type: "Fire" });
+
+	const moonblast = createMove({
+		type: "Fairy",
+		base: 95,
+		category: "Special",
+	});
+
+	const battle = new Battle({
+		attacker: flutterMane,
+		defender: incineroar,
+		move: moonblast,
+	});
+	const actual = getDamangeNumberFromResult(battle.getDamage());
+	const expected = [
+		38, 38, 39, 39, 39, 40, 40, 41, 41, 42, 42, 42, 43, 43, 44, 45,
+	];
+	expect(actual).toEqual(expected);
+});

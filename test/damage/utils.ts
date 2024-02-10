@@ -1,4 +1,4 @@
-import type { Stat } from "../../src/damage/config";
+import type { DamageResult, Stat } from "../../src/damage/config";
 import { Pokemon } from "../../src/pokemon";
 
 type RecursivePartial<T> = {
@@ -41,7 +41,9 @@ function getTypeHelper(
 }
 export function genTestMon(partial?: RecursivePartial<Pokemon>): Pokemon {
 	return new Pokemon({
-		stats: genTestStat(partial?.stats),
+		stats: partial?.stats,
+		baseStat: partial?.baseStat,
+		effortValues: partial?.effortValues,
 		types: getTypeHelper(partial?.types),
 		level: 50,
 		statStage: genTestStatStage(partial?.statStage),
@@ -50,4 +52,10 @@ export function genTestMon(partial?: RecursivePartial<Pokemon>): Pokemon {
 		item: partial?.item,
 		teraType: partial?.teraType,
 	});
+}
+
+export function getDamangeNumberFromResult(
+	result: DamageResult,
+): Array<number> {
+	return result.rolls.map((roll) => roll.number);
 }
