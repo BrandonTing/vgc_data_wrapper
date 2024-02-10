@@ -145,6 +145,7 @@ export class Pokemon implements IPokemon {
 		this.effortValues = genDefaultEv(info?.effortValues);
 		this.statStage = genDefaultStage(info?.statStage);
 		this.nature = info?.nature ?? {};
+		this.flags = info?.flags;
 	}
 
 	getStat(key: keyof Stat): number {
