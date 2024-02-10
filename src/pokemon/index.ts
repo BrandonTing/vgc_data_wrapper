@@ -51,11 +51,20 @@ type PokemonInfo = {
 	flags?: PokemonFlags;
 };
 
+type ToggleTeraOption =
+	| {
+			isTera: true;
+			type: TeraTypes;
+	  }
+	| {
+			isTera: false;
+	  };
+
 interface IPokemon extends PokemonInfo {
 	getStats: () => Stat;
 	getStat: (key: keyof Stat) => number;
 	setFlags: (flags: PokemonFlags) => void;
-	toggleTera: ((tera: true, type: TeraTypes) => void) | ((tera: false) => void);
+	toggleTera: (option: ToggleTeraOption) => void;
 	initWithId: (
 		id: number,
 		option?: {
@@ -178,15 +187,13 @@ export class Pokemon implements IPokemon {
 	setNature(nature: Nature) {
 		this.nature = this.nature ? Object.assign(this.nature, nature) : nature;
 	}
-	toggleTera:
-		| ((tera: true, type: TeraTypes) => void)
-		| ((tera: false) => void) = (tera, type) => {
-		if (tera) {
-			this.teraType = type;
+	toggleTera(option: ToggleTeraOption): void {
+		if (option.isTera) {
+			this.teraType = option.type;
 			return;
 		}
 		this.teraType = null;
-	};
+	}
 	async initWithId(
 		id: number,
 		option?: {
