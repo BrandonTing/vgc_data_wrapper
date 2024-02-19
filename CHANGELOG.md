@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.0
+
+### Minor Changes
+
+- 259771c: Feature: add paste parser that can derive Pokemon instance from pokepaste url or text
+
 ## 0.1.6
 
 ### Patch Changes
