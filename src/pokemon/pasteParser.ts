@@ -4,13 +4,55 @@ import { Pokemon } from "./base";
 import { pokemonSchema } from "./schema";
 import type { Ability, Item } from "./typeHelper";
 
+const natures = [
+	"Hardy",
+	"Lonely",
+	"Brave",
+	"Adamant",
+	"Naughty",
+	"Bold",
+	"Docile",
+	"Relaxed",
+	"Impish",
+	"Lax",
+	"Timid",
+	"Hasty",
+	"Serious",
+	"Jolly",
+	"Naive",
+	"Modest",
+	"Mild",
+	"Quiet",
+	"Bashful",
+	"Rash",
+	"Calm",
+	"Gentle",
+	"Sassy",
+	"Careful",
+	"Quirky",
+] as const;
+
+export async function getPokemonsFromPasteUrl(
+	url: string,
+): Promise<Array<Pokemon>> {
+	try {
+		const content = await fetch(`${url}/json`);
+		const paste = ((await content.json()) as unknown as { paste: string })
+			.paste;
+		return await getPokemonsFromPaste(paste);
+	} catch (err) {
+		throw new Error("Failed to parse info from provided paste url");
+	}
+}
+
 export async function getPokemonsFromPaste(
 	paste: string,
 ): Promise<Array<Pokemon>> {
 	const pasteOfPokemons = paste
-		.split("\n\n")
+		.split(/\r?\n\r?\n/)
 		.filter(Boolean)
 		.map((str) => getPokemonFromPaste(str));
+
 	const pokemons = await Promise.allSettled(pasteOfPokemons);
 	return pokemons
 		.map((pokemonResult) => {
@@ -65,7 +107,7 @@ type PokemonInfoFromPaste = Partial<{
 }>;
 
 function parsePaste(paste: string): PokemonInfoFromPaste {
-	const lines = paste.split("\n").filter(Boolean);
+	const lines = paste.split(/\r?\n/).filter(Boolean);
 	const info: PokemonInfoFromPaste = {};
 	for (const line of lines) {
 		if (line.includes(" @ ")) {
@@ -145,34 +187,6 @@ function getStatFromPaste(paste: string): Partial<Stat> {
 	}
 	return stat;
 }
-
-const natures = [
-	"Hardy",
-	"Lonely",
-	"Brave",
-	"Adamant",
-	"Naughty",
-	"Bold",
-	"Docile",
-	"Relaxed",
-	"Impish",
-	"Lax",
-	"Timid",
-	"Hasty",
-	"Serious",
-	"Jolly",
-	"Naive",
-	"Modest",
-	"Mild",
-	"Quiet",
-	"Bashful",
-	"Rash",
-	"Calm",
-	"Gentle",
-	"Sassy",
-	"Careful",
-	"Quirky",
-] as const;
 
 export function getNatureModifierFromName(
 	name: (typeof natures)[number],
