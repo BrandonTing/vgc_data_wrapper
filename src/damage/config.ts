@@ -16,7 +16,7 @@ export type Stat = {
 	[key in StatKeys]: number;
 };
 
-export const types = [
+const types = [
 	"Normal",
 	"Fire",
 	"Water",

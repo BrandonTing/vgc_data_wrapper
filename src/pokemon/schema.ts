@@ -36,8 +36,6 @@ export const pokemonSchema = z.object({
 		}),
 });
 
-export type PokemonSchema = z.infer<typeof pokemonSchema>;
-
 function getStatKey(pokeapiKey: string): StatKeys {
 	if (
 		pokeapiKey === "hp" ||
