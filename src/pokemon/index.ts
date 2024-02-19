@@ -1,2 +1,7 @@
 export { Pokemon } from "./base";
-export { getNatureModifierFromName, getPokemonFromPaste } from "./pasteParser";
+export {
+	getNatureModifierFromName,
+	getPokemonFromPaste,
+	getPokemonsFromPaste,
+	getPokemonsFromPasteUrl,
+} from "./pasteParser";
