@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
-import { createMove } from "../../src";
-import { getPower } from "../../src/damage/power";
-import { genTestMon } from "./utils";
+import { createMove } from "../../../src";
+import { getPower } from "../../../src/damage/power";
+import { genTestMon } from "../utils";
 
 test("get power without any modifiers", () => {
 	const expected = 95;
