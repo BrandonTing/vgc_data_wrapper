@@ -10,8 +10,10 @@ const statProps = [
 	"speed",
 ] as const;
 
+export type StatKeys = (typeof statProps)[number];
+
 export type Stat = {
-	[key in (typeof statProps)[number]]: number;
+	[key in StatKeys]: number;
 };
 
 const types = [

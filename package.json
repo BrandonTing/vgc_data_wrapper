@@ -35,5 +35,8 @@
     "publish": "bun run build && changeset publish"
   },
   "type": "module",
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "zod": "^3.22.4"
+  }
 }

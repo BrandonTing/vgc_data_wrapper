@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { getEffectivenessOnPokemon } from "../../src/damage/type";
+import { getEffectivenessOnPokemon } from "../../../src/damage/type";
 
 test("normal move hit normal type should be 1x effective", () => {
 	const effectiveness = getEffectivenessOnPokemon("Normal", ["Normal"]);
