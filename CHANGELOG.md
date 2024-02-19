@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.1
+
+### Patch Changes
+
+- 0623b93: forget to export url parser
+
 ## 0.2.0
 
 ### Minor Changes
