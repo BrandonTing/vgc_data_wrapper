@@ -78,7 +78,7 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 		const data = await response.json();
 		const pokemonInfo = pokemonSchema.parse(data);
 		const { id, weight, types, stats } = pokemonInfo;
-		const { item, ev, iv, level, nature, ability } = infoFromPaste;
+		const { item, ev, iv, level, nature, ability, moves } = infoFromPaste;
 		return new Pokemon({
 			baseStat: stats,
 			id,
@@ -90,6 +90,7 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 			level,
 			nature,
 			ability,
+			moves,
 		});
 	} catch (err) {
 		throw new Error("Invalid Name: cannot find target pokemon");
@@ -104,11 +105,13 @@ type PokemonInfoFromPaste = Partial<{
 	ev: Partial<Stat>;
 	nature: Pokemon["nature"];
 	iv: Partial<Stat>;
+	moves: Array<string>;
 }>;
 
 function parsePaste(paste: string): PokemonInfoFromPaste {
 	const lines = paste.split(/\r?\n/).filter(Boolean);
-	const info: PokemonInfoFromPaste = {};
+	const info: PokemonInfoFromPaste = { moves: [] };
+
 	for (const line of lines) {
 		if (line.includes(" @ ")) {
 			// name & item
@@ -149,6 +152,12 @@ function parsePaste(paste: string): PokemonInfoFromPaste {
 			info.nature = getNatureModifierFromName(
 				nature as unknown as (typeof natures)[number],
 			);
+		}
+		if (line.includes("- ")) {
+			const move = line.split("- ")[1]?.trim();
+			if (move) {
+				info.moves?.push(move);
+			}
 		}
 	}
 	return info;
