@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.2
+
+### Patch Changes
+
+- 7627ed8: save moves when parse paste
+
 ## 0.2.1
 
 ### Patch Changes
