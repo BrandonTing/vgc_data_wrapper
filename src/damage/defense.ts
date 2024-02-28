@@ -125,7 +125,7 @@ function modifyByRuin({
 	const usePhysicalDef = checkUsePhysicalHelper(move);
 	// Sword
 	if (
-		field?.ruin === "Sword" &&
+		field?.ruin?.includes("Sword") &&
 		usePhysicalDef &&
 		defender.ability !== "Sword of Ruin"
 	) {
@@ -133,7 +133,7 @@ function modifyByRuin({
 	}
 	// Beads
 	if (
-		field?.ruin === "Beads" &&
+		field?.ruin?.includes("Beads") &&
 		!usePhysicalDef &&
 		defender.ability !== "Beads of Ruin"
 	) {
