@@ -172,14 +172,14 @@ type Aura = "Fairy" | "Dark";
 
 type Ruin = "Tablets" | "Sword" | "Vessel" | "Beads";
 
-export type BattleFieldStatus = {
-	weather?: Weather;
-	terrain?: Terrain;
-	downCounts?: number; // used to calculate damage boost for Supreme Overlord
-	aura?: Aura;
-	ruin?: Ruin;
-	isDouble?: boolean; 
-};
+export type BattleFieldStatus = Partial<{
+	weather: Weather;
+	terrain: Terrain;
+	downCounts: number;
+	aura: Array<Aura>;
+	ruin: Array<Ruin>;
+	isDouble: boolean;
+}>;
 
 ```
 ##### DamageResult
