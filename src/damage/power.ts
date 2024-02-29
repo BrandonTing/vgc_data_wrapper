@@ -257,8 +257,8 @@ function modifyByAura({
 	move,
 	field,
 }: Pick<BattleStatus, "move" | "field">): number {
-	return (move.type === "Dark" && field?.aura === "Dark") ||
-		(move.type === "Fairy" && field?.aura === "Fairy")
+	return (move.type === "Dark" && field?.aura?.includes("Dark")) ||
+		(move.type === "Fairy" && field?.aura?.includes("Fairy"))
 		? 1.33
 		: 1;
 }

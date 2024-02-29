@@ -199,7 +199,7 @@ function modifyByRuin({
 	// ruin ability doesn't affect owner
 	// Tablets
 	if (
-		field?.ruin === "Tablets" &&
+		field?.ruin?.includes("Tablets") &&
 		move.category === "Physical" &&
 		attacker.ability !== "Tablets of Ruin"
 	) {
@@ -207,7 +207,7 @@ function modifyByRuin({
 	}
 	// Vessel
 	if (
-		field?.ruin === "Vessel" &&
+		field?.ruin?.includes("Vessel") &&
 		move.category === "Special" &&
 		attacker.ability !== "Vessel of Ruin"
 	) {
