@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.3
+
+### Patch Changes
+
+- 734dc95: enable array for aura and ruin
+
 ## 0.2.2
 
 ### Patch Changes
