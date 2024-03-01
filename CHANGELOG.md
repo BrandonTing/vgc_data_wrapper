@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.4
+
+### Patch Changes
+
+- 6e12ae5: export types and stat props
+
 ## 0.2.3
 
 ### Patch Changes
