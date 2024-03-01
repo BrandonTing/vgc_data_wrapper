@@ -1,7 +1,7 @@
 import type { Pokemon } from "../pokemon";
 import type { Flags } from "../typeUtils";
 
-const statProps = [
+export const statProps = [
 	"hp",
 	"attack",
 	"defense",
@@ -16,7 +16,7 @@ export type Stat = {
 	[key in StatKeys]: number;
 };
 
-const types = [
+export const types = [
 	"Normal",
 	"Fire",
 	"Water",
