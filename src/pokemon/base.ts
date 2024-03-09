@@ -34,6 +34,7 @@ type Nature = {
 type PokemonType = [Type] | [Type, Type];
 type PokemonInfo = {
 	id?: number; // ID from national dex
+	name?: string;
 	level: number; // affect stat & damage calculation; default 50;
 	types: PokemonType; // Fire, Water, etc.
 	baseStat: Stat;
@@ -86,6 +87,7 @@ interface IPokemon extends PokemonInfo {
 
 export class Pokemon implements IPokemon {
 	id?: number;
+	name?: string;
 	level: number;
 	types: PokemonType;
 	teraType?: TeraTypes | null;
@@ -129,6 +131,7 @@ export class Pokemon implements IPokemon {
 			},
 	) {
 		this.id = info?.id;
+		this.name = info?.name;
 		this.level = info?.level ?? 50;
 		// fetch pokemon infomation by id
 		this.types = info?.types ?? ["Normal"];
