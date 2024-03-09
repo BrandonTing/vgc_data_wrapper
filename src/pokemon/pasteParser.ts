@@ -78,8 +78,9 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 		const data = await response.json();
 		const pokemonInfo = pokemonSchema.parse(data);
 		const { id, weight, types, stats } = pokemonInfo;
-		const { item, ev, iv, level, nature, ability, moves } = infoFromPaste;
+		const { item, ev, iv, level, nature, ability, moves, name } = infoFromPaste;
 		return new Pokemon({
+			name,
 			baseStat: stats,
 			id,
 			weight,
