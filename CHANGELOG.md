@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.5
+
+### Patch Changes
+
+- 37ff24a: add name for pokemon class
+
 ## 0.2.4
 
 ### Patch Changes
