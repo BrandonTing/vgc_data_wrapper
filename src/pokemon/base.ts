@@ -50,8 +50,8 @@ type PokemonInfo = {
 	gender: Gender;
 	status: Status;
 	flags?: PokemonFlags;
-	// FIXME 與Move type 整合
 	moves?: Array<string>;
+	sprite?: string;
 };
 type ToggleTeraOption =
 	| {
@@ -109,6 +109,7 @@ export class Pokemon implements IPokemon {
 	item?: Item;
 	flags?: PokemonFlags;
 	moves?: Array<string>;
+	sprite?: string;
 	constructor(
 		info?: {
 			id?: number;
@@ -152,6 +153,7 @@ export class Pokemon implements IPokemon {
 		this.nature = info?.nature ?? {};
 		this.flags = info?.flags;
 		this.moves = info?.moves;
+		this.sprite = info?.sprite;
 	}
 
 	getStat(key: keyof Stat): number {

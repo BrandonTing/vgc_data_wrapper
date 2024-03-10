@@ -77,7 +77,7 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 		);
 		const data = await response.json();
 		const pokemonInfo = pokemonSchema.parse(data);
-		const { id, weight, types, stats } = pokemonInfo;
+		const { id, weight, types, stats, sprites } = pokemonInfo;
 		const { item, ev, iv, level, nature, ability, moves, name } = infoFromPaste;
 		return new Pokemon({
 			name,
@@ -92,12 +92,12 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 			nature,
 			ability,
 			moves,
+			sprite: sprites,
 		});
 	} catch (err) {
 		throw new Error("Invalid Name: cannot find target pokemon");
 	}
 }
-
 type PokemonInfoFromPaste = Partial<{
 	name: string;
 	item: Item;
