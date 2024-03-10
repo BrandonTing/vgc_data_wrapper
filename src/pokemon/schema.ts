@@ -34,6 +34,11 @@ export const pokemonSchema = z.object({
 				return pre;
 			}, {} as Stat);
 		}),
+	sprites: z
+		.object({
+			front_default: z.string(),
+		})
+		.transform((arg) => arg.front_default),
 });
 
 function getStatKey(pokeapiKey: string): StatKeys {
