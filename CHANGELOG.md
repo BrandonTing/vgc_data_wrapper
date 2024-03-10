@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.6
+
+### Patch Changes
+
+- 5d905fc: add sprite
+
 ## 0.2.5
 
 ### Patch Changes
