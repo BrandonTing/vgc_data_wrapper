@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.7
+
+### Patch Changes
+
+- b33cf0a: patch name
+
 ## 0.2.6
 
 ### Patch Changes
