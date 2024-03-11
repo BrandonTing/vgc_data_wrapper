@@ -71,9 +71,10 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 	}
 	try {
 		// get basestat, type, weight, id from pokeapi
-		const fetchName = infoFromPaste.name.toLowerCase().replace(" ", "-");
 		const response = await fetch(
-			`https://pokeapi.co/api/v2/pokemon/${fetchName}`,
+			`https://pokeapi.co/api/v2/pokemon/${pokemonNameConverter(
+				infoFromPaste.name,
+			)}`,
 		);
 		const data = await response.json();
 		const pokemonInfo = pokemonSchema.parse(data);
@@ -288,4 +289,20 @@ export function getNatureModifierFromName(
 	}
 
 	return nature;
+}
+
+export function pokemonNameConverter(name: string): string {
+	const fetchName = name.toLowerCase().replace(" ", "-");
+
+	if (name === "urshifu") {
+		return "urshifu-single-strike";
+	}
+
+	if (name === "tornadus" || name === "thundurus" || name === "landorus") {
+		return `${name}-incarnate`;
+	}
+	if (name.includes("ogerpon")) {
+		return "ogerpon";
+	}
+	return fetchName;
 }
