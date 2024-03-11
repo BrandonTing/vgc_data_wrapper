@@ -108,7 +108,6 @@ test("correctly calculate base power for speed related moves", () => {
 	const testElectricBall = createMove({
 		id: 486,
 	});
-	console.log(testFastPokemon.getStat("speed"));
 	let basePowerElectricBall = getBasePower(
 		testFastPokemon,
 		testSlowPokemon,
@@ -287,7 +286,6 @@ test("base power of tera blast", () => {
 	let basePower = getBasePower(testMon, testMon, teraBlast);
 	expect(basePower).toBe(80);
 	const testTeraStellarMon = genTestMon({ teraType: "Stellar" });
-	console.log(testTeraStellarMon.teraType);
 	basePower = getBasePower(testTeraStellarMon, testMon, teraBlast);
 	expect(basePower).toBe(100);
 });
