@@ -30,7 +30,6 @@ test("get power with type enhancing item", () => {
 		type: "Normal",
 		category: "Physical",
 	});
-	console.log(testMon.item);
 	const power = getPower({
 		attacker: testMon,
 		defender: testMon,

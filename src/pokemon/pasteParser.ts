@@ -310,6 +310,3 @@ export function pokemonNameConverter(name: string): string {
 	}
 	return fetchName;
 }
-console.log(
-	await getPokemonsFromPasteUrl("https://pokepast.es/59d3961f05628b39"),
-);
