@@ -294,15 +294,22 @@ export function getNatureModifierFromName(
 export function pokemonNameConverter(name: string): string {
 	const fetchName = name.toLowerCase().replace(" ", "-");
 
-	if (name === "urshifu") {
+	if (fetchName === "urshifu") {
 		return "urshifu-single-strike";
 	}
 
-	if (name === "tornadus" || name === "thundurus" || name === "landorus") {
-		return `${name}-incarnate`;
+	if (
+		fetchName === "tornadus" ||
+		fetchName === "thundurus" ||
+		fetchName === "landorus"
+	) {
+		return `${fetchName}-incarnate`;
 	}
-	if (name.includes("ogerpon")) {
+	if (fetchName.includes("ogerpon")) {
 		return "ogerpon";
 	}
 	return fetchName;
 }
+console.log(
+	await getPokemonsFromPasteUrl("https://pokepast.es/59d3961f05628b39"),
+);
