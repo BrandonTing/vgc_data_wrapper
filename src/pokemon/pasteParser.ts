@@ -1,5 +1,5 @@
 import items from "../../data/item.json";
-import type { Stat } from "../damage/config";
+import type { Stat, TeraTypes } from "../damage/config";
 import { Pokemon } from "./base";
 import { pokemonSchema } from "./schema";
 import type { Ability, Item } from "./typeHelper";
@@ -79,7 +79,8 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 		const data = await response.json();
 		const pokemonInfo = pokemonSchema.parse(data);
 		const { id, weight, types, stats, sprites } = pokemonInfo;
-		const { item, ev, iv, level, nature, ability, moves, name } = infoFromPaste;
+		const { item, ev, iv, level, nature, ability, moves, name, teraType } =
+			infoFromPaste;
 		return new Pokemon({
 			name,
 			baseStat: stats,
@@ -94,6 +95,7 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 			ability,
 			moves,
 			sprite: sprites,
+			teraType,
 		});
 	} catch (err) {
 		throw new Error("Invalid Name: cannot find target pokemon");
@@ -108,6 +110,7 @@ type PokemonInfoFromPaste = Partial<{
 	nature: Pokemon["nature"];
 	iv: Partial<Stat>;
 	moves: Array<string>;
+	teraType: TeraTypes;
 }>;
 
 function parsePaste(paste: string): PokemonInfoFromPaste {
@@ -161,6 +164,12 @@ function parsePaste(paste: string): PokemonInfoFromPaste {
 			const move = line.split("- ")[1]?.trim();
 			if (move) {
 				info.moves?.push(move);
+			}
+		}
+		if (line.includes("Tera Type")) {
+			const teraType = line.split("Tera Type: ")[1]?.trim() as TeraTypes;
+			if (teraType) {
+				info.teraType = teraType;
 			}
 		}
 	}

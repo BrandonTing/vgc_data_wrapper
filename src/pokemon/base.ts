@@ -46,27 +46,20 @@ type PokemonInfo = {
 	weight: number; // affect related damage calculation like Grass Knot.
 	ability?: Ability;
 	item?: Item;
-	teraType?: TeraTypes | null; // null mean not in tera form.
+	teraType?: TeraTypes; // null mean not in tera form.
+	isTera: boolean;
 	gender: Gender;
 	status: Status;
 	flags?: PokemonFlags;
 	moves?: Array<string>;
 	sprite?: string;
 };
-type ToggleTeraOption =
-	| {
-			isTera: true;
-			type: TeraTypes;
-	  }
-	| {
-			isTera: false;
-	  };
 
 interface IPokemon extends PokemonInfo {
 	getStats: () => Stat;
 	getStat: (key: keyof Stat) => number;
 	setFlags: (flags: PokemonFlags) => void;
-	toggleTera: (option: ToggleTeraOption) => void;
+	toggleTera: (isTera: boolean, type?: TeraTypes) => void;
 	initWithId: (
 		id: number,
 		option?: {
@@ -90,8 +83,8 @@ export class Pokemon implements IPokemon {
 	name?: string;
 	level: number;
 	types: PokemonType;
-	teraType?: TeraTypes | null;
-
+	teraType?: TeraTypes;
+	isTera = false;
 	weight: number;
 	ability?: Ability;
 	gender: Gender;
@@ -136,7 +129,7 @@ export class Pokemon implements IPokemon {
 		this.level = info?.level ?? 50;
 		// fetch pokemon infomation by id
 		this.types = info?.types ?? ["Normal"];
-		this.teraType = info?.teraType ?? null;
+		this.teraType = info?.teraType;
 		this.weight = info?.weight ?? 0;
 		this.ability = info?.ability;
 		this.gender = info?.gender ?? "Unknown";
@@ -196,12 +189,9 @@ export class Pokemon implements IPokemon {
 	setNature(nature: Nature) {
 		this.nature = this.nature ? Object.assign(this.nature, nature) : nature;
 	}
-	toggleTera(option: ToggleTeraOption): void {
-		if (option.isTera) {
-			this.teraType = option.type;
-			return;
-		}
-		this.teraType = null;
+	toggleTera(isTera: boolean, type?: TeraTypes | undefined) {
+		this.isTera = isTera;
+		this.teraType = type ?? undefined;
 	}
 	async initWithId(
 		id: number,
