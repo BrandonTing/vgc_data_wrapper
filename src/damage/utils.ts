@@ -28,5 +28,12 @@ export function checkMatchType(pokemon: Pokemon, type: Type): boolean {
 }
 
 export function getPokemonCurrentType(pokemon: Pokemon): Array<TeraTypes> {
-	return pokemon.teraType ? [pokemon.teraType] : pokemon.types;
+	return pokemon.isTera ? [pokemon.teraType] : pokemon.types;
+}
+
+export function checkTeraWIthTypeMatch(
+	pokemon: Pokemon,
+	type: TeraTypes,
+): boolean {
+	return pokemon.isTera && type === pokemon.teraType;
 }
