@@ -120,7 +120,7 @@ function parsePaste(paste: string): PokemonInfoFromPaste {
 		if (i === 0) {
 			// name & item
 			const [name, item] = line.split(" @ ");
-			info.name = name?.trim();
+			info.name = name?.trim().replace(/ \(F\)/, ""); // remove female notation;
 			// FIXME set type enhancing item
 			info.item = item && item in items ? (item as Item) : undefined;
 			continue;
@@ -294,10 +294,7 @@ export function getNatureModifierFromName(
 }
 
 export function pokemonNameConverter(name: string): string {
-	const fetchName = name
-		.toLowerCase()
-		.replace(/ \(f\)/, "") // remove female notation
-		.replaceAll(" ", "-");
+	const fetchName = name.toLowerCase().replaceAll(" ", "-");
 
 	if (fetchName === "urshifu") {
 		return "urshifu-single-strike";
