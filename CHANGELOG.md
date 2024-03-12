@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.9
+
+### Patch Changes
+
+- 10abb22: modify ogerpon name parsing
+
 ## 0.2.8
 
 ### Patch Changes
