@@ -114,17 +114,19 @@ function parsePaste(paste: string): PokemonInfoFromPaste {
 	const lines = paste.split(/\r?\n/).filter(Boolean);
 	const info: PokemonInfoFromPaste = { moves: [] };
 
-	for (const line of lines) {
-		if (line.includes(" @ ")) {
+	for (let i = 0; i < lines.length; i++) {
+		const line = lines[i];
+		if (!line) continue;
+		if (i === 0) {
 			// name & item
 			const [name, item] = line.split(" @ ");
-			info.name = name;
+			info.name = name?.trim();
 			// FIXME set type enhancing item
 			info.item = item && item in items ? (item as Item) : undefined;
 			continue;
 		}
 		if (line.includes("Ability: ")) {
-			info.ability = line.split("Ability: ")[1] as Ability;
+			info.ability = line.split("Ability: ")[1]?.trim() as Ability;
 			continue;
 		}
 		if (line.includes("Level: ")) {
@@ -292,7 +294,10 @@ export function getNatureModifierFromName(
 }
 
 export function pokemonNameConverter(name: string): string {
-	const fetchName = name.toLowerCase().replace(" ", "-");
+	const fetchName = name
+		.toLowerCase()
+		.replace(/ \(f\)/, "") // remove female notation
+		.replaceAll(" ", "-");
 
 	if (fetchName === "urshifu") {
 		return "urshifu-single-strike";
@@ -306,6 +311,13 @@ export function pokemonNameConverter(name: string): string {
 		return `${fetchName}-incarnate`;
 	}
 	if (fetchName.includes("ogerpon")) {
+		if (
+			fetchName.includes("wellspring") ||
+			fetchName.includes("cornerstone") ||
+			fetchName.includes("hearthflame")
+		) {
+			return `${fetchName}-mask`;
+		}
 		return "ogerpon";
 	}
 	return fetchName;
