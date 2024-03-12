@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.8
+
+### Patch Changes
+
+- 6594950: fix pokeapi naming issue
+
 ## 0.2.7
 
 ### Patch Changes
