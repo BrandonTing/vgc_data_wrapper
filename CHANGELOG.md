@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.10
+
+### Patch Changes
+
+- b10fd9b: change tera type notation
+
 ## 0.2.9
 
 ### Patch Changes
