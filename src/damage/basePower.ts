@@ -1,6 +1,7 @@
 import type { Pokemon } from "../pokemon";
 import type { Ability } from "../pokemon/typeHelper";
 import type { BattleFieldStatus, Move } from "./config";
+import { checkTeraWIthTypeMatch } from "./utils";
 
 export function getBasePower(
 	attacker: Pokemon,
@@ -110,7 +111,7 @@ export function getBasePower(
 		return 100;
 	}
 	// tera blast
-	if (move.id === 851 && attacker.teraType === "Stellar") {
+	if (move.id === 851 && checkTeraWIthTypeMatch(attacker, "Stellar")) {
 		return 100;
 	}
 	// Power Trip & Stored Power

@@ -54,12 +54,20 @@ type PokemonInfo = {
 	moves?: Array<string>;
 	sprite?: string;
 };
+type ToggleTeraOption =
+	| {
+			isTera: true;
+			type?: TeraTypes;
+	  }
+	| {
+			isTera: false;
+	  };
 
 interface IPokemon extends PokemonInfo {
 	getStats: () => Stat;
 	getStat: (key: keyof Stat) => number;
 	setFlags: (flags: PokemonFlags) => void;
-	toggleTera: (isTera: boolean, type?: TeraTypes) => void;
+	toggleTera: (option: ToggleTeraOption) => void;
 	initWithId: (
 		id: number,
 		option?: {
@@ -83,7 +91,7 @@ export class Pokemon implements IPokemon {
 	name?: string;
 	level: number;
 	types: PokemonType;
-	teraType?: TeraTypes;
+	teraType: TeraTypes;
 	isTera = false;
 	weight: number;
 	ability?: Ability;
@@ -129,7 +137,7 @@ export class Pokemon implements IPokemon {
 		this.level = info?.level ?? 50;
 		// fetch pokemon infomation by id
 		this.types = info?.types ?? ["Normal"];
-		this.teraType = info?.teraType;
+		this.teraType = info?.teraType || this.types[0];
 		this.weight = info?.weight ?? 0;
 		this.ability = info?.ability;
 		this.gender = info?.gender ?? "Unknown";
@@ -189,9 +197,11 @@ export class Pokemon implements IPokemon {
 	setNature(nature: Nature) {
 		this.nature = this.nature ? Object.assign(this.nature, nature) : nature;
 	}
-	toggleTera(isTera: boolean, type?: TeraTypes | undefined) {
-		this.isTera = isTera;
-		this.teraType = type ?? undefined;
+	toggleTera(option: ToggleTeraOption) {
+		this.isTera = option.isTera;
+		if (option.isTera && option.type) {
+			this.teraType = option.type;
+		}
 	}
 	async initWithId(
 		id: number,

@@ -285,7 +285,8 @@ test("base power of tera blast", () => {
 	const teraBlast = createMove({ id: 851, base: 80 });
 	let basePower = getBasePower(testMon, testMon, teraBlast);
 	expect(basePower).toBe(80);
-	const testTeraStellarMon = genTestMon({ teraType: "Stellar" });
+	const testTeraStellarMon = genTestMon();
+	testTeraStellarMon.toggleTera({ isTera: true, type: "Stellar" });
 	basePower = getBasePower(testTeraStellarMon, testMon, teraBlast);
 	expect(basePower).toBe(100);
 });

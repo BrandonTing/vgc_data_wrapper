@@ -1,6 +1,10 @@
 import { getBasePower } from "./basePower";
 import type { BattleStatus } from "./config";
-import { checkMatchType, pipeModifierHelper } from "./utils";
+import {
+	checkMatchType,
+	checkTeraWIthTypeMatch,
+	pipeModifierHelper,
+} from "./utils";
 
 export function getPower(option: BattleStatus): number {
 	const basePower = getBasePower(
@@ -31,7 +35,7 @@ export function getPower(option: BattleStatus): number {
 		(basePower * modifierAfterModification) / 4096 - 0.001,
 	);
 	if (
-		option.attacker.teraType === option.move.type &&
+		checkTeraWIthTypeMatch(option.attacker, option.move.type) &&
 		result < 60 &&
 		!option.move.flags?.isMultihit &&
 		!option.move.flags?.isPriority &&
