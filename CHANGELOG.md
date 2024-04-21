@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.11
+
+### Patch Changes
+
+- 69757a1: fix: steel 2x against fairy & ghost 2x against ghost
+
 ## 0.2.10
 
 ### Patch Changes
