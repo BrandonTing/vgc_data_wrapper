@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.12
+
+### Patch Changes
+
+- 6369a10: fix: don't use selected target to check move is spread
+
 ## 0.2.11
 
 ### Patch Changes
