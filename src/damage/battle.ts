@@ -107,8 +107,8 @@ function getDamage(option: BattleStatus): DamageResult {
 		minKoIndex === 0
 			? 100
 			: minKoIndex === -1
-			  ? 0
-			  : ((dmgRollCounts - minKoIndex) / 16) * 100;
+				? 0
+				: ((dmgRollCounts - minKoIndex) / 16) * 100;
 
 	return {
 		rolls: results,
@@ -123,10 +123,10 @@ function getBasicDamage(option: BattleStatus): number {
 	return Math.trunc(
 		Math.trunc(
 			(Math.trunc((option.attacker.level * 2) / 5 + 2) * power * attack) /
-				defense,
+			defense,
 		) /
-			50 +
-			2,
+		50 +
+		2,
 	);
 }
 
@@ -136,7 +136,9 @@ function modifyBySpreadDamage(
 ): number {
 	let modifier = 1;
 	if (
-		(move.target !== "selectedTarget" ||
+		(
+			move.target === "allAdjacent" ||
+			move.target === "allAdjacentFoes" ||
 			(attacker.id === 1024 &&
 				checkTeraWIthTypeMatch(attacker, "Stellar") &&
 				move.id === 906)) &&
