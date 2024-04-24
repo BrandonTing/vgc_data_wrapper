@@ -11,7 +11,8 @@ export function pipeModifierHelper<T, U extends (...args: any) => T>(
 }
 
 export function checkAtkIsHighest(stat: Stat, target: keyof Stat) {
-	return Math.max(...Object.values(stat)) === stat[target];
+	const { hp, ...statExcludeHp } = stat;
+	return Math.max(...Object.values(statExcludeHp)) === stat[target];
 }
 
 export function modifyStatByStageChange(
