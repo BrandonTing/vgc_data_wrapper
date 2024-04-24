@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.13
+
+### Patch Changes
+
+- 8538720: fix: check atk is highest doesn't need to check hp
+
 ## 0.2.12
 
 ### Patch Changes
