@@ -323,13 +323,13 @@ function getTypeModifier({
 	}
 	// Freeze Dry
 	if (move.id === 573) {
-		if (checkTeraWIthTypeMatch(defender, "Stellar")) {
+		if (checkTeraWIthTypeMatch(defender, "Stellar") || !defender.isTera) {
 			if (defender.types.includes("Water")) {
 				return (
 					2 *
 					getEffectivenessOnPokemon(
 						move.type,
-						defender.types.filter((type) => type === "Water"),
+						defender.types.filter((type) => type !== "Water"),
 					)
 				);
 			}
