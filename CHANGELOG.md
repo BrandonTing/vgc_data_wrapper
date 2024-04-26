@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.14
+
+### Patch Changes
+
+- acdd211: fix: freeze dry computation error
+
 ## 0.2.13
 
 ### Patch Changes
