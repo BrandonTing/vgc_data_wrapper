@@ -77,7 +77,6 @@ type Ruin = "Tablets" | "Sword" | "Vessel" | "Beads";
 export type BattleFieldStatus = Partial<{
 	weather: Weather;
 	terrain: Terrain;
-	downCounts: number;
 	aura: Array<Aura>;
 	ruin: Array<Ruin>;
 	isDouble: boolean;
