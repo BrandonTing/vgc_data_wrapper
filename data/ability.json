@@ -155,8 +155,16 @@
     "name": "狙擊手",
     "effect": "（要害時的傷害變成2.25倍）"
   },
-  "Supreme Overlord": {
+  "Supreme Overlord 1": {
     "name": "大將-1",
+    "effect": "（出場時先前每有n名隊友瀕死，傷害便x1.n倍）"
+  },
+  "Supreme Overlord 2": {
+    "name": "大將-2",
+    "effect": "（出場時先前每有n名隊友瀕死，傷害便x1.n倍）"
+  },
+  "Supreme Overlord 3": {
+    "name": "大將-3",
     "effect": "（出場時先前每有n名隊友瀕死，傷害便x1.n倍）"
   },
   "Protosynthesis": {
