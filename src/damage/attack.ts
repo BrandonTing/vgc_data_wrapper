@@ -53,8 +53,8 @@ export function getAttack({
 					return Math.round(pre * cur(option));
 				},
 			)) /
-			4096 -
-			0.001,
+		4096 -
+		0.001,
 	);
 
 	return result;
@@ -175,7 +175,7 @@ function modifyByDefenderAbility({
 	return 1;
 }
 function modifyByItem({
-	attacker: { item, id },
+	attacker: { item, id, name },
 	move: { category },
 }: Pick<BattleStatus, "attacker" | "move">) {
 	// Choice item
@@ -186,7 +186,7 @@ function modifyByItem({
 		return 1.5;
 	}
 	// Light Ball on Pikachu
-	if (id === 25 && item === "Light Ball") {
+	if ((id === 25 || name?.toLowerCase() === "pikachu") && item === "Light Ball") {
 		return 2;
 	}
 	return 1;
