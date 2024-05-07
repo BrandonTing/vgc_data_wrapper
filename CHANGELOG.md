@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.15
+
+### Patch Changes
+
+- ed8433d: change behavior of supreme overlord, metronomo and lightball
+
 ## 0.2.14
 
 ### Patch Changes
