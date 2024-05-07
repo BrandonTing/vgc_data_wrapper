@@ -59,8 +59,14 @@ function modifyByAttackerAbility({
 		return 0.75;
 	}
 	// Supreme Overlord
-	if (attacker.ability === "Supreme Overlord") {
-		return 1 + 0.1 * (field?.downCounts ?? 0);
+	if (attacker.ability === "Supreme Overlord 1") {
+		return 1 + 0.1 * 1;
+	}
+	if (attacker.ability === "Supreme Overlord 2") {
+		return 1 + 0.1 * 2;
+	}
+	if (attacker.ability === "Supreme Overlord 3") {
+		return 1 + 0.1 * 3;
 	}
 	// skins
 	if (

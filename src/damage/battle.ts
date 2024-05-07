@@ -509,8 +509,9 @@ function modifyByAttackerItem({
 	if (attacker.item === "Life Orb") {
 		return 1.3;
 	}
-	if (attacker.item === "Metronome") {
-		return Math.max(1 + 0.2 * (move.repeatTimes ?? 1 - 1), 2);
+	if (attacker.item?.includes("Metronome-")) {
+		const times = Number(attacker.item.split("Metronome-")[1] ?? "1")
+		return Math.min(1 + 0.2 * (times - 1), 2);
 	}
 	return 1;
 }

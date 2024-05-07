@@ -230,14 +230,64 @@ test("Type Halving berry", () => {
 		base: 95,
 		category: "Special",
 	});
-	const expected = [
-		94, 96, 97, 99, 99, 100, 102, 103, 103, 105, 106, 108, 108, 109, 111, 112,
-	];
 	const battle = new Battle({
 		attacker: flutterMane,
 		defender: baxcalibur,
 		move: moonblast,
 	});
+
+	const expected = [
+		94, 96, 97, 99, 99, 100, 102, 103, 103, 105, 106, 108, 108, 109, 111, 112,
+	];
 	const actual = getDamangeNumberFromResult(battle.getDamage());
 	expect(actual).toEqual(expected);
 });
+
+test("Metronome", () => {
+	// test mons
+	const flutterMane = genTestMon({
+		types: ["Fairy", "Ghost"],
+		baseStat: {
+			specialAttack: 135,
+		},
+		item: "Metronome-2"
+	});
+	const baxcalibur = genTestMon({
+		types: ["Ice", "Dragon"],
+		baseStat: {
+			hp: 115,
+			specialDefense: 86
+		}
+	});
+	const moonblast = createMove({
+		type: "Fairy",
+		base: 95,
+		category: "Special",
+	});
+	const battle = new Battle({
+		attacker: flutterMane,
+		defender: baxcalibur,
+		move: moonblast,
+	});
+	// 2 times
+	const expected = [
+		190,
+		194,
+		194,
+		197,
+		202,
+		202,
+		204,
+		204,
+		209,
+		211,
+		211,
+		216,
+		218,
+		218,
+		223,
+		226
+	]
+	const actual = getDamangeNumberFromResult(battle.getDamage());
+	expect(actual).toEqual(expected);
+})
