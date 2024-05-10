@@ -2,7 +2,7 @@ import type { Stat, TeraTypes, Type } from "../damage/config";
 import type { Flags } from "../typeUtils";
 import type { Ability, Item } from "./typeHelper";
 
-type Gender = "Male" | "Female" | "Unknown";
+export type Gender = "Male" | "Female" | "Unknown";
 
 type Status =
 	| "Healthy"
@@ -56,12 +56,12 @@ type PokemonInfo = {
 };
 type ToggleTeraOption =
 	| {
-			isTera: true;
-			type?: TeraTypes;
-	  }
+		isTera: true;
+		type?: TeraTypes;
+	}
 	| {
-			isTera: false;
-	  };
+		isTera: false;
+	};
 
 interface IPokemon extends PokemonInfo {
 	getStats: () => Stat;
@@ -125,12 +125,12 @@ export class Pokemon implements IPokemon {
 				| "statStage"
 			>
 		> & {
-				stats?: Partial<Stat>;
-				baseStat?: Partial<Stat>;
-				individualValues?: Partial<Stat>;
-				effortValues?: Partial<Stat>;
-				statStage?: Partial<StatStages>;
-			},
+			stats?: Partial<Stat>;
+			baseStat?: Partial<Stat>;
+			individualValues?: Partial<Stat>;
+			effortValues?: Partial<Stat>;
+			statStage?: Partial<StatStages>;
+		},
 	) {
 		this.id = info?.id;
 		this.name = info?.name;
@@ -217,8 +217,8 @@ export class Pokemon implements IPokemon {
 			const data = (await response.json()) as {
 				stats: Array<{ base_stat: number; stat: { name: string } }>;
 				types:
-					| [{ type: { name: string } }]
-					| [{ type: { name: string } }, { type: { name: string } }];
+				| [{ type: { name: string } }]
+				| [{ type: { name: string } }, { type: { name: string } }];
 				weight: number;
 			};
 			for (let i = 0; i < data.stats.length; i++) {
@@ -282,7 +282,7 @@ export class Pokemon implements IPokemon {
 		return Math.trunc(
 			(Math.trunc(((base * 2 + iv + Math.trunc(ev / 4)) * this.level) / 100) +
 				5) *
-				this.getNatureModifer(key),
+			this.getNatureModifer(key),
 		);
 	}
 	private getNatureModifer(key: keyof StatStages): number {
