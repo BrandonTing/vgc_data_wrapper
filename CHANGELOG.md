@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.16
+
+### Patch Changes
+
+- ad76572: fix: fail to parse male pokemon like landorus therian
+
 ## 0.2.15
 
 ### Patch Changes
