@@ -1,6 +1,6 @@
 import items from "../../data/item.json";
 import type { Stat, TeraTypes } from "../damage/config";
-import { Pokemon } from "./base";
+import { Pokemon, type Gender } from "./base";
 import { pokemonSchema } from "./schema";
 import type { Ability, Item } from "./typeHelper";
 
@@ -79,10 +79,11 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 		const data = await response.json();
 		const pokemonInfo = pokemonSchema.parse(data);
 		const { id, weight, types, stats, sprites } = pokemonInfo;
-		const { item, ev, iv, level, nature, ability, moves, name, teraType } =
+		const { item, ev, iv, level, nature, ability, moves, name, teraType, gender } =
 			infoFromPaste;
 		return new Pokemon({
 			name,
+			gender,
 			baseStat: stats,
 			id,
 			weight,
@@ -111,6 +112,7 @@ type PokemonInfoFromPaste = Partial<{
 	iv: Partial<Stat>;
 	moves: Array<string>;
 	teraType: TeraTypes;
+	gender: Gender
 }>;
 
 function parsePaste(paste: string): PokemonInfoFromPaste {
@@ -123,7 +125,18 @@ function parsePaste(paste: string): PokemonInfoFromPaste {
 		if (i === 0) {
 			// name & item
 			const [name, item] = line.split(" @ ");
-			info.name = name?.trim().replace(/ \(F\)/, ""); // remove female notation;
+			if (!name) {
+				throw new Error("Pokemon name is required");
+			}
+			let pokemonName = name.trim()
+			if (pokemonName?.includes("(M)")) {
+				info.gender = "Male"
+				pokemonName = pokemonName.replace(/ \(M\)/, "")
+			} else if (name?.includes("(F)")) {
+				info.gender = "Female"
+				pokemonName = pokemonName.replace(/ \(F\)/, "")
+			}
+			info.name = pokemonName; // remove gender notation;
 			// FIXME set type enhancing item
 			info.item = item && item in items ? (item as Item) : undefined;
 			continue;
@@ -304,7 +317,7 @@ export function getNatureModifierFromName(
 
 export function pokemonNameConverter(name: string): string {
 	const fetchName = name.toLowerCase().replaceAll(" ", "-");
-
+	console.log(fetchName)
 	if (fetchName === "urshifu") {
 		return "urshifu-single-strike";
 	}
