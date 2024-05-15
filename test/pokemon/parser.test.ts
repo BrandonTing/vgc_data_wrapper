@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { getPokemonFromPaste } from "../../src";
+import { getPasteFromPokemons, getPokemonFromPaste } from "../../src";
 
 test("parse paste successfully", async () => {
 	const incineroar = await getPokemonFromPaste(`
@@ -16,6 +16,10 @@ Careful Nature
 `);
 	expect(incineroar.teraType).toBe("Water");
 	expect(incineroar.types).toEqual(["Fire", "Dark"]);
+	const paste = getPasteFromPokemons([incineroar])
+	const reParsedIncineroar = await getPokemonFromPaste(paste);
+	expect(reParsedIncineroar.teraType).toBe("Water");
+	expect(reParsedIncineroar.types).toEqual(["Fire", "Dark"]);
 });
 
 
@@ -31,5 +35,6 @@ Superpower
 Rock Slide
 U-turn
 `);
+	expect(landorusTherian.gender).toEqual("Male");
 	expect(landorusTherian.types).toEqual(["Ground", "Flying"]);
 });
