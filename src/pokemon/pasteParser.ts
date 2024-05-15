@@ -81,14 +81,14 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 		const { id, weight, types, stats, sprites } = pokemonInfo;
 		const { item, ev, iv, level, nature, ability, moves, name, teraType, gender } =
 			infoFromPaste;
-		return new Pokemon({
+
+		const pokemon = new Pokemon({
 			name,
 			gender,
 			baseStat: stats,
 			id,
 			weight,
 			types,
-			item,
 			effortValues: ev,
 			individualValues: iv,
 			level,
@@ -97,7 +97,12 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 			moves,
 			sprite: sprites,
 			teraType,
+			originalItem: item
 		});
+		if (item && item in items) {
+			pokemon.item = item as Item
+		}
+		return pokemon
 	} catch (err) {
 		throw new Error("Invalid Name: cannot find target pokemon");
 	}
@@ -105,7 +110,7 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 
 type PokemonInfoFromPaste = Partial<{
 	name: string;
-	item: Item;
+	item: string;
 	ability: Ability;
 	level: number;
 	ev: Partial<Stat>;
@@ -139,7 +144,7 @@ function parsePaste(paste: string): PokemonInfoFromPaste {
 			}
 			info.name = pokemonName; // remove gender notation;
 			// FIXME set type enhancing item
-			info.item = item && item in items ? (item as Item) : undefined;
+			info.item = item;
 			continue;
 		}
 		if (line.includes("Ability: ")) {
@@ -245,7 +250,7 @@ function getPasteFromPokemon(pokemon: Pokemon): string {
 		return `${value} ${getStatKeyForPaste(key)}`
 	}).filter(Boolean).join(" / ")
 	return `
-${pokemon.name}${pokemon.gender === "Male" ? " (M)" : pokemon.gender === "Female" ? " (F)" : ""} @ ${pokemon.item ?? ""}
+${pokemon.name}${pokemon.gender === "Male" ? " (M)" : pokemon.gender === "Female" ? " (F)" : ""} @ ${pokemon.originalItem ?? ""}
 Ability: ${pokemon.ability}
 Level: ${pokemon.level}
 Tera Type: ${pokemon.teraType}
