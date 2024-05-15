@@ -317,7 +317,6 @@ export function getNatureModifierFromName(
 
 export function pokemonNameConverter(name: string): string {
 	const fetchName = name.toLowerCase().replaceAll(" ", "-");
-	console.log(fetchName)
 	if (fetchName === "urshifu") {
 		return "urshifu-single-strike";
 	}
