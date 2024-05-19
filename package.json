@@ -16,7 +16,8 @@
     ".": "./dist/index.js",
     "./ability.json": "./data/ability.json",
     "./item.json": "./data/item.json",
-    "./typeChart.json": "./data/typeChart.json"
+    "./typeChart.json": "./data/typeChart.json",
+    "./sd": "./data/sd"
   },
   "files": [
     "dist",
