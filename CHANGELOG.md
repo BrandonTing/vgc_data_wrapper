@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.18
+
+### Patch Changes
+
+- ba2edb9: export data from sd repo
+
 ## 0.2.17
 
 ### Patch Changes
