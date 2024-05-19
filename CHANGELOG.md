@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.17
+
+### Patch Changes
+
+- 5456dd6: export function to get paste from pokemons
+
 ## 0.2.16
 
 ### Patch Changes
