@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.2.19
+
+### Patch Changes
+
+- bb64e6d: fix expo path for sd data
+
 ## 0.2.18
 
 ### Patch Changes
