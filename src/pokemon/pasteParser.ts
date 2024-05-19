@@ -4,33 +4,33 @@ import { Pokemon, type Gender } from "./base";
 import { pokemonSchema } from "./schema";
 import type { Ability, Item } from "./typeHelper";
 
-const natures = [
-	"Hardy",
-	"Lonely",
-	"Brave",
-	"Adamant",
-	"Naughty",
-	"Bold",
-	"Docile",
-	"Relaxed",
-	"Impish",
-	"Lax",
-	"Timid",
-	"Hasty",
-	"Serious",
-	"Jolly",
-	"Naive",
-	"Modest",
-	"Mild",
-	"Quiet",
-	"Bashful",
-	"Rash",
-	"Calm",
-	"Gentle",
-	"Sassy",
-	"Careful",
-	"Quirky",
-] as const;
+const natures: Record<string, Pokemon["nature"]> = {
+	Hardy: {},
+	Lonely: { plus: "attack", minus: "defense" },
+	Brave: { plus: "attack", minus: "speed" },
+	Adamant: { plus: "attack", minus: "specialAttack" },
+	Naughty: { plus: "attack", minus: "specialDefense" },
+	Bold: { plus: "defense", minus: "attack" },
+	Docile: {},
+	Relaxed: { plus: "defense", minus: "speed" },
+	Impish: { plus: "defense", minus: "specialAttack" },
+	Lax: { plus: "defense", minus: "specialDefense" },
+	Timid: { plus: "speed", minus: "attack" },
+	Hasty: { plus: "speed", minus: "defense" },
+	Serious: {},
+	Jolly: { plus: "speed", minus: "specialAttack" },
+	Naive: { plus: "speed", minus: "specialDefense" },
+	Modest: { plus: "specialAttack", minus: "attack" },
+	Mild: { plus: "specialAttack", minus: "defense" },
+	Quiet: { plus: "specialAttack", minus: "speed" },
+	Bashful: {},
+	Rash: { plus: "specialAttack", minus: "specialDefense" },
+	Calm: { plus: "specialDefense", minus: "attack" },
+	Gentle: { plus: "specialDefense", minus: "defense" },
+	Sassy: { plus: "specialDefense", minus: "speed" },
+	Careful: { plus: "specialDefense", minus: "specialAttack" },
+	Quirky: {}
+}
 
 export async function getPokemonsFromPasteUrl(
 	url: string,
@@ -81,14 +81,14 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 		const { id, weight, types, stats, sprites } = pokemonInfo;
 		const { item, ev, iv, level, nature, ability, moves, name, teraType, gender } =
 			infoFromPaste;
-		return new Pokemon({
+
+		const pokemon = new Pokemon({
 			name,
 			gender,
 			baseStat: stats,
 			id,
 			weight,
 			types,
-			item,
 			effortValues: ev,
 			individualValues: iv,
 			level,
@@ -97,14 +97,20 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 			moves,
 			sprite: sprites,
 			teraType,
+			originalItem: item
 		});
+		if (item && item in items) {
+			pokemon.item = item as Item
+		}
+		return pokemon
 	} catch (err) {
 		throw new Error("Invalid Name: cannot find target pokemon");
 	}
 }
+
 type PokemonInfoFromPaste = Partial<{
 	name: string;
-	item: Item;
+	item: string;
 	ability: Ability;
 	level: number;
 	ev: Partial<Stat>;
@@ -138,7 +144,7 @@ function parsePaste(paste: string): PokemonInfoFromPaste {
 			}
 			info.name = pokemonName; // remove gender notation;
 			// FIXME set type enhancing item
-			info.item = item && item in items ? (item as Item) : undefined;
+			info.item = item;
 			continue;
 		}
 		if (line.includes("Ability: ")) {
@@ -166,12 +172,10 @@ function parsePaste(paste: string): PokemonInfoFromPaste {
 		}
 		if (line.includes("Nature")) {
 			const nature = line.split(" Nature")[0];
-			if (!nature || !natures.includes(nature)) {
+			if (!nature || !natures[nature]) {
 				continue;
 			}
-			info.nature = getNatureModifierFromName(
-				nature as unknown as (typeof natures)[number],
-			);
+			info.nature = natures[nature]
 		}
 		if (line.includes("- ")) {
 			const move = line.split("- ")[1]?.trim();
@@ -197,127 +201,19 @@ function getStatFromPaste(paste: string): Partial<Stat> {
 		if (!num || !key) {
 			continue;
 		}
-		switch (key) {
-			case "HP":
-				stat.hp = +num;
-				break;
-			case "Atk":
-				stat.attack = +num;
-				break;
-			case "Def":
-				stat.defense = +num;
-				break;
-			case "SpA":
-				stat.specialAttack = +num;
-				break;
-			case "SpD":
-				stat.specialDefense = +num;
-				break;
-			case "Spe":
-				stat.speed = +num;
-				break;
-			default:
-				break;
-		}
+		stat[getStatKeyFromPaste(key)] = +num
 	}
 	return stat;
 }
 
-export function getNatureModifierFromName(
-	name: (typeof natures)[number],
-): Pokemon["nature"] {
-	const nature: Pokemon["nature"] = {};
-	// plus
-	if (
-		name === "Timid" ||
-		name === "Hasty" ||
-		name === "Jolly" ||
-		name === "Naive"
-	) {
-		nature.plus = "speed";
-	}
-	if (
-		name === "Calm" ||
-		name === "Gentle" ||
-		name === "Sassy" ||
-		name === "Careful"
-	) {
-		nature.plus = "specialDefense";
-	}
-	if (
-		name === "Modest" ||
-		name === "Mild" ||
-		name === "Quiet" ||
-		name === "Rash"
-	) {
-		nature.plus = "specialAttack";
-	}
-	if (
-		name === "Bold" ||
-		name === "Relaxed" ||
-		name === "Impish" ||
-		name === "Lax"
-	) {
-		nature.plus = "defense";
-	}
-	if (
-		name === "Lonely" ||
-		name === "Brave" ||
-		name === "Adamant" ||
-		name === "Naughty"
-	) {
-		nature.plus = "attack";
-	}
-
-	// minus
-	if (
-		name === "Sassy" ||
-		name === "Quiet" ||
-		name === "Relaxed" ||
-		name === "Brave"
-	) {
-		nature.minus = "speed";
-	}
-	if (
-		name === "Naive" ||
-		name === "Rash" ||
-		name === "Lax" ||
-		name === "Naughty"
-	) {
-		nature.minus = "specialDefense";
-	}
-	if (
-		name === "Jolly" ||
-		name === "Careful" ||
-		name === "Impish" ||
-		name === "Adamant"
-	) {
-		nature.minus = "specialAttack";
-	}
-	if (
-		name === "Hasty" ||
-		name === "Gentle" ||
-		name === "Mild" ||
-		name === "Lonely"
-	) {
-		nature.minus = "defense";
-	}
-
-	if (
-		name === "Timid" ||
-		name === "Calm" ||
-		name === "Modest" ||
-		name === "Bold"
-	) {
-		nature.minus = "attack";
-	}
-
-	return nature;
+function getNatureNameFromModifier(pokemonNature: Pokemon["nature"]): string {
+	return Object.entries(natures).find(([_, nature]) =>
+		nature.minus === pokemonNature.minus && nature.plus === pokemonNature.plus
+	)?.[0] ?? ""
 }
 
-export function pokemonNameConverter(name: string): string {
+function pokemonNameConverter(name: string): string {
 	const fetchName = name.toLowerCase().replaceAll(" ", "-");
-	console.log(fetchName)
 	if (fetchName === "urshifu") {
 		return "urshifu-single-strike";
 	}
@@ -340,4 +236,65 @@ export function pokemonNameConverter(name: string): string {
 		return "ogerpon";
 	}
 	return fetchName;
+}
+
+export function getPasteFromPokemons(pokemons: Array<Pokemon>): string {
+	return pokemons.map(pokemon => getPasteFromPokemon(pokemon)).join('\n\n')
+}
+
+function getPasteFromPokemon(pokemon: Pokemon): string {
+	const evStr = Object.entries(pokemon.effortValues).map(([key, value]) => {
+		if (value === 0) {
+			return
+		}
+		return `${value} ${getStatKeyForPaste(key)}`
+	}).filter(Boolean).join(" / ")
+	return `
+${pokemon.name}${pokemon.gender === "Male" ? " (M)" : pokemon.gender === "Female" ? " (F)" : ""} @ ${pokemon.originalItem ?? ""}
+Ability: ${pokemon.ability}
+Level: ${pokemon.level}
+Tera Type: ${pokemon.teraType}
+EVs: ${evStr}
+${getNatureNameFromModifier(pokemon.nature)} Nature
+${pokemon.moves?.map(move => `- ${move}`).join("\n")}
+`
+}
+
+function getStatKeyForPaste(key: string) {
+	switch (key) {
+		case "hp":
+			return "HP"
+		case "attack":
+			return "Atk"
+		case "defense":
+			return "Def"
+		case "specialAttack":
+			return "SpA"
+		case "specialDefense":
+			return "SpD"
+		case "speed":
+			return "Spe"
+		default:
+			return key
+	}
+}
+
+
+function getStatKeyFromPaste(key: string): keyof (Pokemon['stats'] & {}) {
+	switch (key) {
+		case "HP":
+			return "hp"
+		case "Atk":
+			return "attack"
+		case "Def":
+			return "defense"
+		case "SpA":
+			return "specialAttack"
+		case "SpD":
+			return "specialDefense"
+		case "Spe":
+			return "speed"
+		default:
+			return "hp"
+	}
 }

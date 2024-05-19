@@ -46,12 +46,13 @@ type PokemonInfo = {
 	weight: number; // affect related damage calculation like Grass Knot.
 	ability?: Ability;
 	item?: Item;
+	originalItem?: string;
 	teraType?: TeraTypes; // null mean not in tera form.
 	isTera: boolean;
 	gender: Gender;
 	status: Status;
 	flags?: PokemonFlags;
-	moves?: Array<string>;
+	moves: Array<string>;
 	sprite?: string;
 };
 type ToggleTeraOption =
@@ -63,7 +64,7 @@ type ToggleTeraOption =
 		isTera: false;
 	};
 
-interface IPokemon extends PokemonInfo {
+export interface IPokemon extends PokemonInfo {
 	getStats: () => Stat;
 	getStat: (key: keyof Stat) => number;
 	setFlags: (flags: PokemonFlags) => void;
@@ -108,8 +109,9 @@ export class Pokemon implements IPokemon {
 	};
 
 	item?: Item;
+	originalItem: string | undefined;
 	flags?: PokemonFlags;
-	moves?: Array<string>;
+	moves: Array<string>;
 	sprite?: string;
 	constructor(
 		info?: {
@@ -143,6 +145,7 @@ export class Pokemon implements IPokemon {
 		this.gender = info?.gender ?? "Unknown";
 		this.status = info?.status ?? "Healthy";
 		this.item = info?.item;
+		this.originalItem = info?.originalItem
 		// stats
 		if (info?.stats) {
 			this.stats = genDefaultStat(info?.stats);
@@ -153,7 +156,7 @@ export class Pokemon implements IPokemon {
 		this.statStage = genDefaultStage(info?.statStage);
 		this.nature = info?.nature ?? {};
 		this.flags = info?.flags;
-		this.moves = info?.moves;
+		this.moves = info?.moves ?? [];
 		this.sprite = info?.sprite;
 	}
 
