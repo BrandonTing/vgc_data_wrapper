@@ -52,7 +52,7 @@ type PokemonInfo = {
 	gender: Gender;
 	status: Status;
 	flags?: PokemonFlags;
-	moves?: Array<string>;
+	moves: Array<string>;
 	sprite?: string;
 };
 type ToggleTeraOption =
@@ -111,7 +111,7 @@ export class Pokemon implements IPokemon {
 	item?: Item;
 	originalItem: string | undefined;
 	flags?: PokemonFlags;
-	moves?: Array<string>;
+	moves: Array<string>;
 	sprite?: string;
 	constructor(
 		info?: {
@@ -156,7 +156,7 @@ export class Pokemon implements IPokemon {
 		this.statStage = genDefaultStage(info?.statStage);
 		this.nature = info?.nature ?? {};
 		this.flags = info?.flags;
-		this.moves = info?.moves;
+		this.moves = info?.moves ?? [];
 		this.sprite = info?.sprite;
 	}
 
