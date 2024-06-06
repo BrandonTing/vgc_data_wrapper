@@ -91,9 +91,10 @@ export type BattleStatus = {
 
 type PokemonDmgFactor<T extends "Attacker" | "Defender"> = (T extends "Attacker" ? {
 	atk: TypedExtract<StatKeys, "attack" | "specialAttack">
-} : {
+} & Pick<Pokemon["flags"] & {}, "charge" | "helpingHand" | "powerSpot" | "steelySpirit"> : {
 	def: TypedExtract<StatKeys, "attack" | "specialAttack">
-}) & Partial<Record<TypedExtract<keyof Pokemon, "ability" | "item" | "isTera">, boolean>> & Pokemon["flags"]
+} & Pick<Pokemon["flags"] & {}, "hasEvolution" | "hasFriendGuard" | "lightScreen" | "reflect">)
+	& Flags<TypedExtract<keyof Pokemon, "ability" | "item" | "isTera">>
 
 export type DamageResult = {
 	rolls: Array<{
@@ -105,7 +106,7 @@ export type DamageResult = {
 	factors?: {
 		attacker: Prettify<PokemonDmgFactor<"Attacker">>,
 		defender: Prettify<PokemonDmgFactor<"Defender">>,
-		field: BattleFieldStatus,
-		move: Move["flags"]
+		field: Prettify<Flags<keyof BattleFieldStatus>>
+		move: Prettify<Flags<TypedExtract<keyof (Move["flags"] & {}), "isCriticalHit">>>
 	}
 };
