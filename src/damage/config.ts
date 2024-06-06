@@ -1,5 +1,5 @@
 import type { Pokemon } from "../pokemon";
-import type { Flags, TypedExtract } from "../typeUtils";
+import type { Flags, Prettify, TypedExtract } from "../typeUtils";
 
 export const statProps = [
 	"hp",
@@ -89,13 +89,11 @@ export type BattleStatus = {
 	field?: BattleFieldStatus;
 };
 
-
 type PokemonDmgFactor<T extends "Attacker" | "Defender"> = (T extends "Attacker" ? {
 	atk: TypedExtract<StatKeys, "attack" | "specialAttack">
 } : {
 	def: TypedExtract<StatKeys, "attack" | "specialAttack">
-}) & Record<TypedExtract<keyof Pokemon, "ability" | "item" | "isTera">, boolean> & Pokemon["flags"]
-
+}) & Partial<Record<TypedExtract<keyof Pokemon, "ability" | "item" | "isTera">, boolean>> & Pokemon["flags"]
 
 export type DamageResult = {
 	rolls: Array<{
@@ -105,9 +103,9 @@ export type DamageResult = {
 	koChance: number;
 	// TODO
 	factors?: {
-		attacker: PokemonDmgFactor<"Attacker">,
-		defender: PokemonDmgFactor<"Defender">,
+		attacker: Prettify<PokemonDmgFactor<"Attacker">>,
+		defender: Prettify<PokemonDmgFactor<"Defender">>,
 		field: BattleFieldStatus,
-		movee: Move["flags"]
+		move: Move["flags"]
 	}
 };
