@@ -107,6 +107,6 @@ export type DamageResult = {
 		attacker: PokemonDmgFactor<"Attacker">,
 		defender: PokemonDmgFactor<"Defender">,
 		field: Prettify<Flags<keyof BattleFieldStatus>>
-		move: Prettify<Flags<TypedExtract<keyof (Move["flags"] & {}), "isCriticalHit">>>
+		move: Prettify<Pick<Move["flags"] & {}, "isCriticalHit">>
 	}
 };
