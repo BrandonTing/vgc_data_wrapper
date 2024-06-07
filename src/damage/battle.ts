@@ -158,8 +158,9 @@ function getBasicDamage(option: BattleStatus): TemporalFactor {
 function modifyBySpreadDamage(
 	value: number,
 	{ move, attacker, field }: Pick<BattleStatus, "move" | "field" | "attacker">,
-): number {
+): TemporalFactor {
 	let modifier = 1;
+	let factors: TemporalFactor['factors'] = undefined
 	if (
 		(
 			move.target === "allAdjacent" ||
@@ -170,40 +171,66 @@ function modifyBySpreadDamage(
 		field?.isDouble
 	) {
 		modifier = 0.75;
+		factors = {
+			field: {
+				isDouble: true
+			}
+		}
 	}
-	return Math.round(value * modifier - 0.001);
+	const operator = Math.round(value * modifier - 0.001)
+	return factors ? { operator, factors } : { operator };
 }
 
 function modifyByWeather(
 	value: number,
 	{ field, move }: Pick<BattleStatus, "field" | "move">,
-): number {
+): TemporalFactor {
 	let modifier = 1;
+	let factors: TemporalFactor['factors'] = undefined
+	const weatherFactor: TemporalFactor['factors'] = {
+		field: {
+			weather: true
+		}
+	}
 	if (field?.weather === "Rain") {
 		if (move.type === "Fire") {
 			modifier = 0.5;
+			factors = weatherFactor
 		}
 		if (move.type === "Water") {
 			modifier = 1.5;
+			factors = weatherFactor
 		}
 	}
 	if (field?.weather === "Sun") {
 		if (move.type === "Fire") {
 			modifier = 1.5;
+			factors = weatherFactor
 		}
 		if (move.type === "Water") {
 			modifier = 0.5;
+			factors = weatherFactor
 		}
 	}
-	return Math.round(value * modifier - 0.001);
+	const operator = Math.round(value * modifier - 0.001)
+	return factors ? { operator, factors } : { operator };
 }
 
 function modifyByCriticalHit(
 	value: number,
 	{ move }: Pick<BattleStatus, "move">,
-): number {
+): TemporalFactor {
 	const modifier = move.flags?.isCriticalHit ? 1.5 : 1;
-	return Math.round(value * modifier - 0.001);
+	const operator = Math.round(value * modifier - 0.001);
+	return move.flags?.isCriticalHit ? {
+		operator, factors: {
+			move: {
+				isCriticalHit: true
+			}
+		}
+	} : {
+		operator
+	}
 }
 
 function modifyByRandomNum(value: number): Array<number> {
