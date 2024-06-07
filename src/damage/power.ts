@@ -1,4 +1,5 @@
 import { getBasePower } from "./basePower";
+import type { TemporalFactor } from "./battle";
 import type { BattleStatus } from "./config";
 import {
 	checkMatchType,
@@ -6,15 +7,17 @@ import {
 	pipeModifierHelper,
 } from "./utils";
 
-export function getPower(option: BattleStatus): number {
+export function getPower(option: BattleStatus): TemporalFactor {
+	let factors: TemporalFactor["factors"] = {}
 	const basePower = getBasePower(
 		option.attacker,
 		option.defender,
 		option.move,
 		option.field,
 	);
+	factors = basePower.factors
 	const modifierAfterModification = pipeModifierHelper(
-		4096 as number,
+		{ operator: 4096, factors: {} } as TemporalFactor,
 		[
 			modifyByAttackerAbility,
 			modifyByDefenderAbility,
@@ -28,12 +31,17 @@ export function getPower(option: BattleStatus): number {
 			modifyByAura,
 		],
 		(pre, cur) => {
-			return Math.round(pre * cur(option));
+			const curResult = cur(option)
+			return { operator: Math.round(pre.operator * curResult.operator), factors: { ...pre.factors, ...curResult.factors } }
 		},
 	);
 	const result = Math.round(
-		(basePower * modifierAfterModification) / 4096 - 0.001,
+		(basePower.operator * modifierAfterModification.operator) / 4096 - 0.001,
 	);
+	factors = {
+		...factors,
+		...modifierAfterModification.factors
+	}
 	if (
 		checkTeraWIthTypeMatch(option.attacker, option.move.type) &&
 		result < 60 &&
@@ -41,9 +49,9 @@ export function getPower(option: BattleStatus): number {
 		!option.move.flags?.isPriority &&
 		option.move.id !== 512
 	) {
-		return 60;
+		return { operator: 60, factors: { ...factors, attacker: { isTera: true } } };
 	}
-	return result;
+	return { operator: result, factors };
 }
 
 function modifyByAttackerAbility({
@@ -51,22 +59,27 @@ function modifyByAttackerAbility({
 	defender,
 	move,
 	field,
-}: BattleStatus): number {
+}: BattleStatus): TemporalFactor {
+	const getFactor = createFactorHelper({
+		attacker: {
+			ability: true
+		},
+	})
 	// Rivalry
 	if (attacker.ability === "Rivalry") {
-		if (defender.gender === "Unknown") return 1;
-		if (attacker.gender === defender.gender) return 1.25;
-		return 0.75;
+		if (defender.gender === "Unknown") return getFactor(1);
+		if (attacker.gender === defender.gender) return getFactor(1.25);
+		return getFactor(0.75);
 	}
 	// Supreme Overlord
 	if (attacker.ability === "Supreme Overlord 1") {
-		return 1 + 0.1 * 1;
+		return getFactor(1 + 0.1 * 1);
 	}
 	if (attacker.ability === "Supreme Overlord 2") {
-		return 1 + 0.1 * 2;
+		return getFactor(1 + 0.1 * 2);
 	}
 	if (attacker.ability === "Supreme Overlord 3") {
-		return 1 + 0.1 * 3;
+		return getFactor(1 + 0.1 * 3);
 	}
 	// skins
 	if (
@@ -80,27 +93,27 @@ function modifyByAttackerAbility({
 			attacker.ability === "Galvanize") &&
 		move.type === "Normal"
 	) {
-		return 1.2;
+		return getFactor(1.2);
 	}
 	// iron fist
 	if (attacker.ability === "Iron Fist" && move.flags?.isPunch) {
-		return 1.2;
+		return getFactor(1.2);
 	}
 	// reckless
 	if (attacker.ability === "Reckless" && move.flags?.hasRecoil) {
-		return 1.2;
+		return getFactor(1.2);
 	}
 	// Analytic
 	if (attacker.ability === "Analytic") {
-		return 1.3;
+		return getFactor(1.3);
 	}
 	// sheer force
 	if (attacker.ability === "Sheer Force" && move.flags?.hasSecondary) {
-		return 1.3;
+		return getFactor(1.3);
 	}
 	// Tough Claws
 	if (attacker.ability === "Tough Claws" && move.flags?.isContact) {
-		return 1.3;
+		return getFactor(1.3);
 	}
 	// Sand Force
 	if (
@@ -108,27 +121,31 @@ function modifyByAttackerAbility({
 		(move.type === "Rock" || move.type === "Steel" || move.type === "Ground") &&
 		field?.weather === "Sand"
 	) {
-		return 1.3;
+		return getFactor(1.3, {
+			field: {
+				weather: true
+			}
+		});
 	}
 	// Punk Rock
 	if (attacker.ability === "Punk Rock" && move.flags?.isSound) {
-		return 1.3;
+		return getFactor(1.3);
 	}
 	// Sharpness
 	if (attacker.ability === "Sharpness" && move.flags?.isSlicing) {
-		return 1.5;
+		return getFactor(1.5);
 	}
 	// Technician
 	if (attacker.ability === "Technician" && move.base <= 60) {
-		return 1.5;
+		return getFactor(1.5);
 	}
 	// Strong Jaw
 	if (attacker.ability === "Strong Jaw" && move.flags?.isBite) {
-		return 1.5;
+		return getFactor(1.5);
 	}
 	// Mega Launcher
 	if (attacker.ability === "Mega Launcher" && move.flags?.isPulse) {
-		return 1.5;
+		return getFactor(1.5);
 	}
 	// Flare Boost
 	if (
@@ -136,7 +153,11 @@ function modifyByAttackerAbility({
 		attacker.status === "Burned" &&
 		move.category === "Special"
 	) {
-		return 1.5;
+		return getFactor(1.5, {
+			attacker: {
+				status: true
+			}
+		});
 	}
 	// Toxic Boost
 	if (
@@ -144,45 +165,61 @@ function modifyByAttackerAbility({
 		(attacker.status === "Poisoned" || attacker.status === "Badly Poisoned") &&
 		move.category === "Physical"
 	) {
-		return 1.5;
+		return getFactor(1.5, {
+			attacker: {
+				status: true
+			}
+		});
 	}
-	return 1;
+	return { operator: 1 }
 }
 
 function modifyByDefenderAbility({
 	defender,
 	move,
-}: Pick<BattleStatus, "defender" | "move">): number {
+}: Pick<BattleStatus, "defender" | "move">): TemporalFactor {
+	const getFactor = createFactorHelper({
+		defender: {
+			ability: true
+		},
+	})
+
 	// Fluffy
 	if (defender.ability === "Fluffy" && move.type === "Fire") {
-		return 1.25;
+		return getFactor(1.25);
 	}
 	if (defender.ability === "Heatproof" && move.type === "Fire") {
-		return 0.5;
+		return getFactor(0.5);
 	}
-	return 1;
+	return { operator: 1 };
 }
 
 function modifyByItem({
 	attacker: { item },
 	move,
-}: Pick<BattleStatus, "attacker" | "move">): number {
+}: Pick<BattleStatus, "attacker" | "move">): TemporalFactor {
+	const getFactor = createFactorHelper({
+		attacker: {
+			item: true
+		},
+	})
+
 	if (item === "Muscle Band" && move.category === "Physical") {
-		return 1.1;
+		return getFactor(1.1);
 	}
 	if (item === "Wise Glasses" && move.category === "Special") {
-		return 1.1;
+		return getFactor(1.1);
 	}
 	if (item === "Punching Glove" && move.flags?.isPunch) {
-		return 1.1;
+		return getFactor(1.1);
 	}
 	if (item === "Type Enhancing" || item === "Ogerpon Mask") {
-		return 1.2;
+		return getFactor(1.2);
 	}
 	if (item === "Normal Gem" && move.type === "Normal") {
-		return 1.3;
+		return getFactor(1.3);
 	}
-	return 1;
+	return { operator: 1 };
 }
 
 function modifyByMoveEffect({
@@ -190,10 +227,17 @@ function modifyByMoveEffect({
 	defender,
 	move,
 	field,
-}: BattleStatus): number {
+}: BattleStatus): TemporalFactor {
 	// Expanding Force
 	if (move.id === 797 && field?.terrain === "Psychic") {
-		return 1.5;
+		return {
+			operator: 1.5,
+			factors: {
+				field: {
+					terrain: true
+				}
+			}
+		}
 	}
 	// solar beam & solar blade
 	if (
@@ -201,74 +245,155 @@ function modifyByMoveEffect({
 		field?.weather &&
 		field?.weather !== "Sun"
 	) {
-		return 0.5;
+		return {
+			operator: 0.5,
+			factors: {
+				field: {
+					weather: true
+				}
+			}
+		}
 	}
 	// Facade
 	if (move.id === 263 && attacker.status === "Burned") {
-		return 2;
+		return {
+			operator: 2,
+			factors: {
+				attacker: {
+					status: true
+				}
+			}
+		}
 	}
 	// Knock off
 	if (move.id === 282 && defender.item) {
-		return 1.5;
+		return {
+			operator: 1.5,
+			factors: {
+				defender: {
+					item: true
+				}
+			}
+		};
 	}
 	// Rising Voltage
 	if (move.id === 804 && field?.terrain === "Electric") {
 		if (checkMatchType(defender, "Flying")) {
-			return 1;
+			return {
+				operator: 1,
+				factors: {
+					defender: {
+						isTera: true
+					}
+				}
+			};
 		}
-		return 2;
+		return { operator: 2, factors: { field: { terrain: true } } };
 	}
-	return 1;
+	return { operator: 1 }
 }
 
 function modifyByHelpingHand({
 	attacker,
-}: Pick<BattleStatus, "attacker">): number {
-	return attacker.flags?.helpingHand ? 1.5 : 1;
+}: Pick<BattleStatus, "attacker">): TemporalFactor {
+	return {
+		operator: attacker.flags?.helpingHand ? 1.5 : 1,
+		factors: {
+			attacker: {
+				helpingHand: attacker.flags?.helpingHand
+			}
+		}
+	};
 }
 
 function modifyByPowerSpot({
 	attacker,
-}: Pick<BattleStatus, "attacker">): number {
-	return attacker.flags?.powerSpot ? 1.3 : 1;
+}: Pick<BattleStatus, "attacker">): TemporalFactor {
+	return {
+		operator: attacker.flags?.powerSpot ? 1.3 : 1, factors: {
+			attacker: {
+				powerSpot: attacker.flags?.powerSpot
+			}
+		}
+	};
 }
 
 function modifyBySteelySpirit({
 	attacker,
-}: Pick<BattleStatus, "attacker">): number {
-	return attacker.flags?.steelySpirit ? 1.5 : 1;
+}: Pick<BattleStatus, "attacker">): TemporalFactor {
+	return {
+		operator: attacker.flags?.steelySpirit ? 1.5 : 1,
+		factors: {
+			attacker: {
+				steelySpirit: attacker.flags?.steelySpirit
+			}
+		}
+	}
 }
 
 function modifyByCharge({
 	attacker,
 	move,
-}: Pick<BattleStatus, "attacker" | "move">): number {
-	return attacker.flags?.charge && move.type === "Electric" ? 2 : 1;
+}: Pick<BattleStatus, "attacker" | "move">): TemporalFactor {
+	const charged = attacker.flags?.charge && move.type === "Electric"
+	return {
+		operator: charged ? 2 : 1,
+		factors: {
+			attacker: {
+				charge: charged
+			}
+		}
+	}
 }
 
 function modifyByTerrain({
 	move,
 	field,
-}: Pick<BattleStatus, "move" | "field">): number {
+}: Pick<BattleStatus, "move" | "field">): TemporalFactor {
+	const getFactor = createFactorHelper({
+		field: {
+			terrain: true
+		}
+	})
 	if (
 		(move.type === "Electric" && field?.terrain === "Electric") ||
 		(move.type === "Psychic" && field?.terrain === "Psychic") ||
 		(move.type === "Grass" && field?.terrain === "Grassy")
 	) {
-		return 1.3;
+		return getFactor(1.3);
 	}
 	if (move.type === "Dragon" && field?.terrain === "Misty") {
-		return 0.5;
+		return getFactor(0.5);
 	}
-	return 1;
+	return { operator: 1 };
 }
 
 function modifyByAura({
 	move,
 	field,
-}: Pick<BattleStatus, "move" | "field">): number {
-	return (move.type === "Dark" && field?.aura?.includes("Dark")) ||
+}: Pick<BattleStatus, "move" | "field">): TemporalFactor {
+	const auraAffected = (move.type === "Dark" && field?.aura?.includes("Dark")) ||
 		(move.type === "Fairy" && field?.aura?.includes("Fairy"))
-		? 1.33
-		: 1;
+	return auraAffected ? {
+		operator: 1.33,
+		factors: {
+			field: {
+				aura: true
+			}
+		}
+	} : {
+		operator: 1
+	}
+}
+
+function createFactorHelper(commonFactor: TemporalFactor["factors"]) {
+	return function getFactor(operator: number, additionalFactor?: TemporalFactor["factors"]): TemporalFactor {
+		return {
+			operator,
+			factors: {
+				...commonFactor,
+				...additionalFactor
+			}
+		}
+	}
 }

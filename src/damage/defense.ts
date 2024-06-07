@@ -1,3 +1,4 @@
+import type { TemporalFactor } from "./battle";
 import type { BattleStatus, Move } from "./config";
 import {
 	checkAtkIsHighest,
@@ -12,7 +13,7 @@ function checkUsePhysicalHelper(move: Move): boolean {
 
 export function getDefense(
 	option: Pick<BattleStatus, "defender" | "move">,
-): number {
+): TemporalFactor {
 	const { move, defender } = option;
 	const usePhysicalDef = checkUsePhysicalHelper(move);
 	let defStat = usePhysicalDef
@@ -37,8 +38,8 @@ export function getDefense(
 					return Math.round(pre * cur(option));
 				},
 			)) /
-			4096 -
-			0.001,
+		4096 -
+		0.001,
 	);
 
 	return result;

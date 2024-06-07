@@ -1,4 +1,5 @@
 import type { Pokemon } from "../pokemon";
+import type { RecursivePartial } from "../typeUtils";
 import { getAttack } from "./attack";
 import type {
 	BattleFieldStatus,
@@ -70,10 +71,15 @@ export class Battle implements IBattle {
 
 const dmgRollCounts = 16;
 
+export type TemporalFactor = {
+	operator: number,
+	factors?: RecursivePartial<DamageResult["factors"]>
+}
+
 function getDamage(option: BattleStatus): DamageResult {
 	function pipeOperator(
-		pre: number,
-		cur: (value: number, option: BattleStatus) => number,
+		pre: TemporalFactor,
+		cur: (temporalResult: TemporalFactor, option: BattleStatus) => TemporalFactor,
 	) {
 		return cur(pre, option);
 	}
@@ -113,21 +119,41 @@ function getDamage(option: BattleStatus): DamageResult {
 	return {
 		rolls: results,
 		koChance,
+		factors: {
+			attacker: {
+				atk: option.move.category === "Special" ? "specialAttack" : "attack"
+			},
+			defender: {
+				def: option.move.category === "Special" ? "specialDefense" : "defense"
+			},
+			move: {},
+			field: {}
+		}
 	};
 }
 
-function getBasicDamage(option: BattleStatus): number {
+function getBasicDamage(option: BattleStatus): TemporalFactor {
 	const power = getPower(option);
+	// TODO
 	const attack = getAttack(option);
 	const defense = getDefense(option);
-	return Math.trunc(
+	const factors = {
+		...power.factors,
+		...attack.factors,
+		...defense.factors
+	}
+	const operator = Math.trunc(
 		Math.trunc(
-			(Math.trunc((option.attacker.level * 2) / 5 + 2) * power * attack) /
-			defense,
+			(Math.trunc((option.attacker.level * 2) / 5 + 2) * power.operator * attack.operator) /
+			defense.operator,
 		) /
 		50 +
 		2,
 	);
+	return {
+		operator,
+		factors
+	}
 }
 
 function modifyBySpreadDamage(

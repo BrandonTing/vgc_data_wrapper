@@ -1,3 +1,4 @@
+import type { TemporalFactor } from "./battle";
 import type { BattleStatus } from "./config";
 import {
 	checkAtkIsHighest,
@@ -10,7 +11,7 @@ export function getAttack({
 	defender,
 	move,
 	field,
-}: BattleStatus): number {
+}: BattleStatus): TemporalFactor {
 	let atkStat =
 		move.category === "Physical"
 			? attacker.getStat("attack")

@@ -8,3 +8,6 @@ export type Prettify<T> = {
 	[K in keyof T]: T[K];
 } & {};
 
+export type RecursivePartial<T> = {
+	[P in keyof T]?: RecursivePartial<T[P]>;
+};
