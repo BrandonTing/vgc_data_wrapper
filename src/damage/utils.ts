@@ -1,5 +1,5 @@
 import type { Pokemon } from "../pokemon";
-import type { Stat, TeraTypes, Type } from "./config";
+import type { Move, Stat, TeraTypes, Type } from "./config";
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export function pipeModifierHelper<T, U extends (...args: any) => T>(
@@ -10,7 +10,8 @@ export function pipeModifierHelper<T, U extends (...args: any) => T>(
 	return modifiers.reduce(operation, initValue);
 }
 
-export function checkAtkIsHighest(stat: Stat, target: keyof Stat) {
+export function checkStatOfMoveCategoryIsHighest(category: Move["category"], stat: Stat) {
+	const target = category === "Physical" ? "attack" : "specialAttack"
 	const { hp, ...statExcludeHp } = stat;
 	return Math.max(...Object.values(statExcludeHp)) === stat[target];
 }

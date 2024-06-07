@@ -1,5 +1,5 @@
 import { getBasePower } from "./basePower";
-import type { TemporalFactor } from "./battle";
+import { createFactorHelper, type TemporalFactor } from "./battle";
 import type { BattleStatus } from "./config";
 import {
 	checkMatchType,
@@ -404,17 +404,5 @@ function modifyByAura({
 		}
 	} : {
 		operator: 1
-	}
-}
-
-function createFactorHelper(commonFactor: TemporalFactor["factors"]) {
-	return function getFactor(operator: number, additionalFactor?: TemporalFactor["factors"]): TemporalFactor {
-		return {
-			operator,
-			factors: {
-				...commonFactor,
-				...additionalFactor
-			}
-		}
 	}
 }

@@ -134,7 +134,6 @@ function getDamage(option: BattleStatus): DamageResult {
 
 function getBasicDamage(option: BattleStatus): TemporalFactor {
 	const power = getPower(option);
-	// TODO
 	const attack = getAttack(option);
 	const defense = getDefense(option);
 	const factors = {
@@ -552,4 +551,17 @@ function modifyByDefenderItem({
 		return 0.5;
 	}
 	return 1;
+}
+
+
+export function createFactorHelper(commonFactor: TemporalFactor["factors"]) {
+	return function getFactor(operator: number, additionalFactor?: TemporalFactor["factors"]): TemporalFactor {
+		return {
+			operator,
+			factors: {
+				...commonFactor,
+				...additionalFactor
+			}
+		}
+	}
 }

@@ -90,10 +90,10 @@ export type BattleStatus = {
 };
 
 type PokemonDmgFactor<T extends "Attacker" | "Defender"> = Prettify<(T extends "Attacker" ? {
-	atk: TypedExtract<StatKeys, "attack" | "specialAttack">
-} & Pick<Pokemon["flags"] & {}, "charge" | "helpingHand" | "powerSpot" | "steelySpirit"> : {
+	atk: TypedExtract<StatKeys, "attack" | "specialAttack" | "defense">
+} & { statFrom: "Attacker" | "Defender" } & Pick<Pokemon["flags"] & {}, "charge" | "helpingHand" | "powerSpot" | "steelySpirit"> : {
 	def: TypedExtract<StatKeys, "defense" | "specialDefense">
-} & Pick<Pokemon["flags"] & {}, "hasEvolution" | "hasFriendGuard" | "lightScreen" | "reflect">)
+} & Pick<Pokemon["flags"] & {}, "hasFriendGuard" | "lightScreen" | "reflect">)
 	& Flags<TypedExtract<keyof Pokemon, "ability" | "item" | "isTera" | "status">>>
 
 export type DamageResult = {
