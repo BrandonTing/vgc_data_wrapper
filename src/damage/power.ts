@@ -296,38 +296,54 @@ function modifyByMoveEffect({
 function modifyByHelpingHand({
 	attacker,
 }: Pick<BattleStatus, "attacker">): TemporalFactor {
-	return {
-		operator: attacker.flags?.helpingHand ? 1.5 : 1,
-		factors: {
-			attacker: {
-				helpingHand: attacker.flags?.helpingHand
+	if (attacker.flags?.helpingHand) {
+		return {
+			operator: 1.5,
+			factors: {
+				attacker: {
+					helpingHand: true
+				}
 			}
 		}
-	};
+	}
+	return {
+		operator: 1
+	}
 }
 
 function modifyByPowerSpot({
 	attacker,
 }: Pick<BattleStatus, "attacker">): TemporalFactor {
-	return {
-		operator: attacker.flags?.powerSpot ? 1.3 : 1, factors: {
-			attacker: {
-				powerSpot: attacker.flags?.powerSpot
+	if (attacker.flags?.powerSpot) {
+		return {
+			operator: 1.3,
+			factors: {
+				attacker: {
+					powerSpot: true
+				}
 			}
 		}
-	};
+	}
+	return {
+		operator: 1,
+	}
 }
 
 function modifyBySteelySpirit({
 	attacker,
 }: Pick<BattleStatus, "attacker">): TemporalFactor {
-	return {
-		operator: attacker.flags?.steelySpirit ? 1.5 : 1,
-		factors: {
-			attacker: {
-				steelySpirit: attacker.flags?.steelySpirit
+	if (attacker.flags?.steelySpirit) {
+		return {
+			operator: 1.5,
+			factors: {
+				attacker: {
+					steelySpirit: true
+				}
 			}
 		}
+	}
+	return {
+		operator: 1,
 	}
 }
 
@@ -336,13 +352,18 @@ function modifyByCharge({
 	move,
 }: Pick<BattleStatus, "attacker" | "move">): TemporalFactor {
 	const charged = attacker.flags?.charge && move.type === "Electric"
-	return {
-		operator: charged ? 2 : 1,
-		factors: {
-			attacker: {
-				charge: charged
+	if (charged) {
+		return {
+			operator: 2,
+			factors: {
+				attacker: {
+					charge: true
+				}
 			}
 		}
+	}
+	return {
+		operator: 1,
 	}
 }
 
