@@ -13,6 +13,7 @@ import { getEffectivenessOnPokemon } from "./type";
 import {
 	checkTeraWIthTypeMatch,
 	getPokemonCurrentType,
+	mergeFactorList,
 	pipeModifierHelper,
 } from "./utils";
 
@@ -136,11 +137,7 @@ function getBasicDamage(option: BattleStatus): TemporalFactor {
 	const power = getPower(option);
 	const attack = getAttack(option);
 	const defense = getDefense(option);
-	const factors = {
-		...power.factors,
-		...attack.factors,
-		...defense.factors
-	}
+	const factors = mergeFactorList(power.factors, attack.factors, defense.factors)
 	const operator = Math.trunc(
 		Math.trunc(
 			(Math.trunc((option.attacker.level * 2) / 5 + 2) * power.operator * attack.operator) /
@@ -585,10 +582,7 @@ export function createFactorHelper(commonFactor: TemporalFactor["factors"]) {
 	return function getFactor(operator: number, additionalFactor?: TemporalFactor["factors"]): TemporalFactor {
 		return {
 			operator,
-			factors: {
-				...commonFactor,
-				...additionalFactor
-			}
+			factors: mergeFactorList(commonFactor, additionalFactor)
 		}
 	}
 }

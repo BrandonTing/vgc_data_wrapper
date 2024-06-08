@@ -3,6 +3,7 @@ import type { BattleStatus, Move } from "./config";
 import {
 	checkMatchType,
 	checkStatOfMoveCategoryIsHighest,
+	mergeFactorList,
 	modifyStatByStageChange,
 	pipeModifierHelper
 } from "./utils";
@@ -29,7 +30,7 @@ export function getDefense(
 		[modifyByWeather, modifyByDefenderAbility, modifyByItem, modifyByRuin],
 		(pre, cur) => {
 			const { operator, factors } = cur(option)
-			return { operator: Math.round(pre.operator * operator), factors: { ...pre.factors, ...factors } };
+			return { operator: Math.round(pre.operator * operator), factors: mergeFactorList(pre.factors, factors) };
 		},
 	)
 	const result = Math.round(

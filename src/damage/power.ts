@@ -4,6 +4,7 @@ import type { BattleStatus } from "./config";
 import {
 	checkMatchType,
 	checkTeraWIthTypeMatch,
+	mergeFactorList,
 	pipeModifierHelper,
 } from "./utils";
 
@@ -31,17 +32,14 @@ export function getPower(option: BattleStatus): TemporalFactor {
 			modifyByAura,
 		],
 		(pre, cur) => {
-			const curResult = cur(option)
-			return { operator: Math.round(pre.operator * curResult.operator), factors: { ...pre.factors, ...curResult.factors } }
+			const { operator, factors } = cur(option)
+			return { operator: Math.round(pre.operator * operator), factors: mergeFactorList(pre.factors, factors) }
 		},
 	);
 	const result = Math.round(
 		(basePower.operator * modifierAfterModification.operator) / 4096 - 0.001,
 	);
-	factors = {
-		...factors,
-		...modifierAfterModification.factors
-	}
+	factors = mergeFactorList(factors, modifierAfterModification.factors)
 	if (
 		checkTeraWIthTypeMatch(option.attacker, option.move.type) &&
 		result < 60 &&
@@ -49,8 +47,9 @@ export function getPower(option: BattleStatus): TemporalFactor {
 		!option.move.flags?.isPriority &&
 		option.move.id !== 512
 	) {
-		return { operator: 60, factors: { ...factors, attacker: { isTera: true } } };
-	}
+		return { operator: 60, factors: mergeFactorList(factors, { attacker: { isTera: true } }) }
+	};
+
 	return { operator: result, factors };
 }
 

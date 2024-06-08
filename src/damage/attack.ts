@@ -2,6 +2,7 @@ import { createFactorHelper, type TemporalFactor } from "./battle";
 import type { BattleStatus } from "./config";
 import {
 	checkStatOfMoveCategoryIsHighest,
+	mergeFactorList,
 	modifyStatByStageChange,
 	pipeModifierHelper
 } from "./utils";
@@ -35,33 +36,31 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 	if (move.id === 776) {
 		atkStat = attacker.getStat("defense");
 		stageChanges = attacker.statStage.defense;
-		factors = {
-			...factors,
+		factors = mergeFactorList(factors, {
 			attacker: {
 				atk: "defense"
 			}
-		}
+		})
 	}
 	// foul play
 	if (move.id === 492) {
 		atkStat = defender.getStat("attack");
 		stageChanges = defender.statStage.attack;
-		factors = {
-			...factors,
+		factors = mergeFactorList(factors, {
 			attacker: {
 				statFrom: "Defender"
 			}
-		}
+		})
 	}
 
 	if (!move.flags?.isCriticalHit) {
 		atkStat = modifyStatByStageChange(atkStat, stageChanges);
-		factors = {
-			...factors,
+		factors = mergeFactorList(factors, {
 			move: {
-				isCriticalHit: true
+				isCriticalHit: true,
 			}
-		}
+		})
+
 	}
 	const operator = pipeModifierHelper(
 		{ operator: 4096, factors: {} } as TemporalFactor,
@@ -73,13 +72,10 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 		],
 		(pre, cur) => {
 			const { operator, factors } = cur(option)
-			return { operator: Math.round(pre.operator * operator), factors: { ...pre.factors, ...factors } };
+			return { operator: Math.round(pre.operator * operator), factors: mergeFactorList(pre.factors, factors) };
 		},
 	)
-	factors = {
-		...factors,
-		...operator.factors
-	}
+	factors = mergeFactorList(factors, operator.factors)
 	const result = Math.round(
 		(atkStat *
 			operator.operator) /
