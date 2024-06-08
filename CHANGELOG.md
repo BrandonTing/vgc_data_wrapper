@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.0
+
+### Minor Changes
+
+- 291702b: getDamage now returns a new property: factors to show what's used in this battle
+
 ## 0.2.19
 
 ### Patch Changes
