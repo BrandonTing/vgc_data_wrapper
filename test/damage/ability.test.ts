@@ -25,7 +25,8 @@ test("Supreme Overlord", () => {
         defender: amoonguss,
         move,
     });
-    const actual = getDamangeNumberFromResult(battle.getDamage());
+    const damage = battle.getDamage()
+    const actual = getDamangeNumberFromResult(damage);
     const expected = [
         85,
         87,
@@ -45,6 +46,7 @@ test("Supreme Overlord", () => {
         102
     ];
     expect(actual).toEqual(expected);
+    expect(damage.factors.attacker.ability).toEqual(true);
     kingGambit.ability = "Supreme Overlord 2"
     const down2Actual = getDamangeNumberFromResult(battle.getDamage());
     const down2Expected = [
@@ -65,7 +67,7 @@ test("Supreme Overlord", () => {
         109,
         111
     ];
-    expect(actual).toEqual(expected);
+    expect(down2Actual).toEqual(down2Expected);
     kingGambit.ability = "Supreme Overlord 3"
     const down3Actual = getDamangeNumberFromResult(battle.getDamage());
     const down3Expected = [
@@ -86,6 +88,5 @@ test("Supreme Overlord", () => {
         118,
         120
     ];
-    expect(actual).toEqual(expected);
-
+    expect(down3Actual).toEqual(down3Expected);
 })

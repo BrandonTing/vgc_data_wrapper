@@ -91,6 +91,7 @@ function getDamage(option: BattleStatus): DamageResult {
 	);
 	const possibleDamages = modifyByRandomNum(preRandomResult.operator);
 	let finalFactors = preRandomResult.factors
+	const hp = option.defender.getStat("hp")
 	const results: DamageResult["rolls"] = possibleDamages.map((damage, index) => {
 		const damageNum = pipeModifierHelper(
 			{ operator: damage, factors: preRandomResult.factors },
@@ -106,10 +107,10 @@ function getDamage(option: BattleStatus): DamageResult {
 			finalFactors = mergeFactorList(finalFactors, damageNum.factors)
 		}
 		const damagePercentage =
-			Math.round((damageNum / option.defender.getStat("hp")) * 1000) / 10;
+			Math.round((damageNum.operator / hp) * 1000) / 10;
 
 		return {
-			number: damageNum,
+			number: damageNum.operator,
 			percentage: damagePercentage,
 		};
 	});
@@ -740,41 +741,58 @@ function modifyByDefenderAbility({
 
 function modifyByFriendGuard({
 	defender: { flags },
-}: Pick<BattleStatus, "defender">): number {
-	return flags?.hasFriendGuard ? 0.75 : 1;
+}: Pick<BattleStatus, "defender">): TemporalFactor {
+	return flags?.hasFriendGuard ? {
+		operator: 0.75, factors: {
+			defender: {
+				hasFriendGuard: true
+			}
+		}
+	} : { operator: 1 };
 }
 
 function modifyByAttackerItem({
 	attacker,
 	defender,
 	move,
-}: Pick<BattleStatus, "attacker" | "defender" | "move">): number {
+}: Pick<BattleStatus, "attacker" | "defender" | "move">): TemporalFactor {
+	const getFactor = createFactorHelper({
+		attacker: {
+			item: true
+		}
+	})
 	if (
 		attacker.item === "Expert Belt" &&
 		getEffectivenessOnPokemon(move.type, getPokemonCurrentType(defender)) > 1
 	) {
-		return 1.2;
+		return getFactor(1.2);
 	}
 	if (attacker.item === "Life Orb") {
-		return 1.3;
+		return getFactor(1.3);
 	}
 	if (attacker.item?.includes("Metronome-")) {
 		const times = Number(attacker.item.split("Metronome-")[1] ?? "1")
-		return Math.min(1 + 0.2 * (times - 1), 2);
+		return getFactor(Math.min(1 + 0.2 * (times - 1), 2));
 	}
-	return 1;
+	return { operator: 1 };
 }
 function modifyByDefenderItem({
 	defender,
 	move,
-}: Pick<BattleStatus, "defender" | "move">): number {
+}: Pick<BattleStatus, "defender" | "move">): TemporalFactor {
 	if (
 		defender.item === "Type Berry" &&
 		getEffectivenessOnPokemon(move.type, getPokemonCurrentType(defender)) > 1
 	) {
-		return 0.5;
+		return {
+			operator: 0.5, factors: {
+				defender: {
+					item: true
+				}
+			}
+		};
 	}
-	return 1;
+	return { operator: 1 };
 }
 
 
