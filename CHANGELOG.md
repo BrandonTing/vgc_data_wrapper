@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.1
+
+### Patch Changes
+
+- 096be26: bug: check is crit incorrectly
+
 ## 0.3.0
 
 ### Minor Changes
