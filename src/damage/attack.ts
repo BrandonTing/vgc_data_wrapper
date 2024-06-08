@@ -55,12 +55,6 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 
 	if (!move.flags?.isCriticalHit) {
 		atkStat = modifyStatByStageChange(atkStat, stageChanges);
-		factors = mergeFactorList(factors, {
-			move: {
-				isCriticalHit: true,
-			}
-		})
-
 	}
 	const operator = pipeModifierHelper(
 		{ operator: 4096, factors } as TemporalFactor,
