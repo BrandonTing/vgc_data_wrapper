@@ -152,6 +152,7 @@ test("test offensive tera", () => {
 		120,
 	];
 	expect(getDamangeNumberFromResult(actual)).toEqual(expected);
+	expect(actual.factors.attacker.isTera).toBe(true)
 	// Tera non-STAB
 	flutterMane.toggleTera({ isTera: true, type: "Electric" });
 	const thunderbolt = createMove({
@@ -165,6 +166,7 @@ test("test offensive tera", () => {
 	];
 	const actualTbolt = battle.getDamage();
 	expect(getDamangeNumberFromResult(actualTbolt)).toEqual(expectedTbolt);
+	expect(actualTbolt.factors.attacker.isTera).toBe(true)
 });
 
 test("defensive tera", () => {

@@ -64,7 +64,7 @@ type ToggleTeraOption =
 		isTera: false;
 	};
 
-export interface IPokemon extends PokemonInfo {
+interface IPokemon extends PokemonInfo {
 	getStats: () => Stat;
 	getStat: (key: keyof Stat) => number;
 	setFlags: (flags: PokemonFlags) => void;
