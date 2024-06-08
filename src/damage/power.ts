@@ -18,7 +18,7 @@ export function getPower(option: BattleStatus): TemporalFactor {
 	);
 	factors = basePower.factors
 	const modifierAfterModification = pipeModifierHelper(
-		{ operator: 4096, factors: {} } as TemporalFactor,
+		{ operator: 4096, factors } as TemporalFactor,
 		[
 			modifyByAttackerAbility,
 			modifyByDefenderAbility,
@@ -39,7 +39,7 @@ export function getPower(option: BattleStatus): TemporalFactor {
 	const result = Math.round(
 		(basePower.operator * modifierAfterModification.operator) / 4096 - 0.001,
 	);
-	factors = mergeFactorList(factors, modifierAfterModification.factors)
+	factors = modifierAfterModification.factors
 	if (
 		checkTeraWIthTypeMatch(option.attacker, option.move.type) &&
 		result < 60 &&

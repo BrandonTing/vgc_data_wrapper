@@ -63,7 +63,7 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 
 	}
 	const operator = pipeModifierHelper(
-		{ operator: 4096, factors: {} } as TemporalFactor,
+		{ operator: 4096, factors } as TemporalFactor,
 		[
 			modifyAtkByAttackAbility,
 			modifyByDefenderAbility,
@@ -75,7 +75,7 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 			return { operator: Math.round(pre.operator * operator), factors: mergeFactorList(pre.factors, factors) };
 		},
 	)
-	factors = mergeFactorList(factors, operator.factors)
+	factors = operator.factors
 	const result = Math.round(
 		(atkStat *
 			operator.operator) /
