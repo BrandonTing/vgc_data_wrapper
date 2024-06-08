@@ -615,45 +615,71 @@ function modifyByWall({
 	move,
 	defender,
 	field,
-}: Pick<BattleStatus, "move" | "defender" | "field">): number {
+}: Pick<BattleStatus, "move" | "defender" | "field">): TemporalFactor {
 	if (move.flags?.isCriticalHit) {
-		return 1;
+		return {
+			operator: 1,
+			factors: {
+				move: {
+					isCriticalHit: true
+				}
+			}
+		};
 	}
 	if (move.category === "Physical" && defender.flags?.reflect) {
-		return field?.isDouble ? 0.667 : 0.5;
+		return {
+			operator: field?.isDouble ? 0.667 : 0.5, factors: {
+				defender: {
+					reflect: true
+				},
+			}
+		};
 	}
 	if (move.category === "Special" && defender.flags?.lightScreen) {
-		return field?.isDouble ? 0.667 : 0.5;
+		return {
+			operator: field?.isDouble ? 0.667 : 0.5, factors: {
+				defender: {
+					lightScreen: true
+				},
+			}
+		};
 	}
-	return 1;
+	return { operator: 1 };
 }
 
 function modifyByMove({
 	defender,
 	move,
-}: Pick<BattleStatus, "defender" | "move">): number {
+}: Pick<BattleStatus, "defender" | "move">): TemporalFactor {
 	const effectiveness = getEffectivenessOnPokemon(
 		move.type,
 		getPokemonCurrentType(defender),
 	);
+	// TODO doesn't count for now
 	if (
 		// 	Collision Course & Electro Drift
 		(move.id === 878 || move.id === 879) &&
 		effectiveness > 1
 	) {
-		return 1.333;
+
+		return { operator: 1.333 };
 	}
-	return 1;
+	return { operator: 1 };
 }
 
 function modifyByAttackerAbility({
 	attacker,
 	defender,
 	move,
-}: Pick<BattleStatus, "attacker" | "defender" | "move">): number {
+}: Pick<BattleStatus, "attacker" | "defender" | "move">): TemporalFactor {
+	const getFactor = createFactorHelper({
+		attacker: {
+			ability: true
+		}
+	})
 	// Sniper
 	if (attacker.ability === "Sniper" && move.flags?.isCriticalHit) {
-		return 1.5;
+		return getFactor(1.5);
 	}
 
 	// Tinted Lens
@@ -662,49 +688,54 @@ function modifyByAttackerAbility({
 		getPokemonCurrentType(defender),
 	);
 	if (attacker.ability === "Tinted Lens" && effectiveness < 1) {
-		return 2;
+		return getFactor(2, defender.isTera ? { defender: { isTera: true } } : undefined);
 	}
-	return 1;
+	return { operator: 1 };
 }
 
 function modifyByDefenderAbility({
 	defender,
 	move,
-}: Pick<BattleStatus, "defender" | "move">): number {
+}: Pick<BattleStatus, "defender" | "move">): TemporalFactor {
+	const getFactor = createFactorHelper({
+		defender: {
+			ability: true
+		}
+	})
 	// Fluffy
 	if (defender.ability === "Fluffy") {
 		if (move.type === "Fire") {
-			return 2;
+			return getFactor(2);
 		}
 		if (move.flags?.isContact) {
-			return 0.5;
+			return getFactor(0.5);
 		}
 	}
 	// Multiscale
 	if (defender.ability === "Multiscale") {
-		return 0.5;
+		return getFactor(0.5);
 	}
 	// Punk Rock
 	if (defender.ability === "Punk Rock" && move.flags?.isSound) {
-		return 0.5;
+		return getFactor(0.5);
 	}
 	// Ice Scales
 	if (defender.ability === "Ice Scales" && move.category === "Special") {
-		return 0.5;
+		return getFactor(0.5);
 	}
 
 	// Solid Rock && Filter
 	const effectiveness = getEffectivenessOnPokemon(
 		move.type,
-		defender.teraType ? [defender.teraType] : defender.types,
+		defender.isTera ? [defender.teraType] : defender.types,
 	);
 	if (
 		(defender.ability === "Solid Rock" || defender.ability === "Filter") &&
 		effectiveness > 1
 	) {
-		return 0.75;
+		return getFactor(0.75, defender.isTera ? { defender: { isTera: true } } : undefined);
 	}
-	return 1;
+	return { operator: 1 };
 }
 
 function modifyByFriendGuard({
