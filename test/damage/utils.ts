@@ -41,6 +41,7 @@ function getTypeHelper(
 }
 export function genTestMon(partial?: RecursivePartial<Pokemon>): Pokemon {
 	return new Pokemon({
+		id: partial?.id,
 		stats: partial?.stats,
 		baseStat: partial?.baseStat,
 		effortValues: partial?.effortValues,
@@ -50,6 +51,7 @@ export function genTestMon(partial?: RecursivePartial<Pokemon>): Pokemon {
 		weight: partial?.weight,
 		ability: partial?.ability,
 		item: partial?.item,
+		isTera: partial?.isTera,
 		teraType: partial?.teraType,
 		flags: partial?.flags,
 	});

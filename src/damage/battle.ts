@@ -1,4 +1,5 @@
 import type { Pokemon } from "../pokemon";
+import { isTerapagosStellar } from "../pokemon/utils";
 import type { RecursivePartial } from "../typeUtils";
 import { getAttack } from "./attack";
 import type {
@@ -25,7 +26,9 @@ interface IBattle extends Partial<BattleStatus> {
 }
 
 export class Battle implements IBattle {
-	field: BattleFieldStatus = {};
+	field: BattleFieldStatus = {
+		isDouble: true
+	};
 	attacker?: Pokemon;
 	defender?: Pokemon;
 	move?: Move;
@@ -143,6 +146,14 @@ function getDamage(option: BattleStatus): DamageResult {
 }
 
 function getBasicDamage(option: BattleStatus): TemporalFactor {
+	const { move, attacker } = option
+	// Tera storm becomes physical move if terapagos atk > spa
+	if (move.id === 906 && isTerapagosStellar(attacker)) {
+		if (attacker.getStat("attack") > attacker.getStat("specialAttack")) {
+			move.category = "Physical"
+		}
+		move.target = "allAdjacentFoes"
+	}
 	const power = getPower(option);
 	const attack = getAttack(option);
 	const defense = getDefense(option);
@@ -170,10 +181,7 @@ function modifyBySpreadDamage(
 	if (
 		(
 			move.target === "allAdjacent" ||
-			move.target === "allAdjacentFoes" ||
-			(attacker.id === 1024 &&
-				checkTeraWIthTypeMatch(attacker, "Stellar") &&
-				move.id === 906)) &&
+			move.target === "allAdjacentFoes") &&
 		field?.isDouble
 	) {
 		modifier = 0.75;
@@ -432,7 +440,7 @@ function getTypeModifier({
 	// tera blast from Stellar tera mon on tera mon is 2x
 	if (
 		checkTeraWIthTypeMatch(attacker, "Stellar") &&
-		defender.teraType &&
+		defender.isTera &&
 		move.id === 851
 	) {
 		return {
@@ -558,6 +566,32 @@ function getTypeModifier({
 					}
 				}
 			};
+		}
+	}
+	// Tera Starstorm
+	if (move.id === 906 && isTerapagosStellar(attacker)) {
+		// 2x against tera mon
+		if (defender.isTera) {
+			return {
+				operator: 2,
+				factors: {
+					attacker: {
+						isTera: true
+					},
+					defender: {
+						isTera: true
+					}
+				}
+			}
+		}
+		// 1x against non tera mon 
+		return {
+			operator: 1,
+			factors: {
+				attacker: {
+					isTera: true
+				},
+			}
 		}
 	}
 	// use original type when tera stellar
