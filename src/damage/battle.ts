@@ -80,7 +80,20 @@ export type TemporalFactor = {
 	factors?: RecursivePartial<DamageResult["factors"]>
 }
 
-function getDamage(option: BattleStatus): DamageResult {
+function getDamage(originalOpt: BattleStatus): DamageResult {
+	const { move, attacker } = originalOpt
+	const newMove = { ...move }
+	// Tera storm becomes physical move if terapagos atk > spa
+	if (newMove.id === 906 && isTerapagosStellar(attacker)) {
+		if (attacker.getStat("attack") > attacker.getStat("specialAttack")) {
+			newMove.category = "Physical"
+		}
+		newMove.target = "allAdjacentFoes"
+	}
+	const option: BattleStatus = {
+		...originalOpt,
+		move: newMove
+	}
 	function pipeOperator(
 		pre: TemporalFactor,
 		cur: (temporalResult: TemporalFactor, option: BattleStatus) => TemporalFactor,
@@ -146,14 +159,6 @@ function getDamage(option: BattleStatus): DamageResult {
 }
 
 function getBasicDamage(option: BattleStatus): TemporalFactor {
-	const { move, attacker } = option
-	// Tera storm becomes physical move if terapagos atk > spa
-	if (move.id === 906 && isTerapagosStellar(attacker)) {
-		if (attacker.getStat("attack") > attacker.getStat("specialAttack")) {
-			move.category = "Physical"
-		}
-		move.target = "allAdjacentFoes"
-	}
 	const power = getPower(option);
 	const attack = getAttack(option);
 	const defense = getDefense(option);
@@ -174,7 +179,7 @@ function getBasicDamage(option: BattleStatus): TemporalFactor {
 
 function modifyBySpreadDamage(
 	value: TemporalFactor,
-	{ move, attacker, field }: Pick<BattleStatus, "move" | "field" | "attacker">,
+	{ move, field }: Pick<BattleStatus, "move" | "field" | "attacker">,
 ): TemporalFactor {
 	let modifier = 1;
 	let factors: TemporalFactor['factors'] = undefined
