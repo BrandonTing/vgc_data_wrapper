@@ -12,7 +12,6 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 		attacker,
 		defender,
 		move,
-		field,
 	} = option
 	const isPhysicalMove = move.category === "Physical"
 	let atkStat =
@@ -52,7 +51,6 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 			}
 		})
 	}
-
 	if (!move.flags?.isCriticalHit) {
 		atkStat = modifyStatByStageChange(atkStat, stageChanges);
 	}
