@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.3
+
+### Patch Changes
+
+- 8493321: fix terapagos stellar check
+
 ## 0.3.2
 
 ### Patch Changes
