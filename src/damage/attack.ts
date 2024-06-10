@@ -280,7 +280,7 @@ function modifyByRuin({
 	move,
 	field,
 }: Pick<BattleStatus, "move" | "field" | "attacker">): TemporalFactor {
-	const getFactor = createFactorHelper({ field: { ruin: true } })
+	const getFactor = createFactorHelper({ defender: { ruin: true } })
 	// ruin ability doesn't affect owner
 	// Tablets
 	if (

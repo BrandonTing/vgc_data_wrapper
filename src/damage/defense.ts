@@ -175,7 +175,7 @@ function modifyByRuin({
 	field,
 }: Pick<BattleStatus, "move" | "field" | "defender">): TemporalFactor {
 	const getFactor = createFactorHelper({
-		field: {
+		attacker: {
 			ruin: true
 		}
 	})
