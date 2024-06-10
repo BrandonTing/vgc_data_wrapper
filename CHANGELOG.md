@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.2
+
+### Patch Changes
+
+- b2a86f1: fix terapagos stellar check & move some flags to pokemons
+
 ## 0.3.1
 
 ### Patch Changes
