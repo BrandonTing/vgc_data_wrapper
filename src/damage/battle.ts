@@ -208,12 +208,10 @@ function modifyByWeather(
 	{ field, move }: Pick<BattleStatus, "field" | "move">,
 ): TemporalFactor {
 	let modifier = 1;
-	let factors: TemporalFactor['factors'] = undefined
 	let weatherFactor: TemporalFactor['factors'] = undefined
 	if (field?.weather === "Rain") {
 		if (move.type === "Fire") {
 			modifier = 0.5;
-			factors = weatherFactor
 			weatherFactor = {
 				defender: {
 					weather: true
@@ -250,7 +248,7 @@ function modifyByWeather(
 	const operator = Math.round(value.operator * modifier - 0.001)
 	return {
 		operator,
-		factors: mergeFactorList(value.factors, factors)
+		factors: mergeFactorList(value.factors, weatherFactor)
 	};
 }
 
