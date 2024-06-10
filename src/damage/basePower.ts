@@ -18,7 +18,7 @@ export function getBasePower(
 		return {
 			operator: move.base * 1.5,
 			factors: {
-				field: {
+				attacker: {
 					weather: true
 				}
 			}
@@ -171,7 +171,7 @@ export function getBasePower(
 		return {
 			operator: 100,
 			factors: {
-				field: {
+				attacker: {
 					weather: true
 				}
 			}
