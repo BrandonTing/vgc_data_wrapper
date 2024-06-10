@@ -88,4 +88,15 @@ test("terapagos using Tera Starstorm", () => {
     expect(againstTeraDefender.factors.defender.isTera).toBe(true)
     expect(againstTeraDefender.factors.field.isDouble).toBe(true)
     expect(againstTeraDefender.factors.attacker.atk).toBe("attack")
+
+    const terapagosStellar = genTestMon({
+        name: "terapagos-stellar",
+        isTera: true,
+        teraType: "Stellar"
+    });
+    battle.setPokemon("attacker", terapagosStellar)
+    const damageFromTerapagosStellar = battle.getDamage()
+    expect(damageFromTerapagosStellar.factors.attacker.isTera).toBe(true)
+    expect(damageFromTerapagosStellar.factors.field.isDouble).toBe(true)
+    expect(damageFromTerapagosStellar.factors.attacker.atk).toBe("specialAttack")
 })
