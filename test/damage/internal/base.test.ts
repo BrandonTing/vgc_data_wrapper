@@ -32,7 +32,7 @@ test("correctly calculate base power for terrain related moves", () => {
 	expect(basePowerHydroSteam).toEqual({
 		operator: 120,
 		factors: {
-			field: {
+			attacker: {
 				weather: true
 			}
 		}
@@ -316,7 +316,7 @@ test("base power of weather ball", () => {
 	expect(basePower).toEqual({
 		operator: 100,
 		factors: {
-			field: {
+			attacker: {
 				weather: true
 			}
 		}
@@ -326,7 +326,7 @@ test("base power of weather ball", () => {
 	expect(basePower).toEqual({
 		operator: 100,
 		factors: {
-			field: {
+			attacker: {
 				weather: true
 			}
 		}
@@ -336,7 +336,7 @@ test("base power of weather ball", () => {
 	expect(basePower).toEqual({
 		operator: 100,
 		factors: {
-			field: {
+			attacker: {
 				weather: true
 			}
 		}
@@ -346,7 +346,7 @@ test("base power of weather ball", () => {
 	expect(basePower).toEqual({
 		operator: 100,
 		factors: {
-			field: {
+			attacker: {
 				weather: true
 			}
 		}

@@ -49,7 +49,7 @@ function modifyByWeather({
 	move: { category },
 }: Pick<BattleStatus, "defender" | "field" | "move">): TemporalFactor {
 	const getFactor = createFactorHelper({
-		field: {
+		defender: {
 			weather: true
 		}
 	})
@@ -138,7 +138,7 @@ function modifyByDefenderAbility({
 		if (field?.weather === "Sun") {
 			activated = true;
 			factors = {
-				field: {
+				defender: {
 					weather: true
 				}
 			}
@@ -175,7 +175,7 @@ function modifyByRuin({
 	field,
 }: Pick<BattleStatus, "move" | "field" | "defender">): TemporalFactor {
 	const getFactor = createFactorHelper({
-		field: {
+		attacker: {
 			ruin: true
 		}
 	})
