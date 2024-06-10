@@ -47,9 +47,45 @@ test("freeze dry", () => {
         268
     ];
     expect(actual).toEqual(expected);
-    
+
 })
 
 test("terapagos using Tera Starstorm", () => {
-    
+    const terapagos = genTestMon({
+        id: 1024,
+        isTera: true,
+        teraType: "Stellar"
+    });
+    const testMon = genTestMon({})
+    const move = createMove({
+        id: 906,
+        base: 120,
+        category: "Special"
+    })
+    const battle = new Battle({
+        attacker: terapagos,
+        defender: testMon,
+        move
+    })
+    const damage = battle.getDamage()
+    expect(damage.factors.attacker.isTera).toBe(true)
+    expect(damage.factors.field.isDouble).toBe(true)
+    expect(damage.factors.attacker.atk).toBe("specialAttack")
+
+    const terapagosPhysical = genTestMon({
+        id: 1024,
+        isTera: true,
+        teraType: "Stellar",
+        stats: {
+            attack: 101,
+            specialAttack: 100
+        }
+    });
+    battle.setPokemon("attacker", terapagosPhysical)
+    testMon.toggleTera({ isTera: true })
+    const againstTeraDefender = battle.getDamage()
+    expect(againstTeraDefender.factors.attacker.isTera).toBe(true)
+    expect(againstTeraDefender.factors.defender.isTera).toBe(true)
+    expect(againstTeraDefender.factors.field.isDouble).toBe(true)
+    expect(againstTeraDefender.factors.attacker.atk).toBe("attack")
 })

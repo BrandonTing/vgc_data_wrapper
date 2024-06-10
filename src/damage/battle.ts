@@ -26,7 +26,9 @@ interface IBattle extends Partial<BattleStatus> {
 }
 
 export class Battle implements IBattle {
-	field: BattleFieldStatus = {};
+	field: BattleFieldStatus = {
+		isDouble: true
+	};
 	attacker?: Pokemon;
 	defender?: Pokemon;
 	move?: Move;
@@ -584,7 +586,12 @@ function getTypeModifier({
 		}
 		// 1x against non tera mon 
 		return {
-			operator: 1
+			operator: 1,
+			factors: {
+				attacker: {
+					isTera: true
+				},
+			}
 		}
 	}
 	// use original type when tera stellar
