@@ -1,5 +1,5 @@
 import type { Pokemon } from "../pokemon";
-import type { Flags, Prettify, TypedExtract } from "../typeUtils";
+import type { Flags, Prettify, TypedExclude, TypedExtract } from "../typeUtils";
 
 export const statProps = [
 	"hp",
@@ -89,12 +89,13 @@ export type BattleStatus = {
 	field?: BattleFieldStatus;
 };
 
-type PokemonDmgFactor<T extends "Attacker" | "Defender"> = Prettify<(T extends "Attacker" ? {
+type PokemonDmgFactor<T extends "Attacker" | "Defender"> = (T extends "Attacker" ? {
 	atk: TypedExtract<StatKeys, "attack" | "specialAttack" | "defense">
 } & { statFrom: "Attacker" | "Defender" } & Pick<Pokemon["flags"] & {}, "charge" | "helpingHand" | "powerSpot" | "steelySpirit"> : {
 	def: TypedExtract<StatKeys, "defense" | "specialDefense">
 } & Pick<Pokemon["flags"] & {}, "hasFriendGuard" | "lightScreen" | "reflect">)
-	& Flags<TypedExtract<keyof Pokemon, "ability" | "item" | "isTera" | "status">>>
+	& Flags<TypedExtract<keyof Pokemon, "ability" | "item" | "isTera" | "status">>
+	& Flags<TypedExtract<keyof BattleFieldStatus, "ruin" | "weather">>
 
 export type DamageResult = {
 	rolls: Array<{
@@ -102,11 +103,10 @@ export type DamageResult = {
 		percentage: number;
 	}>;
 	koChance: number;
-	// TODO
 	factors: {
-		attacker: PokemonDmgFactor<"Attacker">,
-		defender: PokemonDmgFactor<"Defender">,
-		field: Prettify<Flags<keyof BattleFieldStatus>>
+		attacker: Prettify<PokemonDmgFactor<"Attacker">>,
+		defender: Prettify<PokemonDmgFactor<"Defender">>,
+		field: Prettify<Flags<TypedExclude<keyof BattleFieldStatus, "ruin" | "weather">>>
 		move: Prettify<Pick<Move["flags"] & {}, "isCriticalHit">>
 	}
 };

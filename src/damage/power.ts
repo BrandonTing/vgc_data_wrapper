@@ -121,7 +121,7 @@ function modifyByAttackerAbility({
 		field?.weather === "Sand"
 	) {
 		return getFactor(1.3, {
-			field: {
+			attacker: {
 				weather: true
 			}
 		});
@@ -247,7 +247,7 @@ function modifyByMoveEffect({
 		return {
 			operator: 0.5,
 			factors: {
-				field: {
+				defender: {
 					weather: true
 				}
 			}

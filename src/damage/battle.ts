@@ -196,29 +196,42 @@ function modifyByWeather(
 ): TemporalFactor {
 	let modifier = 1;
 	let factors: TemporalFactor['factors'] = undefined
-	const weatherFactor: TemporalFactor['factors'] = {
-		field: {
-			weather: true
-		}
-	}
+	let weatherFactor: TemporalFactor['factors'] = undefined
 	if (field?.weather === "Rain") {
 		if (move.type === "Fire") {
 			modifier = 0.5;
 			factors = weatherFactor
+			weatherFactor = {
+				defender: {
+					weather: true
+				}
+			}
 		}
 		if (move.type === "Water") {
 			modifier = 1.5;
-			factors = weatherFactor
+			weatherFactor = {
+				attacker: {
+					weather: true
+				}
+			}
 		}
 	}
 	if (field?.weather === "Sun") {
 		if (move.type === "Fire") {
 			modifier = 1.5;
-			factors = weatherFactor
+			weatherFactor = {
+				attacker: {
+					weather: true
+				}
+			}
 		}
 		if (move.type === "Water") {
 			modifier = 0.5;
-			factors = weatherFactor
+			weatherFactor = {
+				defender: {
+					weather: true
+				}
+			}
 		}
 	}
 	const operator = Math.round(value.operator * modifier - 0.001)

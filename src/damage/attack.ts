@@ -130,7 +130,7 @@ function modifyAtkByAttackAbility({
 		if (field?.weather === "Sun") {
 			activated = true;
 			factors = {
-				field: {
+				attacker: {
 					weather: true
 				}
 			}
@@ -147,7 +147,7 @@ function modifyAtkByAttackAbility({
 		field?.weather === "Sun"
 	) {
 		return getFactor(1.333, {
-			field: { weather: true }
+			attacker: { weather: true }
 		});
 	}
 	// Hadron Engine
@@ -186,7 +186,7 @@ function modifyAtkByAttackAbility({
 		move.category === "Special"
 	) {
 		return getFactor(1.5, {
-			field: {
+			attacker: {
 				weather: true
 			}
 		});
@@ -280,7 +280,7 @@ function modifyByRuin({
 	move,
 	field,
 }: Pick<BattleStatus, "move" | "field" | "attacker">): TemporalFactor {
-	const getFactor = createFactorHelper({ field: { ruin: true } })
+	const getFactor = createFactorHelper({ defender: { ruin: true } })
 	// ruin ability doesn't affect owner
 	// Tablets
 	if (
