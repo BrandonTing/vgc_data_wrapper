@@ -236,3 +236,37 @@ test("Ivy Cudgel changes type", () => {
     expect(getDamangeNumberFromResult(damage)).toEqual(actual)
 
 })
+
+test("Revelation Dance changes type", () => {
+    const attacker = genTestMon({
+        types: ["Fire", "Flying"],
+        baseStat: {
+            specialAttack: 98
+        }
+    })
+    const defender = genTestMon({
+        types: ["Flying", "Fire"],
+        baseStat: {
+            hp: 78,
+            specialDefense: 85
+        }
+    })
+    const move = createMove({
+        id: 686,
+        type: "Normal",
+        category: "Special",
+        base: 90
+    })
+
+    let actual = [
+        29, 29, 30, 30, 30, 30, 30, 31, 31, 32, 32, 33, 33, 33, 33, 34
+    ]
+    const battle = new Battle({
+        attacker,
+        defender,
+        move
+    })
+
+    let damage = battle.getDamage()
+    expect(getDamangeNumberFromResult(damage)).toEqual(actual)
+})
