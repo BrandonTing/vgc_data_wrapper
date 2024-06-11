@@ -278,7 +278,6 @@ function modifyByRuin({
 	move,
 	field,
 }: Pick<BattleStatus, "move" | "field" | "attacker">): TemporalFactor {
-	const getFactor = createFactorHelper({ defender: { ruin: true } })
 	// ruin ability doesn't affect owner
 	// Tablets
 	if (
@@ -286,7 +285,13 @@ function modifyByRuin({
 		move.category === "Physical" &&
 		attacker.ability !== "Tablets of Ruin"
 	) {
-		return getFactor(0.75);
+		return {
+			operator: 0.75, factors: {
+				defender: {
+					ruin: "Tablets"
+				}
+			}
+		};
 	}
 	// Vessel
 	if (
@@ -294,7 +299,13 @@ function modifyByRuin({
 		move.category === "Special" &&
 		attacker.ability !== "Vessel of Ruin"
 	) {
-		return getFactor(0.75);
+		return {
+			operator: 0.75, factors: {
+				defender: {
+					ruin: "Vessel"
+				}
+			}
+		};
 	}
 	return { operator: 1 };
 }
