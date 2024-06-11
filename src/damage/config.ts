@@ -93,11 +93,11 @@ type PokemonDmgFactor<T extends "Attacker" | "Defender"> = (T extends "Attacker"
 	// attacker
 	{
 		atk: TypedExtract<StatKeys, "attack" | "specialAttack" | "defense">
-	} & { statFrom: "Attacker" | "Defender" } & Pick<Pokemon["flags"] & {}, "charge" | "helpingHand" | "powerSpot" | "steelySpirit"> & { ruin: TypedExtract<Ruin, "Beads" | "Sword"> } :
+	} & { statFrom: "Attacker" | "Defender" } & Pick<Pokemon["flags"] & {}, "charge" | "helpingHand" | "powerSpot" | "steelySpirit"> & { ruin?: TypedExtract<Ruin, "Beads" | "Sword"> } :
 	// defender
 	{
 		def: TypedExtract<StatKeys, "defense" | "specialDefense">
-	} & Pick<Pokemon["flags"] & {}, "hasFriendGuard" | "lightScreen" | "reflect"> & { ruin: TypedExtract<Ruin, "Tablets" | "Vessel"> })
+	} & Pick<Pokemon["flags"] & {}, "hasFriendGuard" | "lightScreen" | "reflect"> & { ruin?: TypedExtract<Ruin, "Tablets" | "Vessel"> })
 	// Common
 	& Flags<TypedExtract<keyof Pokemon, "ability" | "item" | "isTera" | "status">>
 	& Flags<TypedExtract<keyof BattleFieldStatus, "weather">>
