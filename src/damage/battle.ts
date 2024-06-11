@@ -861,7 +861,6 @@ function modifyOption(originalOpt: BattleStatus): BattleStatus {
 			newMove.type = attacker.types[0]
 		}
 	}
-	console.log(newMove)
 	return {
 		...originalOpt,
 		move: newMove
