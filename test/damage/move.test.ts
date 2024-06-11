@@ -100,3 +100,139 @@ test("terapagos using Tera Starstorm", () => {
     expect(damageFromTerapagosStellar.factors.field.isDouble).toBe(true)
     expect(damageFromTerapagosStellar.factors.attacker.atk).toBe("specialAttack")
 })
+
+test("Ivy Cudgel changes type", () => {
+    const ogerpon = genTestMon({
+        name: "ogerpon",
+        types: ["Grass"],
+        baseStat: {
+            attack: 120
+        }
+    })
+    const defender = genTestMon({
+        types: ["Flying", "Fire"],
+        baseStat: {
+            hp: 78,
+            defense: 78
+        }
+    })
+    const move = createMove({
+        id: 904,
+        type: "Grass",
+        base: 100
+    })
+    const battle = new Battle({
+        attacker: ogerpon,
+        defender,
+        move
+    })
+    let actual = [
+        20,
+        20,
+        20,
+        21,
+        21,
+        21,
+        21,
+        21,
+        22,
+        22,
+        22,
+        22,
+        23,
+        23,
+        23,
+        24
+    ]
+    let damage = battle.getDamage()
+    expect(getDamangeNumberFromResult(damage)).toEqual(actual)
+    const ogerponWellspring = genTestMon({
+        name: "ogerpon-wellspring-mask",
+        types: ["Grass", "Water"],
+        baseStat: {
+            attack: 120
+        },
+        item: "Ogerpon Mask"
+    })
+    battle.setPokemon("attacker", ogerponWellspring)
+    damage = battle.getDamage()
+    actual = [
+        194,
+        198,
+        198,
+        200,
+        204,
+        206,
+        210,
+        210,
+        212,
+        216,
+        218,
+        218,
+        222,
+        224,
+        228,
+        230
+    ]
+    expect(getDamangeNumberFromResult(damage)).toEqual(actual)
+
+    const ogerponHearthflame = genTestMon({
+        name: "ogerpon-hearthflame-mask",
+        types: ["Grass", "Fire"],
+        baseStat: {
+            attack: 120
+        },
+        item: "Ogerpon Mask"
+    })
+    battle.setPokemon("attacker", ogerponHearthflame)
+    damage = battle.getDamage()
+    actual = [
+        48,
+        49,
+        49,
+        50,
+        51,
+        51,
+        52,
+        52,
+        53,
+        54,
+        54,
+        54,
+        55,
+        56,
+        57,
+        57
+    ]
+    expect(getDamangeNumberFromResult(damage)).toEqual(actual)
+    const ogerponCornerstone = genTestMon({
+        name: "ogerpon-cornerstone-mask",
+        types: ["Grass", "Rock"],
+        baseStat: {
+            attack: 120
+        },
+        item: "Ogerpon Mask"
+    })
+    battle.setPokemon("attacker", ogerponCornerstone)
+    damage = battle.getDamage()
+    actual = [
+        388,
+        396,
+        396,
+        400,
+        408,
+        412,
+        420,
+        420,
+        424,
+        432,
+        436,
+        436,
+        444,
+        448,
+        456,
+        460
+    ]
+    expect(getDamangeNumberFromResult(damage)).toEqual(actual)
+
+})
