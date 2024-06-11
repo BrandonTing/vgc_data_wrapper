@@ -88,6 +88,7 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 		if (attacker.getStat("attack") > attacker.getStat("specialAttack")) {
 			newMove.category = "Physical"
 		}
+		newMove.type = "Stellar"
 		newMove.target = "allAdjacentFoes"
 	}
 	const option: BattleStatus = {
@@ -374,20 +375,6 @@ function modifyBySameType(
 			modifier = 1.5;
 		}
 	}
-	// Stellar tera
-	if (checkTeraWIthTypeMatch(attacker, "Stellar")) {
-		factors = mergeFactorList(factors, {
-			attacker: {
-				isTera: true
-			}
-		})
-
-		if (attacker.types.includes(move.type)) {
-			modifier = 2;
-		} else {
-			modifier = 1.2;
-		}
-	}
 	// Adaptability
 	if (attacker.ability === "Adaptability") {
 		factors = mergeFactorList(factors, {
@@ -410,8 +397,20 @@ function modifyBySameType(
 			}
 		}
 	}
-	// Normal stab
-	if (attacker.types.includes(move.type)) {
+	// Stellar tera
+	if (checkTeraWIthTypeMatch(attacker, "Stellar")) {
+		factors = mergeFactorList(factors, {
+			attacker: {
+				isTera: true
+			}
+		})
+		if (attacker.types.includes(move.type)) {
+			modifier = 2;
+		} else {
+			modifier = 1.2;
+		}
+	} else if (attacker.types.includes(move.type)) {
+		// Normal stab
 		if (checkTeraWIthTypeMatch(attacker, move.type)) {
 			factors = mergeFactorList(factors, {
 				attacker: {

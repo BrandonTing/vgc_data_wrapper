@@ -7,12 +7,16 @@ type TypeEffectivenessMap = Record<Type, TypeEffectiveness>;
 const typeAttackEffectivenessMap = typeChart satisfies TypeEffectivenessMap;
 
 export function getEffectivenessOnPokemon(
-	atkType: Type,
+	atkType: TeraTypes,
 	targetPokemonTypes: Array<TeraTypes>,
 ): number {
 	return targetPokemonTypes
-		.map((type) =>
-			type === "Stellar" ? 1 : typeAttackEffectivenessMap[atkType][type],
-		)
+		.map((type) => {
+			if (atkType === "Stellar") {
+				return 1
+			} else {
+				return type === "Stellar" ? 1 : typeAttackEffectivenessMap[atkType][type]
+			}
+		})
 		.reduce((pre, cur) => pre * cur, 1 as number);
 }

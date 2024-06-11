@@ -47,7 +47,7 @@ type MoveTarget = "selectedTarget" | "allAdjacentFoes" | "allAdjacent";
 export type Move = {
 	id: number;
 	base: number;
-	type: Type;
+	type: TeraTypes;
 	flags?: Flags<
 		| "hasRecoil"
 		| "hasSecondary"
