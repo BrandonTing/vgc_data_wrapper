@@ -81,19 +81,7 @@ export type TemporalFactor = {
 }
 
 function getDamage(originalOpt: BattleStatus): DamageResult {
-	const { move, attacker } = originalOpt
-	const newMove = { ...move }
-	// Tera storm becomes physical move if terapagos atk > spa
-	if (newMove.id === 906 && isTerapagosStellar(attacker)) {
-		if (attacker.getStat("attack") > attacker.getStat("specialAttack")) {
-			newMove.category = "Physical"
-		}
-		newMove.target = "allAdjacentFoes"
-	}
-	const option: BattleStatus = {
-		...originalOpt,
-		move: newMove
-	}
+	const option = modifyOption(originalOpt)
 	function pipeOperator(
 		pre: TemporalFactor,
 		cur: (temporalResult: TemporalFactor, option: BattleStatus) => TemporalFactor,
@@ -208,12 +196,10 @@ function modifyByWeather(
 	{ field, move }: Pick<BattleStatus, "field" | "move">,
 ): TemporalFactor {
 	let modifier = 1;
-	let factors: TemporalFactor['factors'] = undefined
 	let weatherFactor: TemporalFactor['factors'] = undefined
 	if (field?.weather === "Rain") {
 		if (move.type === "Fire") {
 			modifier = 0.5;
-			factors = weatherFactor
 			weatherFactor = {
 				defender: {
 					weather: true
@@ -250,7 +236,7 @@ function modifyByWeather(
 	const operator = Math.round(value.operator * modifier - 0.001)
 	return {
 		operator,
-		factors: mergeFactorList(value.factors, factors)
+		factors: mergeFactorList(value.factors, weatherFactor)
 	};
 }
 
@@ -376,20 +362,6 @@ function modifyBySameType(
 			modifier = 1.5;
 		}
 	}
-	// Stellar tera
-	if (checkTeraWIthTypeMatch(attacker, "Stellar")) {
-		factors = mergeFactorList(factors, {
-			attacker: {
-				isTera: true
-			}
-		})
-
-		if (attacker.types.includes(move.type)) {
-			modifier = 2;
-		} else {
-			modifier = 1.2;
-		}
-	}
 	// Adaptability
 	if (attacker.ability === "Adaptability") {
 		factors = mergeFactorList(factors, {
@@ -412,8 +384,20 @@ function modifyBySameType(
 			}
 		}
 	}
-	// Normal stab
-	if (attacker.types.includes(move.type)) {
+	// Stellar tera
+	if (checkTeraWIthTypeMatch(attacker, "Stellar")) {
+		factors = mergeFactorList(factors, {
+			attacker: {
+				isTera: true
+			}
+		})
+		if (attacker.types.includes(move.type)) {
+			modifier = 2;
+		} else {
+			modifier = 1.2;
+		}
+	} else if (attacker.types.includes(move.type)) {
+		// Normal stab
 		if (checkTeraWIthTypeMatch(attacker, move.type)) {
 			factors = mergeFactorList(factors, {
 				attacker: {
@@ -854,5 +838,31 @@ export function createFactorHelper(commonFactor: TemporalFactor["factors"]) {
 			operator,
 			factors: mergeFactorList(commonFactor, additionalFactor)
 		}
+	}
+}
+
+function modifyOption(originalOpt: BattleStatus): BattleStatus {
+	const { move, attacker } = originalOpt
+	const newMove = { ...move }
+	// Tera storm becomes physical move if terapagos atk > spa
+	if (newMove.id === 906 && isTerapagosStellar(attacker)) {
+		if (attacker.getStat("attack") > attacker.getStat("specialAttack")) {
+			newMove.category = "Physical"
+		}
+		newMove.type = "Stellar"
+		newMove.target = "allAdjacentFoes"
+	} else if (newMove.id === 904 && attacker.name?.includes("ogerpon")) {
+		newMove.type = attacker.types.find(type => type !== "Grass") ?? "Grass"
+	} else if (newMove.id === 686) {
+		// 傷害屬性變為使用者本身的第一屬性。太晶化的寶可夢使用時，會變為和太晶屬性相同的屬性。
+		if (attacker.isTera) {
+			newMove.type = attacker.teraType
+		} else {
+			newMove.type = attacker.types[0]
+		}
+	}
+	return {
+		...originalOpt,
+		move: newMove
 	}
 }

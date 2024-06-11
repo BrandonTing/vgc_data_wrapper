@@ -174,11 +174,6 @@ function modifyByRuin({
 	move,
 	field,
 }: Pick<BattleStatus, "move" | "field" | "defender">): TemporalFactor {
-	const getFactor = createFactorHelper({
-		attacker: {
-			ruin: true
-		}
-	})
 	// ruin ability doesn't affect owner
 	const usePhysicalDef = checkUsePhysicalHelper(move);
 	// Sword
@@ -187,7 +182,14 @@ function modifyByRuin({
 		usePhysicalDef &&
 		defender.ability !== "Sword of Ruin"
 	) {
-		return getFactor(0.75);
+		return {
+			operator: 0.75,
+			factors: {
+				attacker: {
+					ruin: "Sword"
+				}
+			}
+		}
 	}
 	// Beads
 	if (
@@ -195,7 +197,14 @@ function modifyByRuin({
 		!usePhysicalDef &&
 		defender.ability !== "Beads of Ruin"
 	) {
-		return getFactor(0.75);
+		return {
+			operator: 0.75,
+			factors: {
+				attacker: {
+					ruin: "Beads"
+				}
+			}
+		}
 	}
 	return { operator: 1 };
 }
