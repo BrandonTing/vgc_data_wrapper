@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.4
+
+### Patch Changes
+
+- c0c7357: fix terapagos, revelation dance, ogerpon, weather and ruin factor
+
 ## 0.3.3
 
 ### Patch Changes
