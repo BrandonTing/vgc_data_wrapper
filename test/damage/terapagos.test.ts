@@ -30,7 +30,7 @@ test("terapagos stellar hit charizard", () => {
         defender: charizard,
         move
     })
-    const actual = [
+    const expected = [
         162,
         164,
         166,
@@ -49,7 +49,7 @@ test("terapagos stellar hit charizard", () => {
         192
     ]
     const damage = battle.getDamage()
-    expect(getDamangeNumberFromResult(damage)).toEqual(actual)
+    expect(getDamangeNumberFromResult(damage)).toEqual(expected)
 })
 
 
@@ -82,7 +82,7 @@ test("terapagos stellar hit charizard with terastorm", () => {
         defender: charizard,
         move
     })
-    const actual = [
+    const expected = [
         59,
         59,
         60,
@@ -101,5 +101,5 @@ test("terapagos stellar hit charizard with terastorm", () => {
         70
     ]
     const damage = battle.getDamage()
-    expect(getDamangeNumberFromResult(damage)).toEqual(actual)
+    expect(getDamangeNumberFromResult(damage)).toEqual(expected)
 })
