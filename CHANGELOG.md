@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.5
+
+### Patch Changes
+
+- 75a28dc: fix: defensive tera not showing flag
+
 ## 0.3.4
 
 ### Patch Changes
