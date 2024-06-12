@@ -587,7 +587,13 @@ function getTypeModifier({
 	if (checkTeraWIthTypeMatch(defender, "Stellar")) {
 		return { operator: getEffectivenessOnPokemon(move.type, defender.types) };
 	}
-	return { operator: getEffectivenessOnPokemon(move.type, getPokemonCurrentType(defender)) };
+	return {
+		operator: getEffectivenessOnPokemon(move.type, getPokemonCurrentType(defender)), factors: defender.isTera ? {
+			defender: {
+				isTera: true
+			}
+		} : undefined
+	};
 }
 
 function modifyByType(

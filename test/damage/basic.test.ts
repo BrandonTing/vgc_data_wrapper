@@ -196,9 +196,11 @@ test("defensive tera", () => {
 		defender: incineroar,
 		move: moonblast,
 	});
-	const actual = getDamangeNumberFromResult(battle.getDamage());
+	const damage = battle.getDamage()
+	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
 		38, 38, 39, 39, 39, 40, 40, 41, 41, 42, 42, 42, 43, 43, 44, 45,
 	];
 	expect(actual).toEqual(expected);
+	expect(damage.factors.defender.isTera).toBe(true)
 });
