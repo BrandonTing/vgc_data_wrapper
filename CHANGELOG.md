@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.6
+
+### Patch Changes
+
+- 5e6cabe: fix: shoule divide weight from pokeapi by 10
+
 ## 0.3.5
 
 ### Patch Changes
