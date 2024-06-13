@@ -20,6 +20,7 @@ Careful Nature
 	const reParsedIncineroar = await getPokemonFromPaste(paste);
 	expect(reParsedIncineroar.teraType).toBe("Water");
 	expect(reParsedIncineroar.types).toEqual(["Fire", "Dark"]);
+	expect(reParsedIncineroar.weight).toEqual(83);
 });
 
 
