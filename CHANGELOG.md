@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.7
+
+### Patch Changes
+
+- c8109f2: fix psyshock on av mon
+
 ## 0.3.6
 
 ### Patch Changes
