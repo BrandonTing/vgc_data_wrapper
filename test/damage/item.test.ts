@@ -225,8 +225,58 @@ test("Assult vest", () => {
 
 	expect(getDamangeNumberFromResult(actual)).toEqual(expected);
 	expect(actual.factors.defender.item).toBe(true)
-
 });
+
+test("Psyshock on AV mon", () => {
+	const lunala = genTestMon({
+		types: ["Psychic", "Ghost"],
+		baseStat: {
+			specialAttack: 137,
+		},
+	});
+	const ironHands = genTestMon({
+		types: ["Fighting", "Electric"],
+		baseStat: {
+			hp: 154,
+			defense: 108,
+			specialDefense: 68,
+		},
+		item: "Assault Vest",
+	});
+	const psyshock = createMove({
+		type: "Psychic",
+		base: 80,
+		category: "Special",
+		id: 473
+	});
+	const battle = new Battle({
+		attacker: lunala,
+		defender: ironHands,
+		move: psyshock,
+	});
+
+	const expected = [
+		114,
+		114,
+		116,
+		116,
+		120,
+		120,
+		120,
+		122,
+		122,
+		126,
+		126,
+		128,
+		128,
+		132,
+		132,
+		134
+	]
+	const damage = battle.getDamage()
+	expect(getDamangeNumberFromResult(damage)).toEqual(expected)
+	expect(damage.factors.defender.isTera).not.toBe(true)
+})
 
 test("Eviolite", () => {
 	const flutterMane = genTestMon({
