@@ -160,7 +160,7 @@ function modifyByItem({
 			item: true
 		}
 	})
-	if (item === "Assault Vest" && move.category === "Special") {
+	if (item === "Assault Vest" && move.category === "Special" && !checkUsePhysicalHelper(move)) {
 		return getFactor(1.5);
 	}
 	if (item === "Eviolite" && flags?.hasEvolution) {
