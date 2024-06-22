@@ -17,15 +17,6 @@ export function checkStatOfMoveCategoryIsHighest(category: Move["category"], sta
 	return Math.max(...Object.values(statExcludeHp)) === stat[target];
 }
 
-export function modifyStatByStageChange(
-	stat: number,
-	stageChange: number,
-): number {
-	return stageChange > 0
-		? (stat * (2 + stageChange)) / 2
-		: (stat * 2) / (2 - stageChange);
-}
-
 export function checkMatchType(pokemon: Pokemon, type: Type): boolean {
 	return getPokemonCurrentType(pokemon).includes(type);
 }
