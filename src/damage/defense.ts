@@ -4,7 +4,6 @@ import {
 	checkMatchType,
 	checkStatOfMoveCategoryIsHighest,
 	mergeFactorList,
-	modifyStatByStageChange,
 	pipeModifierHelper
 } from "./utils";
 
@@ -12,19 +11,20 @@ export function getDefense(
 	option: Pick<BattleStatus, "defender" | "move">,
 ): TemporalFactor {
 	const { move, defender } = option;
-	const usePhysicalDef = checkUsePhysicalHelper(move);
-	let defStat = usePhysicalDef
-		? defender.getStat("defense")
-		: defender.getStat("specialDefense");
-	const stageChanges = usePhysicalDef
-		? defender.statStage.defense
-		: defender.statStage.specialDefense;
-	if (
-		!move.flags?.isCriticalHit &&
-		move.id !== 533 // sacred sword
-	) {
-		defStat = modifyStatByStageChange(defStat, stageChanges);
+	function checkCountStages(stageChange: number) {
+		if ((
+			move.flags?.isCriticalHit ||
+			// sacred sword
+			move.id === 533
+		) && stageChange > 0) {
+			return false
+		}
+		return true
 	}
+
+	const usePhysicalDef = checkUsePhysicalHelper(move);
+	const key: "defense" | "specialDefense" = usePhysicalDef ? "defense" : "specialDefense"
+	let defStat = defender.getStat(key, checkCountStages(defender.statStage[key]));
 	const operator = pipeModifierHelper(
 		{ operator: 4096, factors: {} } as TemporalFactor,
 		[modifyByWeather, modifyByDefenderAbility, modifyByItem, modifyByRuin],

@@ -161,37 +161,40 @@ export class Pokemon implements IPokemon {
 		this.sprite = info?.sprite;
 	}
 
-	getStat(key: keyof Stat): number {
+	getStat(key: keyof Stat, countStageChanges: boolean = true): number {
 		// before init
 		if (!this.stats && !this.baseStat) {
 			throw new Error("Please init pokemon with ID or manually set stats");
 		}
-		// support manually set stat, if so, ignore base stat, iv and ev
-		if (this.stats?.[key]) return this.stats[key];
 		if (key === "hp") {
+			if (this.stats?.hp) {
+				return this.stats.hp
+			}
 			return this.getHp(
 				this.baseStat[key],
 				this.individualValues[key],
 				this.effortValues[key],
 			);
 		}
-
+		const statStages = countStageChanges ? this.statStage[key] : 0
+		if (this.stats?.[key]) {
+			return modifyStatByStageChange(this.stats[key], statStages)
+		}
 		return this.getTargetStat(
 			key,
 			this.baseStat[key],
 			this.individualValues[key],
 			this.effortValues[key],
+			statStages
 		);
 	}
-	getStats(): Stat {
+	getStats(countStageChanges: boolean = true): Stat {
 		if (!this.stats && !this.baseStat) {
 			throw new Error("Please init pokemon with ID or manually set stats");
 		}
-		// support manually set stat, if so, ignore base stat, iv and ev
-		if (this.stats) return this.stats;
 		const baseStatEntries = Object.keys(this.baseStat) as Array<keyof Stat>;
 		return baseStatEntries.reduce((pre, key) => {
-			pre[key] = this.getStat(key);
+			pre[key] = this.getStat(key, countStageChanges);
 			return pre;
 		}, {} as Stat);
 	}
@@ -282,12 +285,13 @@ export class Pokemon implements IPokemon {
 		base: number,
 		iv: number,
 		ev: number,
+		stateStages: number
 	): number {
-		return Math.trunc(
+		return modifyStatByStageChange(Math.trunc(
 			(Math.trunc(((base * 2 + iv + Math.trunc(ev / 4)) * this.level) / 100) +
 				5) *
 			this.getNatureModifer(key),
-		);
+		), stateStages);
 	}
 	private getNatureModifer(key: keyof StatStages): number {
 		if (key === this.nature.plus) return 1.1;
@@ -367,4 +371,13 @@ function genDefaultStage(partial?: Partial<StatStages>): StatStages {
 
 function capitalize<T extends string>(s: T) {
 	return (s[0]?.toUpperCase() + s.slice(1)) as Capitalize<typeof s>;
+}
+
+function modifyStatByStageChange(
+	stat: number,
+	stageChange: number,
+): number {
+	return stageChange > 0
+		? (stat * (2 + stageChange)) / 2
+		: (stat * 2) / (2 - stageChange);
 }

@@ -3,7 +3,6 @@ import type { BattleStatus } from "./config";
 import {
 	checkStatOfMoveCategoryIsHighest,
 	mergeFactorList,
-	modifyStatByStageChange,
 	pipeModifierHelper
 } from "./utils";
 
@@ -13,18 +12,19 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 		defender,
 		move,
 	} = option
+
+	function checkCountStages(stageChange: number) {
+		if (move.flags?.isCriticalHit && stageChange < 0) {
+			return false
+		}
+		return true
+	}
 	const isPhysicalMove = move.category === "Physical"
-	let atkStat =
-		isPhysicalMove
-			? attacker.getStat("attack")
-			: attacker.getStat("specialAttack");
-	let stageChanges =
-		move.category === "Physical"
-			? attacker.statStage.attack
-			: attacker.statStage.specialAttack;
+	let atkKey: "attack" | "specialAttack" | "defense" = isPhysicalMove ? "attack" : "specialAttack"
+	let atkStat = attacker.getStat(atkKey, checkCountStages(attacker.statStage[atkKey]));
 	let factors: TemporalFactor["factors"] = {
 		attacker: {
-			atk: isPhysicalMove ? "attack" : "specialAttack",
+			atk: atkKey,
 			statFrom: "Attacker"
 		},
 		defender: {
@@ -33,8 +33,8 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 	}
 	// body press
 	if (move.id === 776) {
-		atkStat = attacker.getStat("defense");
-		stageChanges = attacker.statStage.defense;
+		atkKey = "defense"
+		atkStat = attacker.getStat("defense", checkCountStages(attacker.statStage.defense));
 		factors = mergeFactorList(factors, {
 			attacker: {
 				atk: "defense"
@@ -43,16 +43,12 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 	}
 	// foul play
 	if (move.id === 492) {
-		atkStat = defender.getStat("attack");
-		stageChanges = defender.statStage.attack;
+		atkStat = defender.getStat("attack", checkCountStages(defender.statStage.attack));
 		factors = mergeFactorList(factors, {
 			attacker: {
 				statFrom: "Defender"
 			}
 		})
-	}
-	if (!move.flags?.isCriticalHit) {
-		atkStat = modifyStatByStageChange(atkStat, stageChanges);
 	}
 	const operator = pipeModifierHelper(
 		{ operator: 4096, factors } as TemporalFactor,
@@ -77,7 +73,6 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 
 	return { operator: result, factors };
 }
-
 
 function modifyAtkByAttackAbility({
 	attacker,
