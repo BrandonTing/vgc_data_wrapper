@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.8
+
+### Patch Changes
+
+- 75c3ac3: count stat changes when get stat & fix type chart
+
 ## 0.3.7
 
 ### Patch Changes
