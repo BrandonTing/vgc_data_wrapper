@@ -121,7 +121,7 @@
     },
     "Fighting": {
         "Bug": 0.5,
-        "Dark": 1,
+        "Dark": 2,
         "Dragon": 1,
         "Electric": 1,
         "Fairy": 0.5,
