@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.9
+
+### Patch Changes
+
+- 883b31c: support liquid voice and tera blast
+
 ## 0.3.8
 
 ### Patch Changes
