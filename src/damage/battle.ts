@@ -81,7 +81,7 @@ export type TemporalFactor = {
 }
 
 function getDamage(originalOpt: BattleStatus): DamageResult {
-  const option = modifyOption(originalOpt)
+  const { option, factors } = modifyOption(originalOpt)
   function pipeOperator(
     pre: TemporalFactor,
     cur: (temporalResult: TemporalFactor, option: BattleStatus) => TemporalFactor,
@@ -94,7 +94,7 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
     pipeOperator,
   );
   const possibleDamages = modifyByRandomNum(preRandomResult.operator);
-  let finalFactors = preRandomResult.factors
+  let finalFactors = mergeFactorList(factors, preRandomResult.factors)
   const hp = option.defender.getStat("hp")
   const results: DamageResult["rolls"] = possibleDamages.map((damage, index) => {
     const damageNum = pipeModifierHelper(
@@ -847,9 +847,10 @@ export function createFactorHelper(commonFactor: TemporalFactor["factors"]) {
   }
 }
 
-function modifyOption(originalOpt: BattleStatus): BattleStatus {
+function modifyOption(originalOpt: BattleStatus): { option: BattleStatus, factors: TemporalFactor["factors"] } {
   const { move, attacker } = originalOpt
   const newMove = { ...move }
+  let factors: TemporalFactor["factors"] = {}
   // Tera storm becomes physical move if terapagos atk > spa
   if (newMove.id === 906 && isTerapagosStellar(attacker)) {
     if (attacker.getStat("attack") > attacker.getStat("specialAttack")) {
@@ -857,6 +858,9 @@ function modifyOption(originalOpt: BattleStatus): BattleStatus {
     }
     newMove.type = "Stellar"
     newMove.target = "allAdjacentFoes"
+    factors.attacker = {
+      isTera: true
+    }
   } else if (newMove.id === 904 && attacker.name?.includes("ogerpon")) {
     newMove.type = attacker.types.find(type => type !== "Grass") ?? "Grass"
   } else if (newMove.id === 686) {
@@ -864,6 +868,9 @@ function modifyOption(originalOpt: BattleStatus): BattleStatus {
     // 傷害屬性變為使用者本身的第一屬性。太晶化的寶可夢使用時，會變為和太晶屬性相同的屬性。
     if (attacker.isTera) {
       newMove.type = attacker.teraType
+      factors.attacker = {
+        isTera: true
+      }
     } else {
       newMove.type = attacker.types[0]
     }
@@ -871,13 +878,22 @@ function modifyOption(originalOpt: BattleStatus): BattleStatus {
     // Tera blase
     if (attacker.getStat("attack") > attacker.getStat("specialAttack")) {
       newMove.category = "Physical"
+      factors.attacker = {
+        isTera: true
+      }
     }
   } else if (newMove.flags?.isSound && attacker.ability === "Liquid Voice") {
     newMove.type = "Water"
+    factors.attacker = {
+      ability: true
+    }
   }
 
   return {
-    ...originalOpt,
-    move: newMove
+    option: {
+      ...originalOpt,
+      move: newMove
+    },
+    factors
   }
 }
