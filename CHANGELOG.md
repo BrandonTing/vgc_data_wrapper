@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.10
+
+### Patch Changes
+
+- 47e44a5: change type of weather ball
+
 ## 0.3.9
 
 ### Patch Changes
