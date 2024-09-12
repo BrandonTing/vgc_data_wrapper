@@ -1,1258 +1,1258 @@
 {
-  "noability": {
-    "name": "No Ability",
-    "id": 0
-  },
-  "adaptability": {
-    "name": "Adaptability",
-    "id": 91
-  },
-  "aerilate": {
-    "name": "Aerilate",
-    "id": 184
-  },
-  "aftermath": {
-    "name": "Aftermath",
-    "id": 106
-  },
-  "airlock": {
-    "name": "Air Lock",
-    "id": 76
-  },
-  "analytic": {
-    "name": "Analytic",
-    "id": 148
-  },
-  "angerpoint": {
-    "name": "Anger Point",
-    "id": 83
-  },
-  "angershell": {
-    "name": "Anger Shell",
-    "id": 271
-  },
-  "anticipation": {
-    "name": "Anticipation",
-    "id": 107
-  },
-  "arenatrap": {
-    "name": "Arena Trap",
-    "id": 71
-  },
-  "armortail": {
-    "name": "Armor Tail",
-    "id": 296
-  },
-  "aromaveil": {
-    "name": "Aroma Veil",
-    "id": 165
-  },
-  "asoneglastrier": {
-    "name": "As One (Glastrier)",
-    "id": 266
-  },
-  "asonespectrier": {
-    "name": "As One (Spectrier)",
-    "id": 267
-  },
-  "aurabreak": {
-    "name": "Aura Break",
-    "id": 188
-  },
-  "baddreams": {
-    "name": "Bad Dreams",
-    "id": 123
-  },
-  "ballfetch": {
-    "name": "Ball Fetch",
-    "id": 237
-  },
-  "battery": {
-    "name": "Battery",
-    "id": 217
-  },
-  "battlearmor": {
-    "name": "Battle Armor",
-    "id": 4
-  },
-  "battlebond": {
-    "name": "Battle Bond",
-    "id": 210
-  },
-  "beadsofruin": {
-    "name": "Beads of Ruin",
-    "id": 284
-  },
-  "beastboost": {
-    "name": "Beast Boost",
-    "id": 224
-  },
-  "berserk": {
-    "name": "Berserk",
-    "id": 201
-  },
-  "bigpecks": {
-    "name": "Big Pecks",
-    "id": 145
-  },
-  "blaze": {
-    "name": "Blaze",
-    "id": 66
-  },
-  "bulletproof": {
-    "name": "Bulletproof",
-    "id": 171
-  },
-  "cheekpouch": {
-    "name": "Cheek Pouch",
-    "id": 167
-  },
-  "chillingneigh": {
-    "name": "Chilling Neigh",
-    "id": 264
-  },
-  "chlorophyll": {
-    "name": "Chlorophyll",
-    "id": 34
-  },
-  "clearbody": {
-    "name": "Clear Body",
-    "id": 29
-  },
-  "cloudnine": {
-    "name": "Cloud Nine",
-    "id": 13
-  },
-  "colorchange": {
-    "name": "Color Change",
-    "id": 16
-  },
-  "comatose": {
-    "name": "Comatose",
-    "id": 213
-  },
-  "commander": {
-    "name": "Commander",
-    "id": 279
-  },
-  "competitive": {
-    "name": "Competitive",
-    "id": 172
-  },
-  "compoundeyes": {
-    "name": "Compound Eyes",
-    "id": 14
-  },
-  "contrary": {
-    "name": "Contrary",
-    "id": 126
-  },
-  "corrosion": {
-    "name": "Corrosion",
-    "id": 212
-  },
-  "costar": {
-    "name": "Costar",
-    "id": 294
-  },
-  "cottondown": {
-    "name": "Cotton Down",
-    "id": 238
-  },
-  "cudchew": {
-    "name": "Cud Chew",
-    "id": 291
-  },
-  "curiousmedicine": {
-    "name": "Curious Medicine",
-    "id": 261
-  },
-  "cursedbody": {
-    "name": "Cursed Body",
-    "id": 130
-  },
-  "cutecharm": {
-    "name": "Cute Charm",
-    "id": 56
-  },
-  "damp": {
-    "name": "Damp",
-    "id": 6
-  },
-  "dancer": {
-    "name": "Dancer",
-    "id": 216
-  },
-  "darkaura": {
-    "name": "Dark Aura",
-    "id": 186
-  },
-  "dauntlessshield": {
-    "name": "Dauntless Shield",
-    "id": 235
-  },
-  "dazzling": {
-    "name": "Dazzling",
-    "id": 219
-  },
-  "defeatist": {
-    "name": "Defeatist",
-    "id": 129
-  },
-  "defiant": {
-    "name": "Defiant",
-    "id": 128
-  },
-  "deltastream": {
-    "name": "Delta Stream",
-    "id": 191
-  },
-  "desolateland": {
-    "name": "Desolate Land",
-    "id": 190
-  },
-  "disguise": {
-    "name": "Disguise",
-    "id": 209
-  },
-  "download": {
-    "name": "Download",
-    "id": 88
-  },
-  "dragonsmaw": {
-    "name": "Dragon's Maw",
-    "id": 263
-  },
-  "drizzle": {
-    "name": "Drizzle",
-    "id": 2
-  },
-  "drought": {
-    "name": "Drought",
-    "id": 70
-  },
-  "dryskin": {
-    "name": "Dry Skin",
-    "id": 87
-  },
-  "earlybird": {
-    "name": "Early Bird",
-    "id": 48
-  },
-  "eartheater": {
-    "name": "Earth Eater",
-    "id": 297
-  },
-  "effectspore": {
-    "name": "Effect Spore",
-    "id": 27
-  },
-  "electricsurge": {
-    "name": "Electric Surge",
-    "id": 226
-  },
-  "electromorphosis": {
-    "name": "Electromorphosis",
-    "id": 280
-  },
-  "embodyaspectcornerstone": {
-    "name": "Embody Aspect (Cornerstone)",
-    "id": 304
-  },
-  "embodyaspecthearthflame": {
-    "name": "Embody Aspect (Hearthflame)",
-    "id": 303
-  },
-  "embodyaspectteal": {
-    "name": "Embody Aspect (Teal)",
-    "id": 301
-  },
-  "embodyaspectwellspring": {
-    "name": "Embody Aspect (Wellspring)",
-    "id": 302
-  },
-  "emergencyexit": {
-    "name": "Emergency Exit",
-    "id": 194
-  },
-  "fairyaura": {
-    "name": "Fairy Aura",
-    "id": 187
-  },
-  "filter": {
-    "name": "Filter",
-    "id": 111
-  },
-  "flamebody": {
-    "name": "Flame Body",
-    "id": 49
-  },
-  "flareboost": {
-    "name": "Flare Boost",
-    "id": 138
-  },
-  "flashfire": {
-    "name": "Flash Fire",
-    "id": 18
-  },
-  "flowergift": {
-    "name": "Flower Gift",
-    "id": 122
-  },
-  "flowerveil": {
-    "name": "Flower Veil",
-    "id": 166
-  },
-  "fluffy": {
-    "name": "Fluffy",
-    "id": 218
-  },
-  "forecast": {
-    "name": "Forecast",
-    "id": 59
-  },
-  "forewarn": {
-    "name": "Forewarn",
-    "id": 108
-  },
-  "friendguard": {
-    "name": "Friend Guard",
-    "id": 132
-  },
-  "frisk": {
-    "name": "Frisk",
-    "id": 119
-  },
-  "fullmetalbody": {
-    "name": "Full Metal Body",
-    "id": 230
-  },
-  "furcoat": {
-    "name": "Fur Coat",
-    "id": 169
-  },
-  "galewings": {
-    "name": "Gale Wings",
-    "id": 177
-  },
-  "galvanize": {
-    "name": "Galvanize",
-    "id": 206
-  },
-  "gluttony": {
-    "name": "Gluttony",
-    "id": 82
-  },
-  "goodasgold": {
-    "name": "Good as Gold",
-    "id": 283
-  },
-  "gooey": {
-    "name": "Gooey",
-    "id": 183
-  },
-  "gorillatactics": {
-    "name": "Gorilla Tactics",
-    "id": 255
-  },
-  "grasspelt": {
-    "name": "Grass Pelt",
-    "id": 179
-  },
-  "grassysurge": {
-    "name": "Grassy Surge",
-    "id": 229
-  },
-  "grimneigh": {
-    "name": "Grim Neigh",
-    "id": 265
-  },
-  "guarddog": {
-    "name": "Guard Dog",
-    "id": 275
-  },
-  "gulpmissile": {
-    "name": "Gulp Missile",
-    "id": 241
-  },
-  "guts": {
-    "name": "Guts",
-    "id": 62
-  },
-  "hadronengine": {
-    "name": "Hadron Engine",
-    "id": 289
-  },
-  "harvest": {
-    "name": "Harvest",
-    "id": 139
-  },
-  "healer": {
-    "name": "Healer",
-    "id": 131
-  },
-  "heatproof": {
-    "name": "Heatproof",
-    "id": 85
-  },
-  "heavymetal": {
-    "name": "Heavy Metal",
-    "id": 134
-  },
-  "honeygather": {
-    "name": "Honey Gather",
-    "id": 118
-  },
-  "hospitality": {
-    "name": "Hospitality",
-    "id": 299
-  },
-  "hugepower": {
-    "name": "Huge Power",
-    "id": 37
-  },
-  "hungerswitch": {
-    "name": "Hunger Switch",
-    "id": 258
-  },
-  "hustle": {
-    "name": "Hustle",
-    "id": 55
-  },
-  "hydration": {
-    "name": "Hydration",
-    "id": 93
-  },
-  "hypercutter": {
-    "name": "Hyper Cutter",
-    "id": 52
-  },
-  "icebody": {
-    "name": "Ice Body",
-    "id": 115
-  },
-  "iceface": {
-    "name": "Ice Face",
-    "id": 248
-  },
-  "icescales": {
-    "name": "Ice Scales",
-    "id": 246
-  },
-  "illuminate": {
-    "name": "Illuminate",
-    "id": 35
-  },
-  "illusion": {
-    "name": "Illusion",
-    "id": 149
-  },
-  "immunity": {
-    "name": "Immunity",
-    "id": 17
-  },
-  "imposter": {
-    "name": "Imposter",
-    "id": 150
-  },
-  "infiltrator": {
-    "name": "Infiltrator",
-    "id": 151
-  },
-  "innardsout": {
-    "name": "Innards Out",
-    "id": 215
-  },
-  "innerfocus": {
-    "name": "Inner Focus",
-    "id": 39
-  },
-  "insomnia": {
-    "name": "Insomnia",
-    "id": 15
-  },
-  "intimidate": {
-    "name": "Intimidate",
-    "id": 22
-  },
-  "intrepidsword": {
-    "name": "Intrepid Sword",
-    "id": 234
-  },
-  "ironbarbs": {
-    "name": "Iron Barbs",
-    "id": 160
-  },
-  "ironfist": {
-    "name": "Iron Fist",
-    "id": 89
-  },
-  "justified": {
-    "name": "Justified",
-    "id": 154
-  },
-  "keeneye": {
-    "name": "Keen Eye",
-    "id": 51
-  },
-  "klutz": {
-    "name": "Klutz",
-    "id": 103
-  },
-  "leafguard": {
-    "name": "Leaf Guard",
-    "id": 102
-  },
-  "levitate": {
-    "name": "Levitate",
-    "id": 26
-  },
-  "libero": {
-    "name": "Libero",
-    "id": 236
-  },
-  "lightmetal": {
-    "name": "Light Metal",
-    "id": 135
-  },
-  "lightningrod": {
-    "name": "Lightning Rod",
-    "id": 31
-  },
-  "limber": {
-    "name": "Limber",
-    "id": 7
-  },
-  "lingeringaroma": {
-    "name": "Lingering Aroma",
-    "id": 268
-  },
-  "liquidooze": {
-    "name": "Liquid Ooze",
-    "id": 64
-  },
-  "liquidvoice": {
-    "name": "Liquid Voice",
-    "id": 204
-  },
-  "longreach": {
-    "name": "Long Reach",
-    "id": 203
-  },
-  "magicbounce": {
-    "name": "Magic Bounce",
-    "id": 156
-  },
-  "magicguard": {
-    "name": "Magic Guard",
-    "id": 98
-  },
-  "magician": {
-    "name": "Magician",
-    "id": 170
-  },
-  "magmaarmor": {
-    "name": "Magma Armor",
-    "id": 40
-  },
-  "magnetpull": {
-    "name": "Magnet Pull",
-    "id": 42
-  },
-  "marvelscale": {
-    "name": "Marvel Scale",
-    "id": 63
-  },
-  "megalauncher": {
-    "name": "Mega Launcher",
-    "id": 178
-  },
-  "merciless": {
-    "name": "Merciless",
-    "id": 196
-  },
-  "mimicry": {
-    "name": "Mimicry",
-    "id": 250
-  },
-  "mindseye": {
-    "name": "Mind's Eye",
-    "id": 300
-  },
-  "minus": {
-    "name": "Minus",
-    "id": 58
-  },
-  "mirrorarmor": {
-    "name": "Mirror Armor",
-    "id": 240
-  },
-  "mistysurge": {
-    "name": "Misty Surge",
-    "id": 228
-  },
-  "moldbreaker": {
-    "name": "Mold Breaker",
-    "id": 104
-  },
-  "moody": {
-    "name": "Moody",
-    "id": 141
-  },
-  "motordrive": {
-    "name": "Motor Drive",
-    "id": 78
-  },
-  "moxie": {
-    "name": "Moxie",
-    "id": 153
-  },
-  "multiscale": {
-    "name": "Multiscale",
-    "id": 136
-  },
-  "multitype": {
-    "name": "Multitype",
-    "id": 121
-  },
-  "mummy": {
-    "name": "Mummy",
-    "id": 152
-  },
-  "myceliummight": {
-    "name": "Mycelium Might",
-    "id": 298
-  },
-  "naturalcure": {
-    "name": "Natural Cure",
-    "id": 30
-  },
-  "neuroforce": {
-    "name": "Neuroforce",
-    "id": 233
-  },
-  "neutralizinggas": {
-    "name": "Neutralizing Gas",
-    "id": 256
-  },
-  "noguard": {
-    "name": "No Guard",
-    "id": 99
-  },
-  "normalize": {
-    "name": "Normalize",
-    "id": 96
-  },
-  "oblivious": {
-    "name": "Oblivious",
-    "id": 12
-  },
-  "opportunist": {
-    "name": "Opportunist",
-    "id": 290
-  },
-  "orichalcumpulse": {
-    "name": "Orichalcum Pulse",
-    "id": 288
-  },
-  "overcoat": {
-    "name": "Overcoat",
-    "id": 142
-  },
-  "overgrow": {
-    "name": "Overgrow",
-    "id": 65
-  },
-  "owntempo": {
-    "name": "Own Tempo",
-    "id": 20
-  },
-  "parentalbond": {
-    "name": "Parental Bond",
-    "id": 185
-  },
-  "pastelveil": {
-    "name": "Pastel Veil",
-    "id": 257
-  },
-  "perishbody": {
-    "name": "Perish Body",
-    "id": 253
-  },
-  "pickpocket": {
-    "name": "Pickpocket",
-    "id": 124
-  },
-  "pickup": {
-    "name": "Pickup",
-    "id": 53
-  },
-  "pixilate": {
-    "name": "Pixilate",
-    "id": 182
-  },
-  "plus": {
-    "name": "Plus",
-    "id": 57
-  },
-  "poisonheal": {
-    "name": "Poison Heal",
-    "id": 90
-  },
-  "poisonpoint": {
-    "name": "Poison Point",
-    "id": 38
-  },
-  "poisonpuppeteer": {
-    "name": "Poison Puppeteer",
-    "id": 310
-  },
-  "poisontouch": {
-    "name": "Poison Touch",
-    "id": 143
-  },
-  "powerconstruct": {
-    "name": "Power Construct",
-    "id": 211
-  },
-  "powerofalchemy": {
-    "name": "Power of Alchemy",
-    "id": 223
-  },
-  "powerspot": {
-    "name": "Power Spot",
-    "id": 249
-  },
-  "prankster": {
-    "name": "Prankster",
-    "id": 158
-  },
-  "pressure": {
-    "name": "Pressure",
-    "id": 46
-  },
-  "primordialsea": {
-    "name": "Primordial Sea",
-    "id": 189
-  },
-  "prismarmor": {
-    "name": "Prism Armor",
-    "id": 232
-  },
-  "propellertail": {
-    "name": "Propeller Tail",
-    "id": 239
-  },
-  "protean": {
-    "name": "Protean",
-    "id": 168
-  },
-  "protosynthesis": {
-    "name": "Protosynthesis",
-    "id": 281
-  },
-  "psychicsurge": {
-    "name": "Psychic Surge",
-    "id": 227
-  },
-  "punkrock": {
-    "name": "Punk Rock",
-    "id": 244
-  },
-  "purepower": {
-    "name": "Pure Power",
-    "id": 74
-  },
-  "purifyingsalt": {
-    "name": "Purifying Salt",
-    "id": 272
-  },
-  "quarkdrive": {
-    "name": "Quark Drive",
-    "id": 282
-  },
-  "queenlymajesty": {
-    "name": "Queenly Majesty",
-    "id": 214
-  },
-  "quickdraw": {
-    "name": "Quick Draw",
-    "id": 259
-  },
-  "quickfeet": {
-    "name": "Quick Feet",
-    "id": 95
-  },
-  "raindish": {
-    "name": "Rain Dish",
-    "id": 44
-  },
-  "rattled": {
-    "name": "Rattled",
-    "id": 155
-  },
-  "receiver": {
-    "name": "Receiver",
-    "id": 222
-  },
-  "reckless": {
-    "name": "Reckless",
-    "id": 120
-  },
-  "refrigerate": {
-    "name": "Refrigerate",
-    "id": 174
-  },
-  "regenerator": {
-    "name": "Regenerator",
-    "id": 144
-  },
-  "ripen": {
-    "name": "Ripen",
-    "id": 247
-  },
-  "rivalry": {
-    "name": "Rivalry",
-    "id": 79
-  },
-  "rkssystem": {
-    "name": "RKS System",
-    "id": 225
-  },
-  "rockhead": {
-    "name": "Rock Head",
-    "id": 69
-  },
-  "rockypayload": {
-    "name": "Rocky Payload",
-    "id": 276
-  },
-  "roughskin": {
-    "name": "Rough Skin",
-    "id": 24
-  },
-  "runaway": {
-    "name": "Run Away",
-    "id": 50
-  },
-  "sandforce": {
-    "name": "Sand Force",
-    "id": 159
-  },
-  "sandrush": {
-    "name": "Sand Rush",
-    "id": 146
-  },
-  "sandspit": {
-    "name": "Sand Spit",
-    "id": 245
-  },
-  "sandstream": {
-    "name": "Sand Stream",
-    "id": 45
-  },
-  "sandveil": {
-    "name": "Sand Veil",
-    "id": 8
-  },
-  "sapsipper": {
-    "name": "Sap Sipper",
-    "id": 157
-  },
-  "schooling": {
-    "name": "Schooling",
-    "id": 208
-  },
-  "scrappy": {
-    "name": "Scrappy",
-    "id": 113
-  },
-  "screencleaner": {
-    "name": "Screen Cleaner",
-    "id": 251
-  },
-  "seedsower": {
-    "name": "Seed Sower",
-    "id": 269
-  },
-  "serenegrace": {
-    "name": "Serene Grace",
-    "id": 32
-  },
-  "shadowshield": {
-    "name": "Shadow Shield",
-    "id": 231
-  },
-  "shadowtag": {
-    "name": "Shadow Tag",
-    "id": 23
-  },
-  "sharpness": {
-    "name": "Sharpness",
-    "id": 292
-  },
-  "shedskin": {
-    "name": "Shed Skin",
-    "id": 61
-  },
-  "sheerforce": {
-    "name": "Sheer Force",
-    "id": 125
-  },
-  "shellarmor": {
-    "name": "Shell Armor",
-    "id": 75
-  },
-  "shielddust": {
-    "name": "Shield Dust",
-    "id": 19
-  },
-  "shieldsdown": {
-    "name": "Shields Down",
-    "id": 197
-  },
-  "simple": {
-    "name": "Simple",
-    "id": 86
-  },
-  "skilllink": {
-    "name": "Skill Link",
-    "id": 92
-  },
-  "slowstart": {
-    "name": "Slow Start",
-    "id": 112
-  },
-  "slushrush": {
-    "name": "Slush Rush",
-    "id": 202
-  },
-  "sniper": {
-    "name": "Sniper",
-    "id": 97
-  },
-  "snowcloak": {
-    "name": "Snow Cloak",
-    "id": 81
-  },
-  "snowwarning": {
-    "name": "Snow Warning",
-    "id": 117
-  },
-  "solarpower": {
-    "name": "Solar Power",
-    "id": 94
-  },
-  "solidrock": {
-    "name": "Solid Rock",
-    "id": 116
-  },
-  "soulheart": {
-    "name": "Soul-Heart",
-    "id": 220
-  },
-  "soundproof": {
-    "name": "Soundproof",
-    "id": 43
-  },
-  "speedboost": {
-    "name": "Speed Boost",
-    "id": 3
-  },
-  "stakeout": {
-    "name": "Stakeout",
-    "id": 198
-  },
-  "stall": {
-    "name": "Stall",
-    "id": 100
-  },
-  "stalwart": {
-    "name": "Stalwart",
-    "id": 242
-  },
-  "stamina": {
-    "name": "Stamina",
-    "id": 192
-  },
-  "stancechange": {
-    "name": "Stance Change",
-    "id": 176
-  },
-  "static": {
-    "name": "Static",
-    "id": 9
-  },
-  "steadfast": {
-    "name": "Steadfast",
-    "id": 80
-  },
-  "steamengine": {
-    "name": "Steam Engine",
-    "id": 243
-  },
-  "steelworker": {
-    "name": "Steelworker",
-    "id": 200
-  },
-  "steelyspirit": {
-    "name": "Steely Spirit",
-    "id": 252
-  },
-  "stench": {
-    "name": "Stench",
-    "id": 1
-  },
-  "stickyhold": {
-    "name": "Sticky Hold",
-    "id": 60
-  },
-  "stormdrain": {
-    "name": "Storm Drain",
-    "id": 114
-  },
-  "strongjaw": {
-    "name": "Strong Jaw",
-    "id": 173
-  },
-  "sturdy": {
-    "name": "Sturdy",
-    "id": 5
-  },
-  "suctioncups": {
-    "name": "Suction Cups",
-    "id": 21
-  },
-  "superluck": {
-    "name": "Super Luck",
-    "id": 105
-  },
-  "supersweetsyrup": {
-    "name": "Supersweet Syrup",
-    "id": 306
-  },
-  "supremeoverlord": {
-    "name": "Supreme Overlord",
-    "id": 293
-  },
-  "surgesurfer": {
-    "name": "Surge Surfer",
-    "id": 207
-  },
-  "swarm": {
-    "name": "Swarm",
-    "id": 68
-  },
-  "sweetveil": {
-    "name": "Sweet Veil",
-    "id": 175
-  },
-  "swiftswim": {
-    "name": "Swift Swim",
-    "id": 33
-  },
-  "symbiosis": {
-    "name": "Symbiosis",
-    "id": 180
-  },
-  "synchronize": {
-    "name": "Synchronize",
-    "id": 28
-  },
-  "swordofruin": {
-    "name": "Sword of Ruin",
-    "id": 285
-  },
-  "tabletsofruin": {
-    "name": "Tablets of Ruin",
-    "id": 284
-  },
-  "tangledfeet": {
-    "name": "Tangled Feet",
-    "id": 77
-  },
-  "tanglinghair": {
-    "name": "Tangling Hair",
-    "id": 221
-  },
-  "technician": {
-    "name": "Technician",
-    "id": 101
-  },
-  "telepathy": {
-    "name": "Telepathy",
-    "id": 140
-  },
-  "teraformzero": {
-    "name": "Teraform Zero",
-    "id": 309
-  },
-  "terashell": {
-    "name": "Tera Shell",
-    "id": 308
-  },
-  "terashift": {
-    "name": "Tera Shift",
-    "id": 307
-  },
-  "teravolt": {
-    "name": "Teravolt",
-    "id": 164
-  },
-  "thermalexchange": {
-    "name": "Thermal Exchange",
-    "id": 270
-  },
-  "thickfat": {
-    "name": "Thick Fat",
-    "id": 47
-  },
-  "tintedlens": {
-    "name": "Tinted Lens",
-    "id": 110
-  },
-  "torrent": {
-    "name": "Torrent",
-    "id": 67
-  },
-  "toughclaws": {
-    "name": "Tough Claws",
-    "id": 181
-  },
-  "toxicboost": {
-    "name": "Toxic Boost",
-    "id": 137
-  },
-  "toxicchain": {
-    "name": "Toxic Chain",
-    "id": 305
-  },
-  "toxicdebris": {
-    "name": "Toxic Debris",
-    "id": 295
-  },
-  "trace": {
-    "name": "Trace",
-    "id": 36
-  },
-  "transistor": {
-    "name": "Transistor",
-    "id": 262
-  },
-  "triage": {
-    "name": "Triage",
-    "id": 205
-  },
-  "truant": {
-    "name": "Truant",
-    "id": 54
-  },
-  "turboblaze": {
-    "name": "Turboblaze",
-    "id": 163
-  },
-  "unaware": {
-    "name": "Unaware",
-    "id": 109
-  },
-  "unburden": {
-    "name": "Unburden",
-    "id": 84
-  },
-  "unnerve": {
-    "name": "Unnerve",
-    "id": 127
-  },
-  "unseenfist": {
-    "name": "Unseen Fist",
-    "id": 260
-  },
-  "vesselofruin": {
-    "name": "Vessel of Ruin",
-    "id": 284
-  },
-  "victorystar": {
-    "name": "Victory Star",
-    "id": 162
-  },
-  "vitalspirit": {
-    "name": "Vital Spirit",
-    "id": 72
-  },
-  "voltabsorb": {
-    "name": "Volt Absorb",
-    "id": 10
-  },
-  "wanderingspirit": {
-    "name": "Wandering Spirit",
-    "id": 254
-  },
-  "waterabsorb": {
-    "name": "Water Absorb",
-    "id": 11
-  },
-  "waterbubble": {
-    "name": "Water Bubble",
-    "id": 199
-  },
-  "watercompaction": {
-    "name": "Water Compaction",
-    "id": 195
-  },
-  "waterveil": {
-    "name": "Water Veil",
-    "id": 41
-  },
-  "weakarmor": {
-    "name": "Weak Armor",
-    "id": 133
-  },
-  "wellbakedbody": {
-    "name": "Well-Baked Body",
-    "id": 273
-  },
-  "whitesmoke": {
-    "name": "White Smoke",
-    "id": 73
-  },
-  "wimpout": {
-    "name": "Wimp Out",
-    "id": 193
-  },
-  "windpower": {
-    "name": "Wind Power",
-    "id": 277
-  },
-  "windrider": {
-    "name": "Wind Rider",
-    "id": 274
-  },
-  "wonderguard": {
-    "name": "Wonder Guard",
-    "id": 25
-  },
-  "wonderskin": {
-    "name": "Wonder Skin",
-    "id": 147
-  },
-  "zenmode": {
-    "name": "Zen Mode",
-    "id": 161
-  },
-  "zerotohero": {
-    "name": "Zero to Hero",
-    "id": 278
-  },
-  "mountaineer": {
-    "name": "Mountaineer",
-    "id": -2
-  },
-  "rebound": {
-    "name": "Rebound",
-    "id": -3
-  },
-  "persistent": {
-    "name": "Persistent",
-    "id": -4
-  }
+	"noability": {
+		"name": "No Ability",
+		"id": 0
+	},
+	"adaptability": {
+		"name": "Adaptability",
+		"id": 91
+	},
+	"aerilate": {
+		"name": "Aerilate",
+		"id": 184
+	},
+	"aftermath": {
+		"name": "Aftermath",
+		"id": 106
+	},
+	"airlock": {
+		"name": "Air Lock",
+		"id": 76
+	},
+	"analytic": {
+		"name": "Analytic",
+		"id": 148
+	},
+	"angerpoint": {
+		"name": "Anger Point",
+		"id": 83
+	},
+	"angershell": {
+		"name": "Anger Shell",
+		"id": 271
+	},
+	"anticipation": {
+		"name": "Anticipation",
+		"id": 107
+	},
+	"arenatrap": {
+		"name": "Arena Trap",
+		"id": 71
+	},
+	"armortail": {
+		"name": "Armor Tail",
+		"id": 296
+	},
+	"aromaveil": {
+		"name": "Aroma Veil",
+		"id": 165
+	},
+	"asoneglastrier": {
+		"name": "As One (Glastrier)",
+		"id": 266
+	},
+	"asonespectrier": {
+		"name": "As One (Spectrier)",
+		"id": 267
+	},
+	"aurabreak": {
+		"name": "Aura Break",
+		"id": 188
+	},
+	"baddreams": {
+		"name": "Bad Dreams",
+		"id": 123
+	},
+	"ballfetch": {
+		"name": "Ball Fetch",
+		"id": 237
+	},
+	"battery": {
+		"name": "Battery",
+		"id": 217
+	},
+	"battlearmor": {
+		"name": "Battle Armor",
+		"id": 4
+	},
+	"battlebond": {
+		"name": "Battle Bond",
+		"id": 210
+	},
+	"beadsofruin": {
+		"name": "Beads of Ruin",
+		"id": 284
+	},
+	"beastboost": {
+		"name": "Beast Boost",
+		"id": 224
+	},
+	"berserk": {
+		"name": "Berserk",
+		"id": 201
+	},
+	"bigpecks": {
+		"name": "Big Pecks",
+		"id": 145
+	},
+	"blaze": {
+		"name": "Blaze",
+		"id": 66
+	},
+	"bulletproof": {
+		"name": "Bulletproof",
+		"id": 171
+	},
+	"cheekpouch": {
+		"name": "Cheek Pouch",
+		"id": 167
+	},
+	"chillingneigh": {
+		"name": "Chilling Neigh",
+		"id": 264
+	},
+	"chlorophyll": {
+		"name": "Chlorophyll",
+		"id": 34
+	},
+	"clearbody": {
+		"name": "Clear Body",
+		"id": 29
+	},
+	"cloudnine": {
+		"name": "Cloud Nine",
+		"id": 13
+	},
+	"colorchange": {
+		"name": "Color Change",
+		"id": 16
+	},
+	"comatose": {
+		"name": "Comatose",
+		"id": 213
+	},
+	"commander": {
+		"name": "Commander",
+		"id": 279
+	},
+	"competitive": {
+		"name": "Competitive",
+		"id": 172
+	},
+	"compoundeyes": {
+		"name": "Compound Eyes",
+		"id": 14
+	},
+	"contrary": {
+		"name": "Contrary",
+		"id": 126
+	},
+	"corrosion": {
+		"name": "Corrosion",
+		"id": 212
+	},
+	"costar": {
+		"name": "Costar",
+		"id": 294
+	},
+	"cottondown": {
+		"name": "Cotton Down",
+		"id": 238
+	},
+	"cudchew": {
+		"name": "Cud Chew",
+		"id": 291
+	},
+	"curiousmedicine": {
+		"name": "Curious Medicine",
+		"id": 261
+	},
+	"cursedbody": {
+		"name": "Cursed Body",
+		"id": 130
+	},
+	"cutecharm": {
+		"name": "Cute Charm",
+		"id": 56
+	},
+	"damp": {
+		"name": "Damp",
+		"id": 6
+	},
+	"dancer": {
+		"name": "Dancer",
+		"id": 216
+	},
+	"darkaura": {
+		"name": "Dark Aura",
+		"id": 186
+	},
+	"dauntlessshield": {
+		"name": "Dauntless Shield",
+		"id": 235
+	},
+	"dazzling": {
+		"name": "Dazzling",
+		"id": 219
+	},
+	"defeatist": {
+		"name": "Defeatist",
+		"id": 129
+	},
+	"defiant": {
+		"name": "Defiant",
+		"id": 128
+	},
+	"deltastream": {
+		"name": "Delta Stream",
+		"id": 191
+	},
+	"desolateland": {
+		"name": "Desolate Land",
+		"id": 190
+	},
+	"disguise": {
+		"name": "Disguise",
+		"id": 209
+	},
+	"download": {
+		"name": "Download",
+		"id": 88
+	},
+	"dragonsmaw": {
+		"name": "Dragon's Maw",
+		"id": 263
+	},
+	"drizzle": {
+		"name": "Drizzle",
+		"id": 2
+	},
+	"drought": {
+		"name": "Drought",
+		"id": 70
+	},
+	"dryskin": {
+		"name": "Dry Skin",
+		"id": 87
+	},
+	"earlybird": {
+		"name": "Early Bird",
+		"id": 48
+	},
+	"eartheater": {
+		"name": "Earth Eater",
+		"id": 297
+	},
+	"effectspore": {
+		"name": "Effect Spore",
+		"id": 27
+	},
+	"electricsurge": {
+		"name": "Electric Surge",
+		"id": 226
+	},
+	"electromorphosis": {
+		"name": "Electromorphosis",
+		"id": 280
+	},
+	"embodyaspectcornerstone": {
+		"name": "Embody Aspect (Cornerstone)",
+		"id": 304
+	},
+	"embodyaspecthearthflame": {
+		"name": "Embody Aspect (Hearthflame)",
+		"id": 303
+	},
+	"embodyaspectteal": {
+		"name": "Embody Aspect (Teal)",
+		"id": 301
+	},
+	"embodyaspectwellspring": {
+		"name": "Embody Aspect (Wellspring)",
+		"id": 302
+	},
+	"emergencyexit": {
+		"name": "Emergency Exit",
+		"id": 194
+	},
+	"fairyaura": {
+		"name": "Fairy Aura",
+		"id": 187
+	},
+	"filter": {
+		"name": "Filter",
+		"id": 111
+	},
+	"flamebody": {
+		"name": "Flame Body",
+		"id": 49
+	},
+	"flareboost": {
+		"name": "Flare Boost",
+		"id": 138
+	},
+	"flashfire": {
+		"name": "Flash Fire",
+		"id": 18
+	},
+	"flowergift": {
+		"name": "Flower Gift",
+		"id": 122
+	},
+	"flowerveil": {
+		"name": "Flower Veil",
+		"id": 166
+	},
+	"fluffy": {
+		"name": "Fluffy",
+		"id": 218
+	},
+	"forecast": {
+		"name": "Forecast",
+		"id": 59
+	},
+	"forewarn": {
+		"name": "Forewarn",
+		"id": 108
+	},
+	"friendguard": {
+		"name": "Friend Guard",
+		"id": 132
+	},
+	"frisk": {
+		"name": "Frisk",
+		"id": 119
+	},
+	"fullmetalbody": {
+		"name": "Full Metal Body",
+		"id": 230
+	},
+	"furcoat": {
+		"name": "Fur Coat",
+		"id": 169
+	},
+	"galewings": {
+		"name": "Gale Wings",
+		"id": 177
+	},
+	"galvanize": {
+		"name": "Galvanize",
+		"id": 206
+	},
+	"gluttony": {
+		"name": "Gluttony",
+		"id": 82
+	},
+	"goodasgold": {
+		"name": "Good as Gold",
+		"id": 283
+	},
+	"gooey": {
+		"name": "Gooey",
+		"id": 183
+	},
+	"gorillatactics": {
+		"name": "Gorilla Tactics",
+		"id": 255
+	},
+	"grasspelt": {
+		"name": "Grass Pelt",
+		"id": 179
+	},
+	"grassysurge": {
+		"name": "Grassy Surge",
+		"id": 229
+	},
+	"grimneigh": {
+		"name": "Grim Neigh",
+		"id": 265
+	},
+	"guarddog": {
+		"name": "Guard Dog",
+		"id": 275
+	},
+	"gulpmissile": {
+		"name": "Gulp Missile",
+		"id": 241
+	},
+	"guts": {
+		"name": "Guts",
+		"id": 62
+	},
+	"hadronengine": {
+		"name": "Hadron Engine",
+		"id": 289
+	},
+	"harvest": {
+		"name": "Harvest",
+		"id": 139
+	},
+	"healer": {
+		"name": "Healer",
+		"id": 131
+	},
+	"heatproof": {
+		"name": "Heatproof",
+		"id": 85
+	},
+	"heavymetal": {
+		"name": "Heavy Metal",
+		"id": 134
+	},
+	"honeygather": {
+		"name": "Honey Gather",
+		"id": 118
+	},
+	"hospitality": {
+		"name": "Hospitality",
+		"id": 299
+	},
+	"hugepower": {
+		"name": "Huge Power",
+		"id": 37
+	},
+	"hungerswitch": {
+		"name": "Hunger Switch",
+		"id": 258
+	},
+	"hustle": {
+		"name": "Hustle",
+		"id": 55
+	},
+	"hydration": {
+		"name": "Hydration",
+		"id": 93
+	},
+	"hypercutter": {
+		"name": "Hyper Cutter",
+		"id": 52
+	},
+	"icebody": {
+		"name": "Ice Body",
+		"id": 115
+	},
+	"iceface": {
+		"name": "Ice Face",
+		"id": 248
+	},
+	"icescales": {
+		"name": "Ice Scales",
+		"id": 246
+	},
+	"illuminate": {
+		"name": "Illuminate",
+		"id": 35
+	},
+	"illusion": {
+		"name": "Illusion",
+		"id": 149
+	},
+	"immunity": {
+		"name": "Immunity",
+		"id": 17
+	},
+	"imposter": {
+		"name": "Imposter",
+		"id": 150
+	},
+	"infiltrator": {
+		"name": "Infiltrator",
+		"id": 151
+	},
+	"innardsout": {
+		"name": "Innards Out",
+		"id": 215
+	},
+	"innerfocus": {
+		"name": "Inner Focus",
+		"id": 39
+	},
+	"insomnia": {
+		"name": "Insomnia",
+		"id": 15
+	},
+	"intimidate": {
+		"name": "Intimidate",
+		"id": 22
+	},
+	"intrepidsword": {
+		"name": "Intrepid Sword",
+		"id": 234
+	},
+	"ironbarbs": {
+		"name": "Iron Barbs",
+		"id": 160
+	},
+	"ironfist": {
+		"name": "Iron Fist",
+		"id": 89
+	},
+	"justified": {
+		"name": "Justified",
+		"id": 154
+	},
+	"keeneye": {
+		"name": "Keen Eye",
+		"id": 51
+	},
+	"klutz": {
+		"name": "Klutz",
+		"id": 103
+	},
+	"leafguard": {
+		"name": "Leaf Guard",
+		"id": 102
+	},
+	"levitate": {
+		"name": "Levitate",
+		"id": 26
+	},
+	"libero": {
+		"name": "Libero",
+		"id": 236
+	},
+	"lightmetal": {
+		"name": "Light Metal",
+		"id": 135
+	},
+	"lightningrod": {
+		"name": "Lightning Rod",
+		"id": 31
+	},
+	"limber": {
+		"name": "Limber",
+		"id": 7
+	},
+	"lingeringaroma": {
+		"name": "Lingering Aroma",
+		"id": 268
+	},
+	"liquidooze": {
+		"name": "Liquid Ooze",
+		"id": 64
+	},
+	"liquidvoice": {
+		"name": "Liquid Voice",
+		"id": 204
+	},
+	"longreach": {
+		"name": "Long Reach",
+		"id": 203
+	},
+	"magicbounce": {
+		"name": "Magic Bounce",
+		"id": 156
+	},
+	"magicguard": {
+		"name": "Magic Guard",
+		"id": 98
+	},
+	"magician": {
+		"name": "Magician",
+		"id": 170
+	},
+	"magmaarmor": {
+		"name": "Magma Armor",
+		"id": 40
+	},
+	"magnetpull": {
+		"name": "Magnet Pull",
+		"id": 42
+	},
+	"marvelscale": {
+		"name": "Marvel Scale",
+		"id": 63
+	},
+	"megalauncher": {
+		"name": "Mega Launcher",
+		"id": 178
+	},
+	"merciless": {
+		"name": "Merciless",
+		"id": 196
+	},
+	"mimicry": {
+		"name": "Mimicry",
+		"id": 250
+	},
+	"mindseye": {
+		"name": "Mind's Eye",
+		"id": 300
+	},
+	"minus": {
+		"name": "Minus",
+		"id": 58
+	},
+	"mirrorarmor": {
+		"name": "Mirror Armor",
+		"id": 240
+	},
+	"mistysurge": {
+		"name": "Misty Surge",
+		"id": 228
+	},
+	"moldbreaker": {
+		"name": "Mold Breaker",
+		"id": 104
+	},
+	"moody": {
+		"name": "Moody",
+		"id": 141
+	},
+	"motordrive": {
+		"name": "Motor Drive",
+		"id": 78
+	},
+	"moxie": {
+		"name": "Moxie",
+		"id": 153
+	},
+	"multiscale": {
+		"name": "Multiscale",
+		"id": 136
+	},
+	"multitype": {
+		"name": "Multitype",
+		"id": 121
+	},
+	"mummy": {
+		"name": "Mummy",
+		"id": 152
+	},
+	"myceliummight": {
+		"name": "Mycelium Might",
+		"id": 298
+	},
+	"naturalcure": {
+		"name": "Natural Cure",
+		"id": 30
+	},
+	"neuroforce": {
+		"name": "Neuroforce",
+		"id": 233
+	},
+	"neutralizinggas": {
+		"name": "Neutralizing Gas",
+		"id": 256
+	},
+	"noguard": {
+		"name": "No Guard",
+		"id": 99
+	},
+	"normalize": {
+		"name": "Normalize",
+		"id": 96
+	},
+	"oblivious": {
+		"name": "Oblivious",
+		"id": 12
+	},
+	"opportunist": {
+		"name": "Opportunist",
+		"id": 290
+	},
+	"orichalcumpulse": {
+		"name": "Orichalcum Pulse",
+		"id": 288
+	},
+	"overcoat": {
+		"name": "Overcoat",
+		"id": 142
+	},
+	"overgrow": {
+		"name": "Overgrow",
+		"id": 65
+	},
+	"owntempo": {
+		"name": "Own Tempo",
+		"id": 20
+	},
+	"parentalbond": {
+		"name": "Parental Bond",
+		"id": 185
+	},
+	"pastelveil": {
+		"name": "Pastel Veil",
+		"id": 257
+	},
+	"perishbody": {
+		"name": "Perish Body",
+		"id": 253
+	},
+	"pickpocket": {
+		"name": "Pickpocket",
+		"id": 124
+	},
+	"pickup": {
+		"name": "Pickup",
+		"id": 53
+	},
+	"pixilate": {
+		"name": "Pixilate",
+		"id": 182
+	},
+	"plus": {
+		"name": "Plus",
+		"id": 57
+	},
+	"poisonheal": {
+		"name": "Poison Heal",
+		"id": 90
+	},
+	"poisonpoint": {
+		"name": "Poison Point",
+		"id": 38
+	},
+	"poisonpuppeteer": {
+		"name": "Poison Puppeteer",
+		"id": 310
+	},
+	"poisontouch": {
+		"name": "Poison Touch",
+		"id": 143
+	},
+	"powerconstruct": {
+		"name": "Power Construct",
+		"id": 211
+	},
+	"powerofalchemy": {
+		"name": "Power of Alchemy",
+		"id": 223
+	},
+	"powerspot": {
+		"name": "Power Spot",
+		"id": 249
+	},
+	"prankster": {
+		"name": "Prankster",
+		"id": 158
+	},
+	"pressure": {
+		"name": "Pressure",
+		"id": 46
+	},
+	"primordialsea": {
+		"name": "Primordial Sea",
+		"id": 189
+	},
+	"prismarmor": {
+		"name": "Prism Armor",
+		"id": 232
+	},
+	"propellertail": {
+		"name": "Propeller Tail",
+		"id": 239
+	},
+	"protean": {
+		"name": "Protean",
+		"id": 168
+	},
+	"protosynthesis": {
+		"name": "Protosynthesis",
+		"id": 281
+	},
+	"psychicsurge": {
+		"name": "Psychic Surge",
+		"id": 227
+	},
+	"punkrock": {
+		"name": "Punk Rock",
+		"id": 244
+	},
+	"purepower": {
+		"name": "Pure Power",
+		"id": 74
+	},
+	"purifyingsalt": {
+		"name": "Purifying Salt",
+		"id": 272
+	},
+	"quarkdrive": {
+		"name": "Quark Drive",
+		"id": 282
+	},
+	"queenlymajesty": {
+		"name": "Queenly Majesty",
+		"id": 214
+	},
+	"quickdraw": {
+		"name": "Quick Draw",
+		"id": 259
+	},
+	"quickfeet": {
+		"name": "Quick Feet",
+		"id": 95
+	},
+	"raindish": {
+		"name": "Rain Dish",
+		"id": 44
+	},
+	"rattled": {
+		"name": "Rattled",
+		"id": 155
+	},
+	"receiver": {
+		"name": "Receiver",
+		"id": 222
+	},
+	"reckless": {
+		"name": "Reckless",
+		"id": 120
+	},
+	"refrigerate": {
+		"name": "Refrigerate",
+		"id": 174
+	},
+	"regenerator": {
+		"name": "Regenerator",
+		"id": 144
+	},
+	"ripen": {
+		"name": "Ripen",
+		"id": 247
+	},
+	"rivalry": {
+		"name": "Rivalry",
+		"id": 79
+	},
+	"rkssystem": {
+		"name": "RKS System",
+		"id": 225
+	},
+	"rockhead": {
+		"name": "Rock Head",
+		"id": 69
+	},
+	"rockypayload": {
+		"name": "Rocky Payload",
+		"id": 276
+	},
+	"roughskin": {
+		"name": "Rough Skin",
+		"id": 24
+	},
+	"runaway": {
+		"name": "Run Away",
+		"id": 50
+	},
+	"sandforce": {
+		"name": "Sand Force",
+		"id": 159
+	},
+	"sandrush": {
+		"name": "Sand Rush",
+		"id": 146
+	},
+	"sandspit": {
+		"name": "Sand Spit",
+		"id": 245
+	},
+	"sandstream": {
+		"name": "Sand Stream",
+		"id": 45
+	},
+	"sandveil": {
+		"name": "Sand Veil",
+		"id": 8
+	},
+	"sapsipper": {
+		"name": "Sap Sipper",
+		"id": 157
+	},
+	"schooling": {
+		"name": "Schooling",
+		"id": 208
+	},
+	"scrappy": {
+		"name": "Scrappy",
+		"id": 113
+	},
+	"screencleaner": {
+		"name": "Screen Cleaner",
+		"id": 251
+	},
+	"seedsower": {
+		"name": "Seed Sower",
+		"id": 269
+	},
+	"serenegrace": {
+		"name": "Serene Grace",
+		"id": 32
+	},
+	"shadowshield": {
+		"name": "Shadow Shield",
+		"id": 231
+	},
+	"shadowtag": {
+		"name": "Shadow Tag",
+		"id": 23
+	},
+	"sharpness": {
+		"name": "Sharpness",
+		"id": 292
+	},
+	"shedskin": {
+		"name": "Shed Skin",
+		"id": 61
+	},
+	"sheerforce": {
+		"name": "Sheer Force",
+		"id": 125
+	},
+	"shellarmor": {
+		"name": "Shell Armor",
+		"id": 75
+	},
+	"shielddust": {
+		"name": "Shield Dust",
+		"id": 19
+	},
+	"shieldsdown": {
+		"name": "Shields Down",
+		"id": 197
+	},
+	"simple": {
+		"name": "Simple",
+		"id": 86
+	},
+	"skilllink": {
+		"name": "Skill Link",
+		"id": 92
+	},
+	"slowstart": {
+		"name": "Slow Start",
+		"id": 112
+	},
+	"slushrush": {
+		"name": "Slush Rush",
+		"id": 202
+	},
+	"sniper": {
+		"name": "Sniper",
+		"id": 97
+	},
+	"snowcloak": {
+		"name": "Snow Cloak",
+		"id": 81
+	},
+	"snowwarning": {
+		"name": "Snow Warning",
+		"id": 117
+	},
+	"solarpower": {
+		"name": "Solar Power",
+		"id": 94
+	},
+	"solidrock": {
+		"name": "Solid Rock",
+		"id": 116
+	},
+	"soulheart": {
+		"name": "Soul-Heart",
+		"id": 220
+	},
+	"soundproof": {
+		"name": "Soundproof",
+		"id": 43
+	},
+	"speedboost": {
+		"name": "Speed Boost",
+		"id": 3
+	},
+	"stakeout": {
+		"name": "Stakeout",
+		"id": 198
+	},
+	"stall": {
+		"name": "Stall",
+		"id": 100
+	},
+	"stalwart": {
+		"name": "Stalwart",
+		"id": 242
+	},
+	"stamina": {
+		"name": "Stamina",
+		"id": 192
+	},
+	"stancechange": {
+		"name": "Stance Change",
+		"id": 176
+	},
+	"static": {
+		"name": "Static",
+		"id": 9
+	},
+	"steadfast": {
+		"name": "Steadfast",
+		"id": 80
+	},
+	"steamengine": {
+		"name": "Steam Engine",
+		"id": 243
+	},
+	"steelworker": {
+		"name": "Steelworker",
+		"id": 200
+	},
+	"steelyspirit": {
+		"name": "Steely Spirit",
+		"id": 252
+	},
+	"stench": {
+		"name": "Stench",
+		"id": 1
+	},
+	"stickyhold": {
+		"name": "Sticky Hold",
+		"id": 60
+	},
+	"stormdrain": {
+		"name": "Storm Drain",
+		"id": 114
+	},
+	"strongjaw": {
+		"name": "Strong Jaw",
+		"id": 173
+	},
+	"sturdy": {
+		"name": "Sturdy",
+		"id": 5
+	},
+	"suctioncups": {
+		"name": "Suction Cups",
+		"id": 21
+	},
+	"superluck": {
+		"name": "Super Luck",
+		"id": 105
+	},
+	"supersweetsyrup": {
+		"name": "Supersweet Syrup",
+		"id": 306
+	},
+	"supremeoverlord": {
+		"name": "Supreme Overlord",
+		"id": 293
+	},
+	"surgesurfer": {
+		"name": "Surge Surfer",
+		"id": 207
+	},
+	"swarm": {
+		"name": "Swarm",
+		"id": 68
+	},
+	"sweetveil": {
+		"name": "Sweet Veil",
+		"id": 175
+	},
+	"swiftswim": {
+		"name": "Swift Swim",
+		"id": 33
+	},
+	"symbiosis": {
+		"name": "Symbiosis",
+		"id": 180
+	},
+	"synchronize": {
+		"name": "Synchronize",
+		"id": 28
+	},
+	"swordofruin": {
+		"name": "Sword of Ruin",
+		"id": 285
+	},
+	"tabletsofruin": {
+		"name": "Tablets of Ruin",
+		"id": 284
+	},
+	"tangledfeet": {
+		"name": "Tangled Feet",
+		"id": 77
+	},
+	"tanglinghair": {
+		"name": "Tangling Hair",
+		"id": 221
+	},
+	"technician": {
+		"name": "Technician",
+		"id": 101
+	},
+	"telepathy": {
+		"name": "Telepathy",
+		"id": 140
+	},
+	"teraformzero": {
+		"name": "Teraform Zero",
+		"id": 309
+	},
+	"terashell": {
+		"name": "Tera Shell",
+		"id": 308
+	},
+	"terashift": {
+		"name": "Tera Shift",
+		"id": 307
+	},
+	"teravolt": {
+		"name": "Teravolt",
+		"id": 164
+	},
+	"thermalexchange": {
+		"name": "Thermal Exchange",
+		"id": 270
+	},
+	"thickfat": {
+		"name": "Thick Fat",
+		"id": 47
+	},
+	"tintedlens": {
+		"name": "Tinted Lens",
+		"id": 110
+	},
+	"torrent": {
+		"name": "Torrent",
+		"id": 67
+	},
+	"toughclaws": {
+		"name": "Tough Claws",
+		"id": 181
+	},
+	"toxicboost": {
+		"name": "Toxic Boost",
+		"id": 137
+	},
+	"toxicchain": {
+		"name": "Toxic Chain",
+		"id": 305
+	},
+	"toxicdebris": {
+		"name": "Toxic Debris",
+		"id": 295
+	},
+	"trace": {
+		"name": "Trace",
+		"id": 36
+	},
+	"transistor": {
+		"name": "Transistor",
+		"id": 262
+	},
+	"triage": {
+		"name": "Triage",
+		"id": 205
+	},
+	"truant": {
+		"name": "Truant",
+		"id": 54
+	},
+	"turboblaze": {
+		"name": "Turboblaze",
+		"id": 163
+	},
+	"unaware": {
+		"name": "Unaware",
+		"id": 109
+	},
+	"unburden": {
+		"name": "Unburden",
+		"id": 84
+	},
+	"unnerve": {
+		"name": "Unnerve",
+		"id": 127
+	},
+	"unseenfist": {
+		"name": "Unseen Fist",
+		"id": 260
+	},
+	"vesselofruin": {
+		"name": "Vessel of Ruin",
+		"id": 284
+	},
+	"victorystar": {
+		"name": "Victory Star",
+		"id": 162
+	},
+	"vitalspirit": {
+		"name": "Vital Spirit",
+		"id": 72
+	},
+	"voltabsorb": {
+		"name": "Volt Absorb",
+		"id": 10
+	},
+	"wanderingspirit": {
+		"name": "Wandering Spirit",
+		"id": 254
+	},
+	"waterabsorb": {
+		"name": "Water Absorb",
+		"id": 11
+	},
+	"waterbubble": {
+		"name": "Water Bubble",
+		"id": 199
+	},
+	"watercompaction": {
+		"name": "Water Compaction",
+		"id": 195
+	},
+	"waterveil": {
+		"name": "Water Veil",
+		"id": 41
+	},
+	"weakarmor": {
+		"name": "Weak Armor",
+		"id": 133
+	},
+	"wellbakedbody": {
+		"name": "Well-Baked Body",
+		"id": 273
+	},
+	"whitesmoke": {
+		"name": "White Smoke",
+		"id": 73
+	},
+	"wimpout": {
+		"name": "Wimp Out",
+		"id": 193
+	},
+	"windpower": {
+		"name": "Wind Power",
+		"id": 277
+	},
+	"windrider": {
+		"name": "Wind Rider",
+		"id": 274
+	},
+	"wonderguard": {
+		"name": "Wonder Guard",
+		"id": 25
+	},
+	"wonderskin": {
+		"name": "Wonder Skin",
+		"id": 147
+	},
+	"zenmode": {
+		"name": "Zen Mode",
+		"id": 161
+	},
+	"zerotohero": {
+		"name": "Zero to Hero",
+		"id": 278
+	},
+	"mountaineer": {
+		"name": "Mountaineer",
+		"id": -2
+	},
+	"rebound": {
+		"name": "Rebound",
+		"id": -3
+	},
+	"persistent": {
+		"name": "Persistent",
+		"id": -4
+	}
 }

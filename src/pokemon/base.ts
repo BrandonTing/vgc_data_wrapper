@@ -57,12 +57,12 @@ type PokemonInfo = {
 };
 type ToggleTeraOption =
 	| {
-		isTera: true;
-		type?: TeraTypes;
-	}
+			isTera: true;
+			type?: TeraTypes;
+	  }
 	| {
-		isTera: false;
-	};
+			isTera: false;
+	  };
 
 interface IPokemon extends PokemonInfo {
 	getStats: () => Stat;
@@ -127,12 +127,12 @@ export class Pokemon implements IPokemon {
 				| "statStage"
 			>
 		> & {
-			stats?: Partial<Stat>;
-			baseStat?: Partial<Stat>;
-			individualValues?: Partial<Stat>;
-			effortValues?: Partial<Stat>;
-			statStage?: Partial<StatStages>;
-		},
+				stats?: Partial<Stat>;
+				baseStat?: Partial<Stat>;
+				individualValues?: Partial<Stat>;
+				effortValues?: Partial<Stat>;
+				statStage?: Partial<StatStages>;
+			},
 	) {
 		this.id = info?.id;
 		this.name = info?.name;
@@ -146,7 +146,7 @@ export class Pokemon implements IPokemon {
 		this.gender = info?.gender ?? "Unknown";
 		this.status = info?.status ?? "Healthy";
 		this.item = info?.item;
-		this.originalItem = info?.originalItem
+		this.originalItem = info?.originalItem;
 		// stats
 		if (info?.stats) {
 			this.stats = genDefaultStat(info?.stats);
@@ -161,14 +161,14 @@ export class Pokemon implements IPokemon {
 		this.sprite = info?.sprite;
 	}
 
-	getStat(key: keyof Stat, countStageChanges: boolean = true): number {
+	getStat(key: keyof Stat, countStageChanges = true): number {
 		// before init
 		if (!this.stats && !this.baseStat) {
 			throw new Error("Please init pokemon with ID or manually set stats");
 		}
 		if (key === "hp") {
 			if (this.stats?.hp) {
-				return this.stats.hp
+				return this.stats.hp;
 			}
 			return this.getHp(
 				this.baseStat[key],
@@ -176,19 +176,19 @@ export class Pokemon implements IPokemon {
 				this.effortValues[key],
 			);
 		}
-		const statStages = countStageChanges ? this.statStage[key] : 0
+		const statStages = countStageChanges ? this.statStage[key] : 0;
 		if (this.stats?.[key]) {
-			return modifyStatByStageChange(this.stats[key], statStages)
+			return modifyStatByStageChange(this.stats[key], statStages);
 		}
 		return this.getTargetStat(
 			key,
 			this.baseStat[key],
 			this.individualValues[key],
 			this.effortValues[key],
-			statStages
+			statStages,
 		);
 	}
-	getStats(countStageChanges: boolean = true): Stat {
+	getStats(countStageChanges = true): Stat {
 		if (!this.stats && !this.baseStat) {
 			throw new Error("Please init pokemon with ID or manually set stats");
 		}
@@ -224,8 +224,8 @@ export class Pokemon implements IPokemon {
 			const data = (await response.json()) as {
 				stats: Array<{ base_stat: number; stat: { name: string } }>;
 				types:
-				| [{ type: { name: string } }]
-				| [{ type: { name: string } }, { type: { name: string } }];
+					| [{ type: { name: string } }]
+					| [{ type: { name: string } }, { type: { name: string } }];
 				weight: number;
 			};
 			for (let i = 0; i < data.stats.length; i++) {
@@ -285,13 +285,16 @@ export class Pokemon implements IPokemon {
 		base: number,
 		iv: number,
 		ev: number,
-		stateStages: number
+		stateStages: number,
 	): number {
-		return modifyStatByStageChange(Math.trunc(
-			(Math.trunc(((base * 2 + iv + Math.trunc(ev / 4)) * this.level) / 100) +
-				5) *
-			this.getNatureModifer(key),
-		), stateStages);
+		return modifyStatByStageChange(
+			Math.trunc(
+				(Math.trunc(((base * 2 + iv + Math.trunc(ev / 4)) * this.level) / 100) +
+					5) *
+					this.getNatureModifer(key),
+			),
+			stateStages,
+		);
 	}
 	private getNatureModifer(key: keyof StatStages): number {
 		if (key === this.nature.plus) return 1.1;
@@ -373,10 +376,7 @@ function capitalize<T extends string>(s: T) {
 	return (s[0]?.toUpperCase() + s.slice(1)) as Capitalize<typeof s>;
 }
 
-function modifyStatByStageChange(
-	stat: number,
-	stageChange: number,
-): number {
+function modifyStatByStageChange(stat: number, stageChange: number): number {
 	return stageChange > 0
 		? (stat * (2 + stageChange)) / 2
 		: (stat * 2) / (2 - stageChange);

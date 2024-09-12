@@ -13,15 +13,16 @@ export function getBasePower(
 	// ====== Terrain Related
 	if (
 		// Hydro Steam
-		(move.id === 875 && field?.weather === "Sun")
+		move.id === 875 &&
+		field?.weather === "Sun"
 	) {
 		return {
 			operator: move.base * 1.5,
 			factors: {
 				attacker: {
-					weather: true
-				}
-			}
+					weather: true,
+				},
+			},
 		};
 	}
 	if (
@@ -34,9 +35,9 @@ export function getBasePower(
 			operator: move.base * 1.5,
 			factors: {
 				field: {
-					terrain: true
-				}
-			}
+					terrain: true,
+				},
+			},
 		};
 	}
 
@@ -46,9 +47,9 @@ export function getBasePower(
 			operator: move.base / 2,
 			factors: {
 				field: {
-					terrain: true
-				}
-			}
+					terrain: true,
+				},
+			},
 		};
 	}
 	// terrain pulse
@@ -57,9 +58,9 @@ export function getBasePower(
 			operator: 100,
 			factors: {
 				field: {
-					terrain: true
-				}
-			}
+					terrain: true,
+				},
+			},
 		};
 	}
 	// ====== Speed Related
@@ -117,7 +118,7 @@ export function getBasePower(
 			operator: Math.min(
 				Math.max(Math.trunc((25 * defenderSpeed) / attackerSpeed), 1),
 				150,
-			)
+			),
 		};
 	}
 	// ====== Weight related
@@ -127,32 +128,32 @@ export function getBasePower(
 		const defenderWeight = weightModifier(defender.weight, defender.ability);
 		if (defenderWeight >= 200) {
 			return {
-				operator: 120
-			}
+				operator: 120,
+			};
 		}
 		if (defenderWeight >= 100) {
 			return {
-				operator: 100
-			}
+				operator: 100,
+			};
 		}
 		if (defenderWeight >= 50) {
 			return {
-				operator: 80
-			}
+				operator: 80,
+			};
 		}
 		if (defenderWeight >= 25) {
 			return {
-				operator: 60
-			}
+				operator: 60,
+			};
 		}
 		if (defenderWeight >= 10) {
 			return {
-				operator: 40
-			}
+				operator: 40,
+			};
 		}
 		return {
-			operator: 20
-		}
+			operator: 20,
+		};
 	}
 
 	if (
@@ -163,7 +164,10 @@ export function getBasePower(
 	) {
 		const attackerWeight = weightModifier(attacker.weight, attacker.ability);
 		const defenderWeight = weightModifier(defender.weight, defender.ability);
-		return { operator: 20 + Math.min(Math.floor(attackerWeight / defenderWeight), 5) * 20 }
+		return {
+			operator:
+				20 + Math.min(Math.floor(attackerWeight / defenderWeight), 5) * 20,
+		};
 	}
 	// ====== others
 	// weather ball
@@ -172,9 +176,9 @@ export function getBasePower(
 			operator: 100,
 			factors: {
 				attacker: {
-					weather: true
-				}
-			}
+					weather: true,
+				},
+			},
 		};
 	}
 	// tera blast
@@ -183,9 +187,9 @@ export function getBasePower(
 			operator: 100,
 			factors: {
 				attacker: {
-					isTera: true
-				}
-			}
+					isTera: true,
+				},
+			},
 		};
 	}
 	// Power Trip & Stored Power
@@ -208,12 +212,12 @@ function speedModifier(baseSpeed: number, item: string, stage: number): number {
 		item === "Choice Scarf"
 			? 1.5
 			: // iron ball
-			item === "Iron Ball"
-				? 0.5
-				: 1;
+			  item === "Iron Ball"
+			  ? 0.5
+			  : 1;
 	return Math.round(
 		Math.trunc(baseSpeed * stageMultiplier * (4096 * itemModifier)) / 4096 -
-		0.001,
+			0.001,
 	);
 }
 
@@ -230,8 +234,8 @@ function weightModifier(base: number, ability?: Ability) {
 		ability === "Heavy Metal"
 			? 2
 			: // Light Metal
-			ability === "Light Metal"
-				? 0.5
-				: 1;
+			  ability === "Light Metal"
+			  ? 0.5
+			  : 1;
 	return base * abilityModifier;
 }

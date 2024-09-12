@@ -41,7 +41,7 @@ test("Choice Band & Choice Spec", () => {
 		162,
 	];
 	expect(getDamangeNumberFromResult(actual)).toEqual(expected);
-	expect(actual.factors.attacker.item).toBe(true)
+	expect(actual.factors.attacker.item).toBe(true);
 
 	const flareBlitz = createMove({
 		base: 120,
@@ -54,16 +54,20 @@ test("Choice Band & Choice Spec", () => {
 		145,
 	];
 	const actualFlareBlitzDmg = battle.getDamage();
-	expect(getDamangeNumberFromResult(actualFlareBlitzDmg)).toEqual(expectedFlareBlitzDmg);
+	expect(getDamangeNumberFromResult(actualFlareBlitzDmg)).toEqual(
+		expectedFlareBlitzDmg,
+	);
 
 	incineroar.item = "Choice Band";
 	const expectedFlareBlitzDmgWithCB = [
 		183, 184, 187, 189, 192, 193, 196, 198, 199, 202, 204, 207, 208, 211, 213,
 		216,
 	];
-	const actualFlareBlitzDmgWithCB = battle.getDamage()
-	expect(getDamangeNumberFromResult(actualFlareBlitzDmgWithCB)).toEqual(expectedFlareBlitzDmgWithCB);
-	expect(actualFlareBlitzDmgWithCB.factors.attacker.item).toBe(true)
+	const actualFlareBlitzDmgWithCB = battle.getDamage();
+	expect(getDamangeNumberFromResult(actualFlareBlitzDmgWithCB)).toEqual(
+		expectedFlareBlitzDmgWithCB,
+	);
+	expect(actualFlareBlitzDmgWithCB.factors.attacker.item).toBe(true);
 });
 test("Type enhancing", () => {
 	const flutterMane = genTestMon({
@@ -100,7 +104,7 @@ test("Type enhancing", () => {
 	const actual = battle.getDamage();
 
 	expect(getDamangeNumberFromResult(actual)).toEqual(expected);
-	expect(actual.factors.attacker.item).toBe(true)
+	expect(actual.factors.attacker.item).toBe(true);
 });
 test("life orb", () => {
 	const flutterMane = genTestMon({
@@ -137,7 +141,7 @@ test("life orb", () => {
 	const actual = battle.getDamage();
 
 	expect(getDamangeNumberFromResult(actual)).toEqual(expected);
-	expect(actual.factors.attacker.item).toBe(true)
+	expect(actual.factors.attacker.item).toBe(true);
 });
 
 test("Metronome", () => {
@@ -147,14 +151,14 @@ test("Metronome", () => {
 		baseStat: {
 			specialAttack: 135,
 		},
-		item: "Metronome-2"
+		item: "Metronome-2",
 	});
 	const baxcalibur = genTestMon({
 		types: ["Ice", "Dragon"],
 		baseStat: {
 			hp: 115,
-			specialDefense: 86
-		}
+			specialDefense: 86,
+		},
 	});
 	const moonblast = createMove({
 		type: "Fairy",
@@ -168,27 +172,13 @@ test("Metronome", () => {
 	});
 	// 2 times
 	const expected = [
-		190,
-		194,
-		194,
-		197,
-		202,
-		202,
-		204,
-		204,
-		209,
-		211,
-		211,
-		216,
-		218,
-		218,
-		223,
-		226
-	]
+		190, 194, 194, 197, 202, 202, 204, 204, 209, 211, 211, 216, 218, 218, 223,
+		226,
+	];
 	const actual = battle.getDamage();
 	expect(getDamangeNumberFromResult(actual)).toEqual(expected);
-	expect(actual.factors.attacker.item).toBe(true)
-})
+	expect(actual.factors.attacker.item).toBe(true);
+});
 // defensive
 test("Assult vest", () => {
 	const flutterMane = genTestMon({
@@ -224,7 +214,7 @@ test("Assult vest", () => {
 	const actual = battle.getDamage();
 
 	expect(getDamangeNumberFromResult(actual)).toEqual(expected);
-	expect(actual.factors.defender.item).toBe(true)
+	expect(actual.factors.defender.item).toBe(true);
 });
 
 test("Psyshock on AV mon", () => {
@@ -247,7 +237,7 @@ test("Psyshock on AV mon", () => {
 		type: "Psychic",
 		base: 80,
 		category: "Special",
-		id: 473
+		id: 473,
 	});
 	const battle = new Battle({
 		attacker: lunala,
@@ -256,27 +246,13 @@ test("Psyshock on AV mon", () => {
 	});
 
 	const expected = [
-		114,
-		114,
-		116,
-		116,
-		120,
-		120,
-		120,
-		122,
-		122,
-		126,
-		126,
-		128,
-		128,
-		132,
-		132,
-		134
-	]
-	const damage = battle.getDamage()
-	expect(getDamangeNumberFromResult(damage)).toEqual(expected)
-	expect(damage.factors.defender.isTera).not.toBe(true)
-})
+		114, 114, 116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132,
+		134,
+	];
+	const damage = battle.getDamage();
+	expect(getDamangeNumberFromResult(damage)).toEqual(expected);
+	expect(damage.factors.defender.isTera).not.toBe(true);
+});
 
 test("Eviolite", () => {
 	const flutterMane = genTestMon({
@@ -314,7 +290,7 @@ test("Eviolite", () => {
 	const actual = battle.getDamage();
 
 	expect(getDamangeNumberFromResult(actual)).toEqual(expected);
-	expect(actual.factors.defender.item).toBe(true)
+	expect(actual.factors.defender.item).toBe(true);
 });
 
 test("Type Halving berry", () => {
@@ -351,5 +327,5 @@ test("Type Halving berry", () => {
 	const actual = battle.getDamage();
 
 	expect(getDamangeNumberFromResult(actual)).toEqual(expected);
-	expect(actual.factors.defender.item).toBe(true)
+	expect(actual.factors.defender.item).toBe(true);
 });

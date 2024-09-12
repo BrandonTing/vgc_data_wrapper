@@ -11,8 +11,11 @@ export function pipeModifierHelper<T, U extends (...args: any) => T>(
 	return modifiers.reduce(operation, initValue);
 }
 
-export function checkStatOfMoveCategoryIsHighest(category: Move["category"], stat: Stat) {
-	const target = category === "Physical" ? "attack" : "specialAttack"
+export function checkStatOfMoveCategoryIsHighest(
+	category: Move["category"],
+	stat: Stat,
+) {
+	const target = category === "Physical" ? "attack" : "specialAttack";
 	const { hp, ...statExcludeHp } = stat;
 	return Math.max(...Object.values(statExcludeHp)) === stat[target];
 }
@@ -32,28 +35,36 @@ export function checkTeraWIthTypeMatch(
 	return pokemon.isTera && type === pokemon.teraType;
 }
 
-function mergeFactors(factors: TemporalFactor["factors"], newFactors: TemporalFactor["factors"]): TemporalFactor["factors"] {
+function mergeFactors(
+	factors: TemporalFactor["factors"],
+	newFactors: TemporalFactor["factors"],
+): TemporalFactor["factors"] {
 	return {
 		attacker: {
 			...factors?.attacker,
-			...newFactors?.attacker
+			...newFactors?.attacker,
 		},
 		defender: {
 			...factors?.defender,
-			...newFactors?.defender
+			...newFactors?.defender,
 		},
 		move: {
 			...factors?.move,
-			...newFactors?.move
+			...newFactors?.move,
 		},
 		field: {
 			...factors?.field,
-			...newFactors?.field
+			...newFactors?.field,
 		},
-	}
+	};
 }
-export function mergeFactorList(...factorList: Array<TemporalFactor["factors"]>): TemporalFactor["factors"] {
-	return factorList.reduce((pre, cur) => {
-		return mergeFactors(pre, cur)
-	}, {} as TemporalFactor["factors"])
+export function mergeFactorList(
+	...factorList: Array<TemporalFactor["factors"]>
+): TemporalFactor["factors"] {
+	return factorList.reduce(
+		(pre, cur) => {
+			return mergeFactors(pre, cur);
+		},
+		{} as TemporalFactor["factors"],
+	);
 }

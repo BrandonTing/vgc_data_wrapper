@@ -1,5 +1,5 @@
 import { getBasePower } from "./basePower";
-import { createFactorHelper, type TemporalFactor } from "./battle";
+import { type TemporalFactor, createFactorHelper } from "./battle";
 import type { BattleStatus } from "./config";
 import {
 	checkMatchType,
@@ -9,14 +9,14 @@ import {
 } from "./utils";
 
 export function getPower(option: BattleStatus): TemporalFactor {
-	let factors: TemporalFactor["factors"] = {}
+	let factors: TemporalFactor["factors"] = {};
 	const basePower = getBasePower(
 		option.attacker,
 		option.defender,
 		option.move,
 		option.field,
 	);
-	factors = basePower.factors
+	factors = basePower.factors;
 	const modifierAfterModification = pipeModifierHelper(
 		{ operator: 4096, factors } as TemporalFactor,
 		[
@@ -32,14 +32,17 @@ export function getPower(option: BattleStatus): TemporalFactor {
 			modifyByAura,
 		],
 		(pre, cur) => {
-			const { operator, factors } = cur(option)
-			return { operator: Math.round(pre.operator * operator), factors: mergeFactorList(pre.factors, factors) }
+			const { operator, factors } = cur(option);
+			return {
+				operator: Math.round(pre.operator * operator),
+				factors: mergeFactorList(pre.factors, factors),
+			};
 		},
 	);
 	const result = Math.round(
 		(basePower.operator * modifierAfterModification.operator) / 4096 - 0.001,
 	);
-	factors = modifierAfterModification.factors
+	factors = modifierAfterModification.factors;
 	if (
 		checkTeraWIthTypeMatch(option.attacker, option.move.type) &&
 		result < 60 &&
@@ -47,8 +50,11 @@ export function getPower(option: BattleStatus): TemporalFactor {
 		!option.move.flags?.isPriority &&
 		option.move.id !== 512
 	) {
-		return { operator: 60, factors: mergeFactorList(factors, { attacker: { isTera: true } }) }
-	};
+		return {
+			operator: 60,
+			factors: mergeFactorList(factors, { attacker: { isTera: true } }),
+		};
+	}
 
 	return { operator: result, factors };
 }
@@ -61,9 +67,9 @@ function modifyByAttackerAbility({
 }: BattleStatus): TemporalFactor {
 	const getFactor = createFactorHelper({
 		attacker: {
-			ability: true
+			ability: true,
 		},
-	})
+	});
 	// Rivalry
 	if (attacker.ability === "Rivalry") {
 		if (defender.gender === "Unknown") return getFactor(1);
@@ -122,8 +128,8 @@ function modifyByAttackerAbility({
 	) {
 		return getFactor(1.3, {
 			attacker: {
-				weather: true
-			}
+				weather: true,
+			},
 		});
 	}
 	// Punk Rock
@@ -154,8 +160,8 @@ function modifyByAttackerAbility({
 	) {
 		return getFactor(1.5, {
 			attacker: {
-				status: true
-			}
+				status: true,
+			},
 		});
 	}
 	// Toxic Boost
@@ -166,11 +172,11 @@ function modifyByAttackerAbility({
 	) {
 		return getFactor(1.5, {
 			attacker: {
-				status: true
-			}
+				status: true,
+			},
 		});
 	}
-	return { operator: 1 }
+	return { operator: 1 };
 }
 
 function modifyByDefenderAbility({
@@ -179,9 +185,9 @@ function modifyByDefenderAbility({
 }: Pick<BattleStatus, "defender" | "move">): TemporalFactor {
 	const getFactor = createFactorHelper({
 		defender: {
-			ability: true
+			ability: true,
 		},
-	})
+	});
 
 	// Fluffy
 	if (defender.ability === "Fluffy" && move.type === "Fire") {
@@ -199,9 +205,9 @@ function modifyByItem({
 }: Pick<BattleStatus, "attacker" | "move">): TemporalFactor {
 	const getFactor = createFactorHelper({
 		attacker: {
-			item: true
+			item: true,
 		},
-	})
+	});
 
 	if (item === "Muscle Band" && move.category === "Physical") {
 		return getFactor(1.1);
@@ -233,10 +239,10 @@ function modifyByMoveEffect({
 			operator: 1.5,
 			factors: {
 				field: {
-					terrain: true
-				}
-			}
-		}
+					terrain: true,
+				},
+			},
+		};
 	}
 	// solar beam & solar blade
 	if (
@@ -248,10 +254,10 @@ function modifyByMoveEffect({
 			operator: 0.5,
 			factors: {
 				defender: {
-					weather: true
-				}
-			}
-		}
+					weather: true,
+				},
+			},
+		};
 	}
 	// Facade
 	if (move.id === 263 && attacker.status === "Burned") {
@@ -259,10 +265,10 @@ function modifyByMoveEffect({
 			operator: 2,
 			factors: {
 				attacker: {
-					status: true
-				}
-			}
-		}
+					status: true,
+				},
+			},
+		};
 	}
 	// Knock off
 	if (move.id === 282 && defender.item) {
@@ -270,9 +276,9 @@ function modifyByMoveEffect({
 			operator: 1.5,
 			factors: {
 				defender: {
-					item: true
-				}
-			}
+					item: true,
+				},
+			},
 		};
 	}
 	// Rising Voltage
@@ -282,14 +288,14 @@ function modifyByMoveEffect({
 				operator: 1,
 				factors: {
 					defender: {
-						isTera: true
-					}
-				}
+						isTera: true,
+					},
+				},
 			};
 		}
 		return { operator: 2, factors: { field: { terrain: true } } };
 	}
-	return { operator: 1 }
+	return { operator: 1 };
 }
 
 function modifyByHelpingHand({
@@ -300,14 +306,14 @@ function modifyByHelpingHand({
 			operator: 1.5,
 			factors: {
 				attacker: {
-					helpingHand: true
-				}
-			}
-		}
+					helpingHand: true,
+				},
+			},
+		};
 	}
 	return {
-		operator: 1
-	}
+		operator: 1,
+	};
 }
 
 function modifyByPowerSpot({
@@ -318,14 +324,14 @@ function modifyByPowerSpot({
 			operator: 1.3,
 			factors: {
 				attacker: {
-					powerSpot: true
-				}
-			}
-		}
+					powerSpot: true,
+				},
+			},
+		};
 	}
 	return {
 		operator: 1,
-	}
+	};
 }
 
 function modifyBySteelySpirit({
@@ -336,34 +342,34 @@ function modifyBySteelySpirit({
 			operator: 1.5,
 			factors: {
 				attacker: {
-					steelySpirit: true
-				}
-			}
-		}
+					steelySpirit: true,
+				},
+			},
+		};
 	}
 	return {
 		operator: 1,
-	}
+	};
 }
 
 function modifyByCharge({
 	attacker,
 	move,
 }: Pick<BattleStatus, "attacker" | "move">): TemporalFactor {
-	const charged = attacker.flags?.charge && move.type === "Electric"
+	const charged = attacker.flags?.charge && move.type === "Electric";
 	if (charged) {
 		return {
 			operator: 2,
 			factors: {
 				attacker: {
-					charge: true
-				}
-			}
-		}
+					charge: true,
+				},
+			},
+		};
 	}
 	return {
 		operator: 1,
-	}
+	};
 }
 
 function modifyByTerrain({
@@ -372,9 +378,9 @@ function modifyByTerrain({
 }: Pick<BattleStatus, "move" | "field">): TemporalFactor {
 	const getFactor = createFactorHelper({
 		field: {
-			terrain: true
-		}
-	})
+			terrain: true,
+		},
+	});
 	if (
 		(move.type === "Electric" && field?.terrain === "Electric") ||
 		(move.type === "Psychic" && field?.terrain === "Psychic") ||
@@ -392,16 +398,19 @@ function modifyByAura({
 	move,
 	field,
 }: Pick<BattleStatus, "move" | "field">): TemporalFactor {
-	const auraAffected = (move.type === "Dark" && field?.aura?.includes("Dark")) ||
-		(move.type === "Fairy" && field?.aura?.includes("Fairy"))
-	return auraAffected ? {
-		operator: 1.33,
-		factors: {
-			field: {
-				aura: true
-			}
-		}
-	} : {
-		operator: 1
-	}
+	const auraAffected =
+		(move.type === "Dark" && field?.aura?.includes("Dark")) ||
+		(move.type === "Fairy" && field?.aura?.includes("Fairy"));
+	return auraAffected
+		? {
+				operator: 1.33,
+				factors: {
+					field: {
+						aura: true,
+					},
+				},
+		  }
+		: {
+				operator: 1,
+		  };
 }

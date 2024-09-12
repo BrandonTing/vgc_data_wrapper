@@ -1,6 +1,6 @@
 import items from "../../data/item.json";
 import type { Stat, TeraTypes } from "../damage/config";
-import { Pokemon, type Gender } from "./base";
+import { type Gender, Pokemon } from "./base";
 import { pokemonSchema } from "./schema";
 import type { Ability, Item } from "./typeHelper";
 
@@ -29,8 +29,8 @@ const natures: Record<string, Pokemon["nature"]> = {
 	Gentle: { plus: "specialDefense", minus: "defense" },
 	Sassy: { plus: "specialDefense", minus: "speed" },
 	Careful: { plus: "specialDefense", minus: "specialAttack" },
-	Quirky: {}
-}
+	Quirky: {},
+};
 
 export async function getPokemonsFromPasteUrl(
 	url: string,
@@ -79,8 +79,18 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 		const data = await response.json();
 		const pokemonInfo = pokemonSchema.parse(data);
 		const { id, weight, types, stats, sprites } = pokemonInfo;
-		const { item, ev, iv, level, nature, ability, moves, name, teraType, gender } =
-			infoFromPaste;
+		const {
+			item,
+			ev,
+			iv,
+			level,
+			nature,
+			ability,
+			moves,
+			name,
+			teraType,
+			gender,
+		} = infoFromPaste;
 
 		const pokemon = new Pokemon({
 			name,
@@ -97,12 +107,12 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 			moves,
 			sprite: sprites,
 			teraType,
-			originalItem: item
+			originalItem: item,
 		});
 		if (item && item in items) {
-			pokemon.item = item as Item
+			pokemon.item = item as Item;
 		}
-		return pokemon
+		return pokemon;
 	} catch (err) {
 		throw new Error("Invalid Name: cannot find target pokemon");
 	}
@@ -118,7 +128,7 @@ type PokemonInfoFromPaste = Partial<{
 	iv: Partial<Stat>;
 	moves: Array<string>;
 	teraType: TeraTypes;
-	gender: Gender
+	gender: Gender;
 }>;
 
 function parsePaste(paste: string): PokemonInfoFromPaste {
@@ -134,13 +144,13 @@ function parsePaste(paste: string): PokemonInfoFromPaste {
 			if (!name) {
 				throw new Error("Pokemon name is required");
 			}
-			let pokemonName = name.trim()
+			let pokemonName = name.trim();
 			if (pokemonName?.includes("(M)")) {
-				info.gender = "Male"
-				pokemonName = pokemonName.replace(/ \(M\)/, "")
+				info.gender = "Male";
+				pokemonName = pokemonName.replace(/ \(M\)/, "");
 			} else if (name?.includes("(F)")) {
-				info.gender = "Female"
-				pokemonName = pokemonName.replace(/ \(F\)/, "")
+				info.gender = "Female";
+				pokemonName = pokemonName.replace(/ \(F\)/, "");
 			}
 			info.name = pokemonName; // remove gender notation;
 			// FIXME set type enhancing item
@@ -175,7 +185,7 @@ function parsePaste(paste: string): PokemonInfoFromPaste {
 			if (!nature || !natures[nature]) {
 				continue;
 			}
-			info.nature = natures[nature]
+			info.nature = natures[nature];
 		}
 		if (line.includes("- ")) {
 			const move = line.split("- ")[1]?.trim();
@@ -201,15 +211,19 @@ function getStatFromPaste(paste: string): Partial<Stat> {
 		if (!num || !key) {
 			continue;
 		}
-		stat[getStatKeyFromPaste(key)] = +num
+		stat[getStatKeyFromPaste(key)] = +num;
 	}
 	return stat;
 }
 
 function getNatureNameFromModifier(pokemonNature: Pokemon["nature"]): string {
-	return Object.entries(natures).find(([_, nature]) =>
-		nature.minus === pokemonNature.minus && nature.plus === pokemonNature.plus
-	)?.[0] ?? ""
+	return (
+		Object.entries(natures).find(
+			([_, nature]) =>
+				nature.minus === pokemonNature.minus &&
+				nature.plus === pokemonNature.plus,
+		)?.[0] ?? ""
+	);
 }
 
 function pokemonNameConverter(name: string): string {
@@ -239,62 +253,66 @@ function pokemonNameConverter(name: string): string {
 }
 
 export function getPasteFromPokemons(pokemons: Array<Pokemon>): string {
-	return pokemons.map(pokemon => getPasteFromPokemon(pokemon)).join('\n\n')
+	return pokemons.map((pokemon) => getPasteFromPokemon(pokemon)).join("\n\n");
 }
 
 function getPasteFromPokemon(pokemon: Pokemon): string {
-	const evStr = Object.entries(pokemon.effortValues).map(([key, value]) => {
-		if (value === 0) {
-			return
-		}
-		return `${value} ${getStatKeyForPaste(key)}`
-	}).filter(Boolean).join(" / ")
+	const evStr = Object.entries(pokemon.effortValues)
+		.map(([key, value]) => {
+			if (value === 0) {
+				return;
+			}
+			return `${value} ${getStatKeyForPaste(key)}`;
+		})
+		.filter(Boolean)
+		.join(" / ");
 	return `
-${pokemon.name}${pokemon.gender === "Male" ? " (M)" : pokemon.gender === "Female" ? " (F)" : ""} @ ${pokemon.originalItem ?? ""}
+${pokemon.name}${
+	pokemon.gender === "Male" ? " (M)" : pokemon.gender === "Female" ? " (F)" : ""
+} @ ${pokemon.originalItem ?? ""}
 Ability: ${pokemon.ability}
 Level: ${pokemon.level}
 Tera Type: ${pokemon.teraType}
 EVs: ${evStr}
 ${getNatureNameFromModifier(pokemon.nature)} Nature
-${pokemon.moves?.map(move => `- ${move}`).join("\n")}
-`
+${pokemon.moves?.map((move) => `- ${move}`).join("\n")}
+`;
 }
 
 function getStatKeyForPaste(key: string) {
 	switch (key) {
 		case "hp":
-			return "HP"
+			return "HP";
 		case "attack":
-			return "Atk"
+			return "Atk";
 		case "defense":
-			return "Def"
+			return "Def";
 		case "specialAttack":
-			return "SpA"
+			return "SpA";
 		case "specialDefense":
-			return "SpD"
+			return "SpD";
 		case "speed":
-			return "Spe"
+			return "Spe";
 		default:
-			return key
+			return key;
 	}
 }
 
-
-function getStatKeyFromPaste(key: string): keyof (Pokemon['stats'] & {}) {
+function getStatKeyFromPaste(key: string): keyof (Pokemon["stats"] & {}) {
 	switch (key) {
 		case "HP":
-			return "hp"
+			return "hp";
 		case "Atk":
-			return "attack"
+			return "attack";
 		case "Def":
-			return "defense"
+			return "defense";
 		case "SpA":
-			return "specialAttack"
+			return "specialAttack";
 		case "SpD":
-			return "specialDefense"
+			return "specialDefense";
 		case "Spe":
-			return "speed"
+			return "speed";
 		default:
-			return "hp"
+			return "hp";
 	}
 }
