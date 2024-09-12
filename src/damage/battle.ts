@@ -848,7 +848,7 @@ export function createFactorHelper(commonFactor: TemporalFactor["factors"]) {
 }
 
 function modifyOption(originalOpt: BattleStatus): { option: BattleStatus, factors: TemporalFactor["factors"] } {
-  const { move, attacker } = originalOpt
+  const { move, attacker, field } = originalOpt
   const newMove = { ...move }
   let factors: TemporalFactor["factors"] = {}
   // Tera storm becomes physical move if terapagos atk > spa
@@ -886,6 +886,29 @@ function modifyOption(originalOpt: BattleStatus): { option: BattleStatus, factor
     newMove.type = "Water"
     factors.attacker = {
       ability: true
+    }
+  } else if (newMove.id === 311 && field?.weather) {
+    // weatherball
+    switch (field.weather) {
+      case "Rain": {
+        newMove.type = "Water"
+        break
+      };
+      case "Sun": {
+        newMove.type = "Fire"
+        break
+      };
+      case "Sand": {
+        newMove.type = "Rock"
+        break
+      };
+      case "Snow": {
+        newMove.type = "Ice"
+        break
+      };
+    }
+    factors.attacker = {
+      weather: true
     }
   }
 
