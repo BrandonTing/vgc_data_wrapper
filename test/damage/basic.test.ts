@@ -50,7 +50,6 @@ test("test STAB", () => {
 	expect(getDamangeNumberFromResult(actualWithSTAB)).toEqual(expectedWithSTAB);
 });
 
-
 test("test offensive tera", () => {
 	const flutterMane = genTestMon({
 		types: ["Fairy", "Ghost"],
@@ -83,7 +82,7 @@ test("test offensive tera", () => {
 		120,
 	];
 	expect(getDamangeNumberFromResult(actual)).toEqual(expected);
-	expect(actual.factors.attacker.isTera).toBe(true)
+	expect(actual.factors.attacker.isTera).toBe(true);
 	// Tera non-STAB
 	flutterMane.toggleTera({ isTera: true, type: "Electric" });
 	const thunderbolt = createMove({
@@ -97,7 +96,7 @@ test("test offensive tera", () => {
 	];
 	const actualTbolt = battle.getDamage();
 	expect(getDamangeNumberFromResult(actualTbolt)).toEqual(expectedTbolt);
-	expect(actualTbolt.factors.attacker.isTera).toBe(true)
+	expect(actualTbolt.factors.attacker.isTera).toBe(true);
 });
 
 test("defensive tera", () => {
@@ -127,11 +126,11 @@ test("defensive tera", () => {
 		defender: incineroar,
 		move: moonblast,
 	});
-	const damage = battle.getDamage()
+	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
 		38, 38, 39, 39, 39, 40, 40, 41, 41, 42, 42, 42, 43, 43, 44, 45,
 	];
 	expect(actual).toEqual(expected);
-	expect(damage.factors.defender.isTera).toBe(true)
+	expect(damage.factors.defender.isTera).toBe(true);
 });

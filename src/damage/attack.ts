@@ -1,54 +1,61 @@
-import { createFactorHelper, type TemporalFactor } from "./battle";
+import { type TemporalFactor, createFactorHelper } from "./battle";
 import type { BattleStatus } from "./config";
 import {
 	checkStatOfMoveCategoryIsHighest,
 	mergeFactorList,
-	pipeModifierHelper
+	pipeModifierHelper,
 } from "./utils";
 
 export function getAttack(option: BattleStatus): TemporalFactor {
-	const {
-		attacker,
-		defender,
-		move,
-	} = option
+	const { attacker, defender, move } = option;
 
 	function checkCountStages(stageChange: number) {
 		if (move.flags?.isCriticalHit && stageChange < 0) {
-			return false
+			return false;
 		}
-		return true
+		return true;
 	}
-	const isPhysicalMove = move.category === "Physical"
-	let atkKey: "attack" | "specialAttack" | "defense" = isPhysicalMove ? "attack" : "specialAttack"
-	let atkStat = attacker.getStat(atkKey, checkCountStages(attacker.statStage[atkKey]));
+	const isPhysicalMove = move.category === "Physical";
+	let atkKey: "attack" | "specialAttack" | "defense" = isPhysicalMove
+		? "attack"
+		: "specialAttack";
+	let atkStat = attacker.getStat(
+		atkKey,
+		checkCountStages(attacker.statStage[atkKey]),
+	);
 	let factors: TemporalFactor["factors"] = {
 		attacker: {
 			atk: atkKey,
-			statFrom: "Attacker"
+			statFrom: "Attacker",
 		},
 		defender: {
-			def: isPhysicalMove ? "defense" : "specialDefense"
-		}
-	}
+			def: isPhysicalMove ? "defense" : "specialDefense",
+		},
+	};
 	// body press
 	if (move.id === 776) {
-		atkKey = "defense"
-		atkStat = attacker.getStat("defense", checkCountStages(attacker.statStage.defense));
+		atkKey = "defense";
+		atkStat = attacker.getStat(
+			"defense",
+			checkCountStages(attacker.statStage.defense),
+		);
 		factors = mergeFactorList(factors, {
 			attacker: {
-				atk: "defense"
-			}
-		})
+				atk: "defense",
+			},
+		});
 	}
 	// foul play
 	if (move.id === 492) {
-		atkStat = defender.getStat("attack", checkCountStages(defender.statStage.attack));
+		atkStat = defender.getStat(
+			"attack",
+			checkCountStages(defender.statStage.attack),
+		);
 		factors = mergeFactorList(factors, {
 			attacker: {
-				statFrom: "Defender"
-			}
-		})
+				statFrom: "Defender",
+			},
+		});
 	}
 	const operator = pipeModifierHelper(
 		{ operator: 4096, factors } as TemporalFactor,
@@ -59,17 +66,15 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 			modifyByRuin,
 		],
 		(pre, cur) => {
-			const { operator, factors } = cur(option)
-			return { operator: Math.round(pre.operator * operator), factors: mergeFactorList(pre.factors, factors) };
+			const { operator, factors } = cur(option);
+			return {
+				operator: Math.round(pre.operator * operator),
+				factors: mergeFactorList(pre.factors, factors),
+			};
 		},
-	)
-	factors = operator.factors
-	const result = Math.round(
-		(atkStat *
-			operator.operator) /
-		4096 -
-		0.001,
 	);
+	factors = operator.factors;
+	const result = Math.round((atkStat * operator.operator) / 4096 - 0.001);
 
 	return { operator: result, factors };
 }
@@ -82,54 +87,60 @@ function modifyAtkByAttackAbility({
 	const { ability } = attacker;
 	const getFactor = createFactorHelper({
 		attacker: {
-			ability: true
-		}
-	})
+			ability: true,
+		},
+	});
 	// Quark Drive & Protosynthesis
 	if (ability === "Quark Drive") {
-		let factors: TemporalFactor["factors"] = {}
-		let activated = false
+		let factors: TemporalFactor["factors"] = {};
+		let activated = false;
 		if (attacker.item === "Booster Energy") {
 			activated = true;
 			factors = {
 				attacker: {
-					item: true
+					item: true,
 				},
-			}
+			};
 		}
 		if (field?.terrain === "Electric") {
 			activated = true;
 			factors = {
 				field: {
-					terrain: true
-				}
-			}
+					terrain: true,
+				},
+			};
 		}
-		if (activated && checkStatOfMoveCategoryIsHighest(move.category, attacker.getStats())) {
-			return getFactor(1.3, factors)
+		if (
+			activated &&
+			checkStatOfMoveCategoryIsHighest(move.category, attacker.getStats())
+		) {
+			return getFactor(1.3, factors);
 		}
 	}
 	if (ability === "Protosynthesis") {
-		let factors: TemporalFactor["factors"] = {}
-		let activated = false
+		let factors: TemporalFactor["factors"] = {};
+		let activated = false;
 		if (attacker.item === "Booster Energy") {
 			activated = true;
 			factors = {
 				attacker: {
 					ability: true,
 				},
-			}
+			};
 		}
 		if (field?.weather === "Sun") {
 			activated = true;
 			factors = {
 				attacker: {
-					weather: true
-				}
-			}
+					weather: true,
+				},
+			};
 		}
-		if (activated && checkStatOfMoveCategoryIsHighest(move.category, attacker.getStats())) {
-			return getFactor(1.3, factors)
+		if (
+			activated &&
+			checkStatOfMoveCategoryIsHighest(move.category, attacker.getStats())
+		) {
+			return getFactor(1.3, factors);
 		}
 	}
 
@@ -140,7 +151,7 @@ function modifyAtkByAttackAbility({
 		field?.weather === "Sun"
 	) {
 		return getFactor(1.333, {
-			attacker: { weather: true }
+			attacker: { weather: true },
 		});
 	}
 	// Hadron Engine
@@ -151,9 +162,9 @@ function modifyAtkByAttackAbility({
 	) {
 		return getFactor(1.333, {
 			field: {
-				terrain: true
-			}
-		})
+				terrain: true,
+			},
+		});
 	}
 	// Transistor
 	if (ability === "Transistor" && move.type === "Electric") {
@@ -180,8 +191,8 @@ function modifyAtkByAttackAbility({
 	) {
 		return getFactor(1.5, {
 			attacker: {
-				weather: true
-			}
+				weather: true,
+			},
 		});
 	}
 	// Plus / Minus
@@ -196,8 +207,8 @@ function modifyAtkByAttackAbility({
 	) {
 		return getFactor(1.5, {
 			attacker: {
-				status: true
-			}
+				status: true,
+			},
 		});
 	}
 	// Rocky Payload
@@ -224,7 +235,7 @@ function modifyAtkByAttackAbility({
 		return getFactor(2);
 	}
 	return {
-		operator: 1
+		operator: 1,
 	};
 }
 function modifyByDefenderAbility({
@@ -233,9 +244,9 @@ function modifyByDefenderAbility({
 }: Pick<BattleStatus, "defender" | "move">): TemporalFactor {
 	const getFactor = createFactorHelper({
 		defender: {
-			ability: true
-		}
-	})
+			ability: true,
+		},
+	});
 	// Thick Fat
 	if (ability === "Thick Fat" && (type === "Fire" || type === "Ice")) {
 		return getFactor(0.5);
@@ -254,7 +265,7 @@ function modifyByItem({
 	attacker: { item, id, name },
 	move: { category },
 }: Pick<BattleStatus, "attacker" | "move">): TemporalFactor {
-	const getFactor = createFactorHelper({ attacker: { item: true } })
+	const getFactor = createFactorHelper({ attacker: { item: true } });
 	// Choice item
 	if (
 		(item === "Choice Band" && category === "Physical") ||
@@ -263,7 +274,10 @@ function modifyByItem({
 		return getFactor(1.5);
 	}
 	// Light Ball on Pikachu
-	if ((id === 25 || name?.toLowerCase() === "pikachu") && item === "Light Ball") {
+	if (
+		(id === 25 || name?.toLowerCase() === "pikachu") &&
+		item === "Light Ball"
+	) {
 		return getFactor(2);
 	}
 	return { operator: 1 };
@@ -281,11 +295,12 @@ function modifyByRuin({
 		attacker.ability !== "Tablets of Ruin"
 	) {
 		return {
-			operator: 0.75, factors: {
+			operator: 0.75,
+			factors: {
 				defender: {
-					ruin: "Tablets"
-				}
-			}
+					ruin: "Tablets",
+				},
+			},
 		};
 	}
 	// Vessel
@@ -295,11 +310,12 @@ function modifyByRuin({
 		attacker.ability !== "Vessel of Ruin"
 	) {
 		return {
-			operator: 0.75, factors: {
+			operator: 0.75,
+			factors: {
 				defender: {
-					ruin: "Vessel"
-				}
-			}
+					ruin: "Vessel",
+				},
+			},
 		};
 	}
 	return { operator: 1 };

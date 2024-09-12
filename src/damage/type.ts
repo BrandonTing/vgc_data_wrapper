@@ -13,9 +13,9 @@ export function getEffectivenessOnPokemon(
 	return targetPokemonTypes
 		.map((type) => {
 			if (atkType === "Stellar") {
-				return 1
+				return 1;
 			}
-			return type === "Stellar" ? 1 : typeAttackEffectivenessMap[atkType][type]
+			return type === "Stellar" ? 1 : typeAttackEffectivenessMap[atkType][type];
 		})
 		.reduce((pre, cur) => pre * cur, 1 as number);
 }

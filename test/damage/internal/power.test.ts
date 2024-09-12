@@ -22,7 +22,7 @@ test("get power without any modifiers", () => {
 		attacker: {},
 		defender: {},
 		move: {},
-		field: {}
+		field: {},
 	});
 });
 

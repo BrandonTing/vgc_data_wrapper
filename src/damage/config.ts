@@ -89,19 +89,24 @@ export type BattleStatus = {
 	field?: BattleFieldStatus;
 };
 
-type PokemonDmgFactor<T extends "Attacker" | "Defender"> = (T extends "Attacker" ?
-	// attacker
-	{
-		atk: TypedExtract<StatKeys, "attack" | "specialAttack" | "defense">
-	} & { statFrom: "Attacker" | "Defender" } & Pick<Pokemon["flags"] & {}, "charge" | "helpingHand" | "powerSpot" | "steelySpirit"> & { ruin?: TypedExtract<Ruin, "Beads" | "Sword"> } :
-	// defender
-	{
-		def: TypedExtract<StatKeys, "defense" | "specialDefense">
-	} & Pick<Pokemon["flags"] & {}, "hasFriendGuard" | "lightScreen" | "reflect"> & { ruin?: TypedExtract<Ruin, "Tablets" | "Vessel"> })
+type PokemonDmgFactor<T extends "Attacker" | "Defender"> = (T extends "Attacker"
+	? // attacker
+	  {
+			atk: TypedExtract<StatKeys, "attack" | "specialAttack" | "defense">;
+	  } & { statFrom: "Attacker" | "Defender" } & Pick<
+				Pokemon["flags"] & {},
+				"charge" | "helpingHand" | "powerSpot" | "steelySpirit"
+			> & { ruin?: TypedExtract<Ruin, "Beads" | "Sword"> }
+	: // defender
+	  {
+			def: TypedExtract<StatKeys, "defense" | "specialDefense">;
+	  } & Pick<
+			Pokemon["flags"] & {},
+			"hasFriendGuard" | "lightScreen" | "reflect"
+	  > & { ruin?: TypedExtract<Ruin, "Tablets" | "Vessel"> }) &
 	// Common
-	& Flags<TypedExtract<keyof Pokemon, "ability" | "item" | "isTera" | "status">>
-	& Flags<TypedExtract<keyof BattleFieldStatus, "weather">>
-
+	Flags<TypedExtract<keyof Pokemon, "ability" | "item" | "isTera" | "status">> &
+	Flags<TypedExtract<keyof BattleFieldStatus, "weather">>;
 
 export type DamageResult = {
 	rolls: Array<{
@@ -110,9 +115,11 @@ export type DamageResult = {
 	}>;
 	koChance: number;
 	factors: {
-		attacker: Prettify<PokemonDmgFactor<"Attacker">>,
-		defender: Prettify<PokemonDmgFactor<"Defender">>,
-		field: Prettify<Flags<TypedExclude<keyof BattleFieldStatus, "ruin" | "weather">>>
-		move: Prettify<Pick<Move["flags"] & {}, "isCriticalHit">>
-	}
+		attacker: Prettify<PokemonDmgFactor<"Attacker">>;
+		defender: Prettify<PokemonDmgFactor<"Defender">>;
+		field: Prettify<
+			Flags<TypedExclude<keyof BattleFieldStatus, "ruin" | "weather">>
+		>;
+		move: Prettify<Pick<Move["flags"] & {}, "isCriticalHit">>;
+	};
 };

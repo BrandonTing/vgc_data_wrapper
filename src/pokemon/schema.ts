@@ -16,7 +16,10 @@ const typeSchema = z
 
 export const pokemonSchema = z.object({
 	id: z.number(),
-	weight: z.number().transform(arg => arg / 10).describe("pokemon weight from pokeapi "),
+	weight: z
+		.number()
+		.transform((arg) => arg / 10)
+		.describe("pokemon weight from pokeapi "),
 	types: z.union([z.tuple([typeSchema]), z.tuple([typeSchema, typeSchema])]),
 	stats: z
 		.array(

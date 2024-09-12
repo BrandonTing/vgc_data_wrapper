@@ -33,9 +33,9 @@ test("correctly calculate base power for terrain related moves", () => {
 		operator: 120,
 		factors: {
 			attacker: {
-				weather: true
-			}
-		}
+				weather: true,
+			},
+		},
 	});
 
 	const testPsyblade = createMove({
@@ -54,9 +54,9 @@ test("correctly calculate base power for terrain related moves", () => {
 		operator: 120,
 		factors: {
 			field: {
-				terrain: true
-			}
-		}
+				terrain: true,
+			},
+		},
 	});
 
 	const testMistyExplosion = createMove({
@@ -75,9 +75,9 @@ test("correctly calculate base power for terrain related moves", () => {
 		operator: 150,
 		factors: {
 			field: {
-				terrain: true
-			}
-		}
+				terrain: true,
+			},
+		},
 	});
 	const testEarthQuake = createMove({
 		id: 89,
@@ -95,9 +95,9 @@ test("correctly calculate base power for terrain related moves", () => {
 		operator: 50,
 		factors: {
 			field: {
-				terrain: true
-			}
-		}
+				terrain: true,
+			},
+		},
 	});
 	const testBulldoze = createMove({
 		id: 523,
@@ -110,9 +110,9 @@ test("correctly calculate base power for terrain related moves", () => {
 		operator: 30,
 		factors: {
 			field: {
-				terrain: true
-			}
-		}
+				terrain: true,
+			},
+		},
 	});
 
 	const testTerrainPulse = createMove({
@@ -131,9 +131,9 @@ test("correctly calculate base power for terrain related moves", () => {
 		operator: 100,
 		factors: {
 			field: {
-				terrain: true
-			}
-		}
+				terrain: true,
+			},
+		},
 	});
 });
 
@@ -317,9 +317,9 @@ test("base power of weather ball", () => {
 		operator: 100,
 		factors: {
 			attacker: {
-				weather: true
-			}
-		}
+				weather: true,
+			},
+		},
 	});
 	// rain
 	basePower = getBasePower(testMon, testMon, weatherBall, { weather: "Rain" });
@@ -327,9 +327,9 @@ test("base power of weather ball", () => {
 		operator: 100,
 		factors: {
 			attacker: {
-				weather: true
-			}
-		}
+				weather: true,
+			},
+		},
 	});
 	// sand
 	basePower = getBasePower(testMon, testMon, weatherBall, { weather: "Sand" });
@@ -337,9 +337,9 @@ test("base power of weather ball", () => {
 		operator: 100,
 		factors: {
 			attacker: {
-				weather: true
-			}
-		}
+				weather: true,
+			},
+		},
 	});
 	// snow
 	basePower = getBasePower(testMon, testMon, weatherBall, { weather: "Snow" });
@@ -347,9 +347,9 @@ test("base power of weather ball", () => {
 		operator: 100,
 		factors: {
 			attacker: {
-				weather: true
-			}
-		}
+				weather: true,
+			},
+		},
 	});
 });
 
@@ -362,11 +362,12 @@ test("base power of tera blast", () => {
 	testTeraStellarMon.toggleTera({ isTera: true, type: "Stellar" });
 	basePower = getBasePower(testTeraStellarMon, testMon, teraBlast);
 	expect(basePower).toEqual({
-		operator: 100, factors: {
+		operator: 100,
+		factors: {
 			attacker: {
-				isTera: true
-			}
-		}
+				isTera: true,
+			},
+		},
 	});
 });
 

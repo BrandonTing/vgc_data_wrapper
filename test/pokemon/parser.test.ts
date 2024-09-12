@@ -16,13 +16,12 @@ Careful Nature
 `);
 	expect(incineroar.teraType).toBe("Water");
 	expect(incineroar.types).toEqual(["Fire", "Dark"]);
-	const paste = getPasteFromPokemons([incineroar])
+	const paste = getPasteFromPokemons([incineroar]);
 	const reParsedIncineroar = await getPokemonFromPaste(paste);
 	expect(reParsedIncineroar.teraType).toBe("Water");
 	expect(reParsedIncineroar.types).toEqual(["Fire", "Dark"]);
 	expect(reParsedIncineroar.weight).toEqual(83);
 });
-
 
 test("parse Landorus-Therian successfully", async () => {
 	const landorusTherian = await getPokemonFromPaste(`
