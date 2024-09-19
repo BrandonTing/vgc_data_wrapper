@@ -18,7 +18,7 @@ export function getDefense(
       return false;
     }
     // sacred sword
-    if (move.id === 533) {
+    if (move.id === 533|| move.id===663) {
       return false
     }
     return true;
