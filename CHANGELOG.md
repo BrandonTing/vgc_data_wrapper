@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.11
+
+### Patch Changes
+
+- bdbd74d: sacred sword ignore minus defense
+
 ## 0.3.10
 
 ### Patch Changes
