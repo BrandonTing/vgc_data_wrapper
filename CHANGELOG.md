@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.12
+
+### Patch Changes
+
+- 9d770d0: fix: not change tera blast type when pokemon teraed
+
 ## 0.3.11
 
 ### Patch Changes
