@@ -401,6 +401,55 @@ test("Collision Course increase 33% when effective, including stellar tera", () 
 		360,
 	];
 	const damage = battle.getDamage();
-	console.log(damage);
+	expect(getDamangeNumberFromResult(damage)).toEqual(actualBeforeTera);
+});
+
+
+test("Hadron Engine increase 33% when effective, including stellar tera", () => {
+	const attacker = genTestMon({
+		types: ["Electric", "Dragon"],
+		baseStat: {
+			specialAttack: 135,
+		},
+		effortValues: {
+			specialAttack: 252,
+		},
+		nature: {
+			plus: "specialAttack",
+		},
+		ability: "Hadron Engine"
+	});
+	const defender = genTestMon({
+		types: ["Water"],
+		baseStat: {
+			hp: 100,
+			specialDefense: 140,
+		},
+		effortValues: {
+			hp: 252,
+			specialDefense: 4,
+		},
+		isTera: true,
+		teraType: "Stellar",
+	});
+	const move = createMove({
+		id: 879,
+		type: "Electric",
+		category: "Special",
+		base: 100,
+	});
+	const battle = new Battle({
+		attacker,
+		defender,
+		move,
+		field: {
+			terrain: "Electric",
+		},
+	});
+
+	const actualBeforeTera = [
+		331, 336, 339, 344, 347, 352, 355, 360, 363, 368, 371, 376, 379, 384, 387, 392,
+	];
+	const damage = battle.getDamage();
 	expect(getDamangeNumberFromResult(damage)).toEqual(actualBeforeTera);
 });
