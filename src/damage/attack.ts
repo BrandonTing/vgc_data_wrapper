@@ -143,7 +143,6 @@ function modifyAtkByAttackAbility({
 			return getFactor(1.3, factors);
 		}
 	}
-
 	// Orichalcum Pulse
 	if (
 		ability === "Orichalcum Pulse" &&
@@ -151,7 +150,7 @@ function modifyAtkByAttackAbility({
 		field?.weather === "Sun"
 	) {
 		return getFactor(1.333, {
-			attacker: { weather: true },
+			attacker: { weather: true, ability: true },
 		});
 	}
 	// Hadron Engine
