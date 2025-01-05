@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.13
+
+### Patch Changes
+
+- 1270713: fix: Electro Drift and Collision Course hit tera stellar
+
 ## 0.3.12
 
 ### Patch Changes
