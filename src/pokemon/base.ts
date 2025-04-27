@@ -49,11 +49,16 @@ type PokemonInfo = {
 	originalItem?: string;
 	teraType?: TeraTypes; // null mean not in tera form.
 	isTera: boolean;
+	isMega: boolean;
+	isDynamax: boolean;
+	isGDynamax: boolean;
 	gender: Gender;
 	status: Status;
 	flags?: PokemonFlags;
 	moves: Array<string>;
 	sprite?: string;
+	isFainted: boolean; // if this is set to true, this pokemon is considered fainted and cannot be used in battle.
+	takenDamage: number;
 };
 type ToggleTeraOption =
 	| {
@@ -85,6 +90,7 @@ interface IPokemon extends PokemonInfo {
 		},
 	) => void;
 	setNature: (nature: Nature) => void;
+	initBattleStatus: () => void;
 }
 
 export class Pokemon implements IPokemon {
@@ -94,6 +100,9 @@ export class Pokemon implements IPokemon {
 	types: PokemonType;
 	teraType: TeraTypes;
 	isTera = false;
+	isMega = false;
+	isDynamax = false;
+	isGDynamax = false;
 	weight: number;
 	ability?: Ability;
 	gender: Gender;
@@ -113,6 +122,8 @@ export class Pokemon implements IPokemon {
 	flags?: PokemonFlags;
 	moves: Array<string>;
 	sprite?: string;
+	isFainted = false;
+	takenDamage = 0;
 	constructor(
 		info?: {
 			id?: number;
@@ -270,6 +281,23 @@ export class Pokemon implements IPokemon {
 			console.log("Failed to init pokemon from pokeapi: ", err);
 			throw new Error("Failed to init pokemon from pokeapi");
 		}
+	}
+	initBattleStatus() {
+		this.isFainted = false;
+		this.takenDamage = 0;
+		this.isTera = false;
+		this.isMega = false;
+		this.isDynamax = false;
+		this.isGDynamax = false;
+		this.status = "Healthy";
+		this.flags = undefined;
+		this.statStage = {
+			attack: 0,
+			defense: 0,
+			specialAttack: 0,
+			specialDefense: 0,
+			speed: 0,
+		};
 	}
 	private getHp(base: number, iv: number, ev: number): number {
 		// Shedinja

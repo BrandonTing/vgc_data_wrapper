@@ -20,6 +20,7 @@ import {
 
 interface IBattle extends Partial<BattleStatus> {
 	getDamage: () => DamageResult;
+	setDamage: (damage: number) => void;
 	setField: (field: Partial<BattleFieldStatus>) => void;
 	setPokemon: (type: "attacker" | "defender", pokemon: Pokemon) => void;
 	swapPokemons: () => void;
@@ -59,6 +60,15 @@ export class Battle implements IBattle {
 			move: this.move,
 			field: this.field,
 		});
+	}
+	setDamage(damage: number) {
+		if (!this.attacker || !this.defender) {
+			throw new Error("Attacker or Defender is not set");
+		}
+		this.defender.takenDamage += damage;
+		if (this.defender.takenDamage >= this.defender.getStat("hp")) {
+			this.defender.isFainted = true;
+		}
 	}
 	setField(field: Partial<BattleFieldStatus>) {
 		this.field = this.field ? Object.assign(this.field, field) : field;
@@ -129,8 +139,8 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 		minKoIndex === 0
 			? 100
 			: minKoIndex === -1
-			  ? 0
-			  : ((dmgRollCounts - minKoIndex) / 16) * 100;
+			? 0
+			: ((dmgRollCounts - minKoIndex) / 16) * 100;
 
 	return {
 		rolls: results,
