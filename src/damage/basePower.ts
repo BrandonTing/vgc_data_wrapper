@@ -212,9 +212,9 @@ function speedModifier(baseSpeed: number, item: string, stage: number): number {
 		item === "Choice Scarf"
 			? 1.5
 			: // iron ball
-			  item === "Iron Ball"
-			  ? 0.5
-			  : 1;
+			item === "Iron Ball"
+			? 0.5
+			: 1;
 	return Math.round(
 		Math.trunc(baseSpeed * stageMultiplier * (4096 * itemModifier)) / 4096 -
 			0.001,
@@ -234,8 +234,8 @@ function weightModifier(base: number, ability?: Ability) {
 		ability === "Heavy Metal"
 			? 2
 			: // Light Metal
-			  ability === "Light Metal"
-			  ? 0.5
-			  : 1;
+			ability === "Light Metal"
+			? 0.5
+			: 1;
 	return base * abilityModifier;
 }

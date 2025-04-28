@@ -25,14 +25,14 @@ export function checkMatchType(pokemon: Pokemon, type: Type): boolean {
 }
 
 export function getPokemonCurrentType(pokemon: Pokemon): Array<TeraTypes> {
-	return pokemon.isTera ? [pokemon.teraType] : pokemon.types;
+	return pokemon.isTera() ? [pokemon.teraType] : pokemon.types;
 }
 
 export function checkTeraWIthTypeMatch(
 	pokemon: Pokemon,
 	type: TeraTypes,
 ): boolean {
-	return pokemon.isTera && type === pokemon.teraType;
+	return pokemon.isTera() && type === pokemon.teraType;
 }
 
 function mergeFactors(
@@ -61,10 +61,7 @@ function mergeFactors(
 export function mergeFactorList(
 	...factorList: Array<TemporalFactor["factors"]>
 ): TemporalFactor["factors"] {
-	return factorList.reduce(
-		(pre, cur) => {
-			return mergeFactors(pre, cur);
-		},
-		{} as TemporalFactor["factors"],
-	);
+	return factorList.reduce((pre, cur) => {
+		return mergeFactors(pre, cur);
+	}, {} as TemporalFactor["factors"]);
 }

@@ -38,7 +38,7 @@ test("freeze dry", () => {
 test("terapagos using Tera Starstorm", () => {
 	const terapagos = genTestMon({
 		id: 1024,
-		isTera: true,
+		specialForm: "Tera",
 		teraType: "Stellar",
 	});
 	const testMon = genTestMon({});
@@ -59,7 +59,7 @@ test("terapagos using Tera Starstorm", () => {
 
 	const terapagosPhysical = genTestMon({
 		id: 1024,
-		isTera: true,
+		specialForm: "Tera",
 		teraType: "Stellar",
 		stats: {
 			attack: 101,
@@ -67,7 +67,7 @@ test("terapagos using Tera Starstorm", () => {
 		},
 	});
 	battle.setPokemon("attacker", terapagosPhysical);
-	testMon.toggleTera({ isTera: true });
+	testMon.toggleTera({ isTera: true, type: "Stellar" });
 	const againstTeraDefender = battle.getDamage();
 	expect(againstTeraDefender.factors.attacker.isTera).toBe(true);
 	expect(againstTeraDefender.factors.defender.isTera).toBe(true);
@@ -76,7 +76,7 @@ test("terapagos using Tera Starstorm", () => {
 
 	const terapagosStellar = genTestMon({
 		name: "terapagos-stellar",
-		isTera: true,
+		specialForm: "Tera",
 		teraType: "Stellar",
 	});
 	battle.setPokemon("attacker", terapagosStellar);
@@ -273,7 +273,7 @@ test("Tera Blast changes category", () => {
 			attack: 115,
 			specialAttack: 80,
 		},
-		isTera: true,
+		specialForm: "Tera",
 		teraType: "Water",
 	});
 	const defender = genTestMon({
@@ -404,7 +404,6 @@ test("Collision Course increase 33% when effective, including stellar tera", () 
 	expect(getDamangeNumberFromResult(damage)).toEqual(actualBeforeTera);
 });
 
-
 test("Hadron Engine increase 33% when effective, including stellar tera", () => {
 	const attacker = genTestMon({
 		types: ["Electric", "Dragon"],
@@ -417,7 +416,7 @@ test("Hadron Engine increase 33% when effective, including stellar tera", () => 
 		nature: {
 			plus: "specialAttack",
 		},
-		ability: "Hadron Engine"
+		ability: "Hadron Engine",
 	});
 	const defender = genTestMon({
 		types: ["Water"],
@@ -448,7 +447,8 @@ test("Hadron Engine increase 33% when effective, including stellar tera", () => 
 	});
 
 	const actualBeforeTera = [
-		331, 336, 339, 344, 347, 352, 355, 360, 363, 368, 371, 376, 379, 384, 387, 392,
+		331, 336, 339, 344, 347, 352, 355, 360, 363, 368, 371, 376, 379, 384, 387,
+		392,
 	];
 	const damage = battle.getDamage();
 	expect(getDamangeNumberFromResult(damage)).toEqual(actualBeforeTera);

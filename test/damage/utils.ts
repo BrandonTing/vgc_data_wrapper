@@ -52,7 +52,7 @@ export function genTestMon(partial?: RecursivePartial<Pokemon>): Pokemon {
 		weight: partial?.weight,
 		ability: partial?.ability,
 		item: partial?.item,
-		isTera: partial?.isTera,
+		specialForm: partial?.specialForm,
 		teraType: partial?.teraType,
 		flags: partial?.flags,
 		nature: partial?.nature,

@@ -66,9 +66,6 @@ export class Battle implements IBattle {
 			throw new Error("Attacker or Defender is not set");
 		}
 		this.defender.takenDamage += damage;
-		if (this.defender.takenDamage >= this.defender.getStat("hp")) {
-			this.defender.isFainted = true;
-		}
 	}
 	setField(field: Partial<BattleFieldStatus>) {
 		this.field = this.field ? Object.assign(this.field, field) : field;
@@ -454,7 +451,7 @@ function getTypeModifier({
 	// tera blast from Stellar tera mon on tera mon is 2x
 	if (
 		checkTeraWIthTypeMatch(attacker, "Stellar") &&
-		defender.isTera &&
+		defender.isTera() &&
 		move.id === 851
 	) {
 		return {
@@ -473,7 +470,7 @@ function getTypeModifier({
 		move.type === "Ground" &&
 		defender.item === "Iron Ball" &&
 		(checkTeraWIthTypeMatch(defender, "Flying") ||
-			((!defender.isTera || defender.teraType === "Stellar") &&
+			((!defender.isTera() || defender.teraType === "Stellar") &&
 				defender.types.includes("Flying")))
 	) {
 		return {
@@ -490,7 +487,7 @@ function getTypeModifier({
 	}
 	// skins
 	if (attacker.ability === "Pixilate") {
-		if (!defender.isTera || defender.teraType === "Stellar") {
+		if (!defender.isTera() || defender.teraType === "Stellar") {
 			// use original type
 			return {
 				operator: getEffectivenessOnPokemon("Fairy", defender.types),
@@ -514,7 +511,7 @@ function getTypeModifier({
 		};
 	}
 	if (attacker.ability === "Galvanize") {
-		if (!defender.isTera || defender.teraType === "Stellar") {
+		if (!defender.isTera() || defender.teraType === "Stellar") {
 			// use original type
 			return {
 				operator: getEffectivenessOnPokemon("Electric", defender.types),
@@ -552,7 +549,7 @@ function getTypeModifier({
 				getEffectivenessOnPokemon("Flying", curDefenderType) *
 				getEffectivenessOnPokemon("Fighting", curDefenderType),
 			factors: {
-				defender: defender.isTera
+				defender: defender.isTera()
 					? {
 							isTera: true,
 					  }
@@ -562,7 +559,7 @@ function getTypeModifier({
 	}
 	// Freeze Dry
 	if (move.id === 573) {
-		if (checkTeraWIthTypeMatch(defender, "Stellar") || !defender.isTera) {
+		if (checkTeraWIthTypeMatch(defender, "Stellar") || !defender.isTera()) {
 			if (defender.types.includes("Water")) {
 				return {
 					operator:
@@ -588,7 +585,7 @@ function getTypeModifier({
 	// Tera Starstorm
 	if (move.id === 906 && isTerapagosStellar(attacker)) {
 		// 2x against tera mon
-		if (defender.isTera) {
+		if (defender.isTera()) {
 			return {
 				operator: 2,
 				factors: {
@@ -620,7 +617,7 @@ function getTypeModifier({
 			move.type,
 			getPokemonCurrentType(defender),
 		),
-		factors: defender.isTera
+		factors: defender.isTera()
 			? {
 					defender: {
 						isTera: true,
@@ -743,7 +740,7 @@ function modifyByMove({
 }: Pick<BattleStatus, "defender" | "move">): TemporalFactor {
 	const effectiveness = getEffectivenessOnPokemon(
 		move.type,
-		defender.isTera && defender.teraType === "Stellar"
+		defender.isTera() && defender.teraType === "Stellar"
 			? defender.types
 			: getPokemonCurrentType(defender),
 	);
@@ -782,7 +779,7 @@ function modifyByAttackerAbility({
 	if (attacker.ability === "Tinted Lens" && effectiveness < 1) {
 		return getFactor(
 			2,
-			defender.isTera ? { defender: { isTera: true } } : undefined,
+			defender.isTera() ? { defender: { isTera: true } } : undefined,
 		);
 	}
 	return { operator: 1 };
@@ -822,7 +819,7 @@ function modifyByDefenderAbility({
 	// Solid Rock && Filter
 	const effectiveness = getEffectivenessOnPokemon(
 		move.type,
-		defender.isTera ? [defender.teraType] : defender.types,
+		defender.isTera() ? [defender.teraType] : defender.types,
 	);
 	if (
 		(defender.ability === "Solid Rock" || defender.ability === "Filter") &&
@@ -830,7 +827,7 @@ function modifyByDefenderAbility({
 	) {
 		return getFactor(
 			0.75,
-			defender.isTera ? { defender: { isTera: true } } : undefined,
+			defender.isTera() ? { defender: { isTera: true } } : undefined,
 		);
 	}
 	return { operator: 1 };
@@ -930,7 +927,7 @@ function modifyOption(originalOpt: BattleStatus): {
 	} else if (newMove.id === 686) {
 		// revelationdance
 		// 傷害屬性變為使用者本身的第一屬性。太晶化的寶可夢使用時，會變為和太晶屬性相同的屬性。
-		if (attacker.isTera) {
+		if (attacker.isTera()) {
 			newMove.type = attacker.teraType;
 			factors.attacker = {
 				isTera: true,
@@ -938,7 +935,7 @@ function modifyOption(originalOpt: BattleStatus): {
 		} else {
 			newMove.type = attacker.types[0];
 		}
-	} else if (newMove.id === 851 && attacker.isTera) {
+	} else if (newMove.id === 851 && attacker.isTera()) {
 		// Tera blase
 		if (attacker.getStat("attack") > attacker.getStat("specialAttack")) {
 			newMove.category = "Physical";

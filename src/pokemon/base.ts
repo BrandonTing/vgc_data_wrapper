@@ -31,6 +31,8 @@ type Nature = {
 	minus?: keyof StatStages;
 };
 
+type SpecialForms = "None" | "Mega" | "Dynamax" | "GigaDynamax" | "Tera";
+
 type PokemonType = [Type] | [Type, Type];
 type PokemonInfo = {
 	id?: number; // ID from national dex
@@ -48,16 +50,12 @@ type PokemonInfo = {
 	item?: Item;
 	originalItem?: string;
 	teraType?: TeraTypes; // null mean not in tera form.
-	isTera: boolean;
-	isMega: boolean;
-	isDynamax: boolean;
-	isGDynamax: boolean;
+	specialForm: SpecialForms; // special form like Mega, Dynamax, GigaDynamax, Tera
 	gender: Gender;
 	status: Status;
 	flags?: PokemonFlags;
 	moves: Array<string>;
 	sprite?: string;
-	isFainted: boolean; // if this is set to true, this pokemon is considered fainted and cannot be used in battle.
 	takenDamage: number;
 };
 type ToggleTeraOption =
@@ -90,6 +88,7 @@ interface IPokemon extends PokemonInfo {
 		},
 	) => void;
 	setNature: (nature: Nature) => void;
+	isFainted: () => boolean;
 	initBattleStatus: () => void;
 }
 
@@ -99,7 +98,7 @@ export class Pokemon implements IPokemon {
 	level: number;
 	types: PokemonType;
 	teraType: TeraTypes;
-	isTera = false;
+	specialForm: SpecialForms;
 	isMega = false;
 	isDynamax = false;
 	isGDynamax = false;
@@ -122,7 +121,6 @@ export class Pokemon implements IPokemon {
 	flags?: PokemonFlags;
 	moves: Array<string>;
 	sprite?: string;
-	isFainted = false;
 	takenDamage = 0;
 	constructor(
 		info?: {
@@ -150,8 +148,8 @@ export class Pokemon implements IPokemon {
 		this.level = info?.level ?? 50;
 		// fetch pokemon infomation by id
 		this.types = info?.types ?? ["Normal"];
-		this.isTera = info?.isTera || false;
 		this.teraType = info?.teraType || this.types[0];
+		this.specialForm = info?.specialForm ?? "None";
 		this.weight = info?.weight ?? 0;
 		this.ability = info?.ability;
 		this.gender = info?.gender ?? "Unknown";
@@ -216,10 +214,15 @@ export class Pokemon implements IPokemon {
 		this.nature = this.nature ? Object.assign(this.nature, nature) : nature;
 	}
 	toggleTera(option: ToggleTeraOption) {
-		this.isTera = option.isTera;
 		if (option.isTera && option.type) {
 			this.teraType = option.type;
+			this.specialForm = "Tera";
+		} else {
+			this.specialForm = "None";
 		}
+	}
+	isFainted() {
+		return this.getStat("hp") < this.takenDamage;
 	}
 	async initWithId(
 		id: number,
@@ -283,12 +286,8 @@ export class Pokemon implements IPokemon {
 		}
 	}
 	initBattleStatus() {
-		this.isFainted = false;
 		this.takenDamage = 0;
-		this.isTera = false;
-		this.isMega = false;
-		this.isDynamax = false;
-		this.isGDynamax = false;
+		this.specialForm = "None";
 		this.status = "Healthy";
 		this.flags = undefined;
 		this.statStage = {
@@ -328,6 +327,10 @@ export class Pokemon implements IPokemon {
 		if (key === this.nature.plus) return 1.1;
 		if (key === this.nature.minus) return 0.9;
 		return 1;
+	}
+
+	isTera() {
+		return this.specialForm === "Tera";
 	}
 }
 
