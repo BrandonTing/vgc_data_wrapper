@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.14
+
+### Patch Changes
+
+- 4b6015c: add isFinted status to check if defense Pokemon is beaten. and use specialForm to manage special status like mega, Dynamax, GMax, Tera.
+
 ## 0.3.13
 
 ### Patch Changes
