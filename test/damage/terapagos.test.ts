@@ -9,7 +9,7 @@ test("terapagos stellar hit charizard", () => {
 		baseStat: {
 			specialAttack: 130,
 		},
-		isTera: true,
+		specialForm: "Tera",
 		teraType: "Stellar",
 	});
 
@@ -45,7 +45,7 @@ test("terapagos stellar hit charizard with terastorm", () => {
 		baseStat: {
 			specialAttack: 130,
 		},
-		isTera: true,
+		specialForm: "Tera",
 		teraType: "Stellar",
 	});
 
