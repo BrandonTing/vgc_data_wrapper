@@ -241,7 +241,11 @@ function modifyByWeather(
 			};
 		}
 		if (move.type === "Water") {
-			modifier = 0.5;
+			if (move.id === 875) {
+				modifier = 1.5;
+			} else {
+				modifier = 0.5;
+			}
 			weatherFactor = {
 				defender: {
 					weather: true,
