@@ -11,20 +11,20 @@ export function getBasePower(
 	field?: BattleFieldStatus,
 ): TemporalFactor {
 	// ====== Terrain Related
-	if (
-		// Hydro Steam
-		move.id === 875 &&
-		field?.weather === "Sun"
-	) {
-		return {
-			operator: move.base * 1.5,
-			factors: {
-				attacker: {
-					weather: true,
-				},
-			},
-		};
-	}
+	// if (
+	// 	// Hydro Steam
+	// 	move.id === 875 &&
+	// 	field?.weather === "Sun"
+	// ) {
+	// 	return {
+	// 		operator: move.base * 1.5,
+	// 		factors: {
+	// 			attacker: {
+	// 				weather: true,
+	// 			},
+	// 		},
+	// 	};
+	// }
 	if (
 		// Psyblade
 		(move.id === 876 && field?.terrain === "Electric") ||
