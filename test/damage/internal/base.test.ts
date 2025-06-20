@@ -17,26 +17,6 @@ test("correctly calculate base power", () => {
 
 test("correctly calculate base power for terrain related moves", () => {
 	const testPokemon = genTestMon();
-	const testHydroSteam = createMove({
-		id: 875,
-		base: 80,
-	});
-	const basePowerHydroSteam = getBasePower(
-		testPokemon,
-		testPokemon,
-		testHydroSteam,
-		{
-			weather: "Sun",
-		},
-	);
-	expect(basePowerHydroSteam).toEqual({
-		operator: 120,
-		factors: {
-			attacker: {
-				weather: true,
-			},
-		},
-	});
 
 	const testPsyblade = createMove({
 		id: 876,

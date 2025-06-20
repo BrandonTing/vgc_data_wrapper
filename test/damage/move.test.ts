@@ -453,3 +453,38 @@ test("Hadron Engine increase 33% when effective, including stellar tera", () => 
 	const damage = battle.getDamage();
 	expect(getDamangeNumberFromResult(damage)).toEqual(actualBeforeTera);
 });
+
+
+test("Hydro steam should have 1,5x damage in Sun", () => {
+  const attacker = genTestMon({
+    types: ["Water"],
+    baseStat: {
+      specialAttack: 125,
+    },
+  });
+  const defender = genTestMon({
+    types: ["Fire"],
+    baseStat: {
+      hp: 95,
+      specialDefense: 90,
+    },
+  });
+  const move = createMove({
+    id: 875,
+    type: "Water",
+    category: "Special",
+    base: 80,
+  });
+  const battle = new Battle({
+    attacker,
+    defender,
+    move,
+    field: {
+      weather: "Sun",
+    },
+  });
+  const damage = battle.getDamage();    
+  expect(getDamangeNumberFromResult(damage)).toEqual([
+    182, 182, 186, 188, 192, 192, 194, 198, 198, 200, 204, 206, 206, 210, 212, 216,
+  ]);
+})
