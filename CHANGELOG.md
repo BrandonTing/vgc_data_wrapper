@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.15
+
+### Patch Changes
+
+- a861520: fix: hydro steam should have 1.5x damage in sun
+
 ## 0.3.14
 
 ### Patch Changes
