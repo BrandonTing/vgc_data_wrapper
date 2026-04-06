@@ -7,6 +7,7 @@ import type {
 	BattleStatus,
 	DamageResult,
 	Move,
+	Type,
 } from "./config";
 import { getDefense } from "./defense";
 import { getPower } from "./power";
@@ -17,6 +18,14 @@ import {
 	mergeFactorList,
 	pipeModifierHelper,
 } from "./utils";
+
+const SKIN_ABILITIES: Record<string, Type> = {
+	Pixilate: "Fairy",
+	Refrigerate: "Ice",
+	Aerilate: "Flying",
+	Dragonize: "Dragon",
+	Galvanize: "Electric",
+};
 
 interface IBattle extends Partial<BattleStatus> {
 	getDamage: () => DamageResult;
@@ -312,8 +321,11 @@ function modifyBySameType(
 			modifier = 1.5;
 		}
 	}
-	// Pixilate
-	if (attacker.ability === "Pixilate") {
+	// skin abilities (Pixilate/Refrigerate/Aerilate/Dragonize/Galvanize)
+	const skinType = attacker.ability
+		? SKIN_ABILITIES[attacker.ability]
+		: undefined;
+	if (skinType) {
 		factors = mergeFactorList(factors, {
 			attacker: {
 				ability: true,
@@ -327,57 +339,21 @@ function modifyBySameType(
 				},
 			});
 
-			if (attacker.types.includes("Fairy") && move.type === "Normal") {
+			if (attacker.types.includes(skinType) && move.type === "Normal") {
 				modifier = 2;
 			} else {
 				modifier = 1.2;
 			}
 		}
-		if (checkTeraWIthTypeMatch(attacker, "Fairy") && move.type === "Normal") {
+		if (checkTeraWIthTypeMatch(attacker, skinType) && move.type === "Normal") {
 			factors = mergeFactorList(factors, {
 				attacker: {
 					isTera: true,
 				},
 			});
-			modifier = attacker.types.includes("Fairy") ? 2 : 1.5;
+			modifier = attacker.types.includes(skinType) ? 2 : 1.5;
 		}
-		if (attacker.types.includes("Fairy") && move.type === "Normal") {
-			modifier = 1.5;
-		}
-	}
-	// Galvanize
-	if (attacker.ability === "Galvanize") {
-		factors = mergeFactorList(factors, {
-			attacker: {
-				ability: true,
-			},
-		});
-		if (checkTeraWIthTypeMatch(attacker, "Stellar")) {
-			factors = mergeFactorList(factors, {
-				attacker: {
-					isTera: true,
-				},
-			});
-
-			if (attacker.types.includes("Electric") && move.type === "Normal") {
-				modifier = 2;
-			} else {
-				modifier = 1.2;
-			}
-		}
-		if (
-			checkTeraWIthTypeMatch(attacker, "Electric") &&
-			move.type === "Normal"
-		) {
-			factors = mergeFactorList(factors, {
-				attacker: {
-					isTera: true,
-				},
-			});
-
-			modifier = attacker.types.includes("Electric") ? 2 : 1.5;
-		}
-		if (attacker.types.includes("Electric") && move.type === "Normal") {
+		if (attacker.types.includes(skinType) && move.type === "Normal") {
 			modifier = 1.5;
 		}
 	}
@@ -485,12 +461,15 @@ function getTypeModifier({
 			},
 		};
 	}
-	// skins
-	if (attacker.ability === "Pixilate") {
+	// skins (Pixilate/Refrigerate/Aerilate/Dragonize/Galvanize)
+	const skinType = attacker.ability
+		? SKIN_ABILITIES[attacker.ability]
+		: undefined;
+	if (skinType) {
 		if (!defender.isTera() || defender.teraType === "Stellar") {
 			// use original type
 			return {
-				operator: getEffectivenessOnPokemon("Fairy", defender.types),
+				operator: getEffectivenessOnPokemon(skinType, defender.types),
 				factors: {
 					attacker: {
 						ability: true,
@@ -499,31 +478,7 @@ function getTypeModifier({
 			};
 		}
 		return {
-			operator: getEffectivenessOnPokemon("Fairy", [defender.teraType]),
-			factors: {
-				attacker: {
-					ability: true,
-				},
-				defender: {
-					isTera: true,
-				},
-			},
-		};
-	}
-	if (attacker.ability === "Galvanize") {
-		if (!defender.isTera() || defender.teraType === "Stellar") {
-			// use original type
-			return {
-				operator: getEffectivenessOnPokemon("Electric", defender.types),
-				factors: {
-					attacker: {
-						ability: true,
-					},
-				},
-			};
-		}
-		return {
-			operator: getEffectivenessOnPokemon("Electric", [defender.teraType]),
+			operator: getEffectivenessOnPokemon(skinType, [defender.teraType]),
 			factors: {
 				attacker: {
 					ability: true,
