@@ -1,3 +1,4 @@
+import type { Ability } from "../pokemon/typeHelper";
 import type { Pokemon } from "../pokemon";
 import { isTerapagosStellar } from "../pokemon/utils";
 import type { RecursivePartial } from "../typeUtils";
@@ -19,7 +20,7 @@ import {
 	pipeModifierHelper,
 } from "./utils";
 
-const SKIN_ABILITIES: Record<string, Type> = {
+const SKIN_ABILITIES: Partial<Record<Ability, Type>> = {
 	Pixilate: "Fairy",
 	Refrigerate: "Ice",
 	Aerilate: "Flying",
