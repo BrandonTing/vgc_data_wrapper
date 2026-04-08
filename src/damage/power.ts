@@ -92,6 +92,8 @@ function modifyByAttackerAbility({
 		(attacker.ability === "Refrigerate" ||
 			// Pixilate
 			attacker.ability === "Pixilate" ||
+			// Dragonize
+			attacker.ability === "Dragonize" ||
 			// Aerilate
 			attacker.ability === "Aerilate" ||
 			// Galvanize
