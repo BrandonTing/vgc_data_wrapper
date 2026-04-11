@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.16
+
+### Patch Changes
+
+- c34973b: fix adaptabilituy
+
 ## 0.3.15
 
 ### Patch Changes
