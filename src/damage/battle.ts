@@ -146,8 +146,8 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 		minKoIndex === 0
 			? 100
 			: minKoIndex === -1
-			? 0
-			: ((dmgRollCounts - minKoIndex) / 16) * 100;
+				? 0
+				: ((dmgRollCounts - minKoIndex) / 16) * 100;
 
 	return {
 		rolls: results,
@@ -182,10 +182,10 @@ function getBasicDamage(option: BattleStatus): TemporalFactor {
 			(Math.trunc((option.attacker.level * 2) / 5 + 2) *
 				power.operator *
 				attack.operator) /
-				defense.operator,
+			defense.operator,
 		) /
-			50 +
-			2,
+		50 +
+		2,
 	);
 	return {
 		operator,
@@ -283,10 +283,10 @@ function modifyByCriticalHit(
 			value.factors,
 			move.flags?.isCriticalHit
 				? {
-						move: {
-							isCriticalHit: true,
-						},
-				  }
+					move: {
+						isCriticalHit: true,
+					},
+				}
 				: undefined,
 		),
 	};
@@ -363,29 +363,9 @@ function modifyBySameType(
 		}
 	}
 	// Adaptability
-	if (attacker.ability === "Adaptability") {
-		factors = mergeFactorList(factors, {
-			attacker: {
-				ability: true,
-			},
-		});
-
-		if (attacker.types.includes(move.type)) {
-			if (checkTeraWIthTypeMatch(attacker, move.type)) {
-				factors = mergeFactorList(factors, {
-					attacker: {
-						isTera: true,
-					},
-				});
-
-				modifier = 2.25;
-			} else {
-				modifier = 2;
-			}
-		}
-	}
-	// Stellar tera
+	const isAdaptability = attacker.ability === "Adaptability";
 	if (checkTeraWIthTypeMatch(attacker, "Stellar")) {
+		// Stellar tera
 		factors = mergeFactorList(factors, {
 			attacker: {
 				isTera: true,
@@ -404,10 +384,27 @@ function modifyBySameType(
 					isTera: true,
 				},
 			});
-
-			modifier = 2;
+			if (isAdaptability) {
+				factors = mergeFactorList(factors, {
+					attacker: {
+						ability: true,
+					},
+				});
+				modifier = 2.25;
+			} else {
+				modifier = 2;
+			}
 		} else {
-			modifier = 1.5;
+			if (isAdaptability) {
+				factors = mergeFactorList(factors, {
+					attacker: {
+						ability: true,
+					},
+				});
+				modifier = 2;
+			} else {
+				modifier = 1.5;
+			}
 		}
 	} else if (checkTeraWIthTypeMatch(attacker, move.type)) {
 		factors = mergeFactorList(factors, {
@@ -416,7 +413,16 @@ function modifyBySameType(
 			},
 		});
 
-		modifier = 1.5;
+		if (isAdaptability) {
+			factors = mergeFactorList(factors, {
+				attacker: {
+					ability: true,
+				},
+			});
+			modifier = 2;
+		} else {
+			modifier = 1.5;
+		}
 	}
 	return {
 		operator: Math.round(value.operator * modifier - 0.001),
@@ -459,9 +465,9 @@ function getTypeModifier({
 			factors: {
 				defender: checkTeraWIthTypeMatch(defender, "Flying")
 					? {
-							item: true,
-							isTera: true,
-					  }
+						item: true,
+						isTera: true,
+					}
 					: undefined,
 			},
 		};
@@ -511,8 +517,8 @@ function getTypeModifier({
 			factors: {
 				defender: defender.isTera()
 					? {
-							isTera: true,
-					  }
+						isTera: true,
+					}
 					: undefined,
 			},
 		};
@@ -579,10 +585,10 @@ function getTypeModifier({
 		),
 		factors: defender.isTera()
 			? {
-					defender: {
-						isTera: true,
-					},
-			  }
+				defender: {
+					isTera: true,
+				},
+			}
 			: undefined,
 	};
 }
@@ -798,13 +804,13 @@ function modifyByFriendGuard({
 }: Pick<BattleStatus, "defender">): TemporalFactor {
 	return flags?.hasFriendGuard
 		? {
-				operator: 0.75,
-				factors: {
-					defender: {
-						hasFriendGuard: true,
-					},
+			operator: 0.75,
+			factors: {
+				defender: {
+					hasFriendGuard: true,
 				},
-		  }
+			},
+		}
 		: { operator: 1 };
 }
 
