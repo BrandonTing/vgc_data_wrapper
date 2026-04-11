@@ -61,7 +61,10 @@ function mergeFactors(
 export function mergeFactorList(
 	...factorList: Array<TemporalFactor["factors"]>
 ): TemporalFactor["factors"] {
-	return factorList.reduce((pre, cur) => {
-		return mergeFactors(pre, cur);
-	}, {} as TemporalFactor["factors"]);
+	return factorList.reduce(
+		(pre, cur) => {
+			return mergeFactors(pre, cur);
+		},
+		{} as TemporalFactor["factors"],
+	);
 }

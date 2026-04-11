@@ -1,4 +1,8 @@
 import { expect, test } from "bun:test";
+import {
+	bundlerModuleNameResolver,
+	isConstructorDeclaration,
+} from "typescript";
 import { Battle, createMove } from "../../src";
 import { genTestMon, getDamangeNumberFromResult } from "./utils";
 test("Supreme Overlord", () => {
@@ -207,6 +211,33 @@ test("Dragonize", () => {
 	const expected = [
 		74, 74, 76, 76, 78, 78, 80, 80, 80, 82, 82, 84, 84, 86, 86, 88,
 	];
+	expect(actual).toEqual(expected);
+	expect(damage.factors.attacker.ability).toEqual(true);
+});
+
+test("Adaptability", () => {
+	const attacker = genTestMon({
+		types: ["Poison"],
+		ability: "Adaptability",
+		baseStat: {
+			specialAttack: 150,
+		},
+	});
+	const defender = genTestMon({
+		types: ["Fire"],
+		baseStat: {
+			specialDefense: 90,
+		},
+	});
+	const move = createMove({ base: 90, type: "Poison", category: "Special" });
+	const battle = new Battle({ attacker, defender, move });
+	const damage = battle.getDamage();
+	const actual = getDamangeNumberFromResult(damage);
+	const expected = [
+		106, 108, 108, 110, 112, 112, 114, 114, 116, 118, 118, 120, 122, 122, 124,
+		126,
+	];
+	console.log(damage.factors);
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
 });

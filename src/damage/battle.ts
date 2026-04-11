@@ -1,5 +1,5 @@
-import type { Ability } from "../pokemon/typeHelper";
 import type { Pokemon } from "../pokemon";
+import type { Ability } from "../pokemon/typeHelper";
 import { isTerapagosStellar } from "../pokemon/utils";
 import type { RecursivePartial } from "../typeUtils";
 import { getAttack } from "./attack";
@@ -146,8 +146,8 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 		minKoIndex === 0
 			? 100
 			: minKoIndex === -1
-			? 0
-			: ((dmgRollCounts - minKoIndex) / 16) * 100;
+			  ? 0
+			  : ((dmgRollCounts - minKoIndex) / 16) * 100;
 
 	return {
 		rolls: results,
@@ -363,29 +363,9 @@ function modifyBySameType(
 		}
 	}
 	// Adaptability
-	if (attacker.ability === "Adaptability") {
-		factors = mergeFactorList(factors, {
-			attacker: {
-				ability: true,
-			},
-		});
-
-		if (attacker.types.includes(move.type)) {
-			if (checkTeraWIthTypeMatch(attacker, move.type)) {
-				factors = mergeFactorList(factors, {
-					attacker: {
-						isTera: true,
-					},
-				});
-
-				modifier = 2.25;
-			} else {
-				modifier = 2;
-			}
-		}
-	}
-	// Stellar tera
+	const isAdaptability = attacker.ability === "Adaptability";
 	if (checkTeraWIthTypeMatch(attacker, "Stellar")) {
+		// Stellar tera
 		factors = mergeFactorList(factors, {
 			attacker: {
 				isTera: true,
@@ -404,10 +384,27 @@ function modifyBySameType(
 					isTera: true,
 				},
 			});
-
-			modifier = 2;
+			if (isAdaptability) {
+				factors = mergeFactorList(factors, {
+					attacker: {
+						ability: true,
+					},
+				});
+				modifier = 2.25;
+			} else {
+				modifier = 2;
+			}
 		} else {
-			modifier = 1.5;
+			if (isAdaptability) {
+				factors = mergeFactorList(factors, {
+					attacker: {
+						ability: true,
+					},
+				});
+				modifier = 2;
+			} else {
+				modifier = 1.5;
+			}
 		}
 	} else if (checkTeraWIthTypeMatch(attacker, move.type)) {
 		factors = mergeFactorList(factors, {
@@ -416,7 +413,16 @@ function modifyBySameType(
 			},
 		});
 
-		modifier = 1.5;
+		if (isAdaptability) {
+			factors = mergeFactorList(factors, {
+				attacker: {
+					ability: true,
+				},
+			});
+			modifier = 2;
+		} else {
+			modifier = 1.5;
+		}
 	}
 	return {
 		operator: Math.round(value.operator * modifier - 0.001),
