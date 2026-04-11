@@ -1,5 +1,5 @@
-import type { Ability } from "../pokemon/typeHelper";
 import type { Pokemon } from "../pokemon";
+import type { Ability } from "../pokemon/typeHelper";
 import { isTerapagosStellar } from "../pokemon/utils";
 import type { RecursivePartial } from "../typeUtils";
 import { getAttack } from "./attack";
@@ -146,8 +146,8 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 		minKoIndex === 0
 			? 100
 			: minKoIndex === -1
-				? 0
-				: ((dmgRollCounts - minKoIndex) / 16) * 100;
+			  ? 0
+			  : ((dmgRollCounts - minKoIndex) / 16) * 100;
 
 	return {
 		rolls: results,
@@ -182,10 +182,10 @@ function getBasicDamage(option: BattleStatus): TemporalFactor {
 			(Math.trunc((option.attacker.level * 2) / 5 + 2) *
 				power.operator *
 				attack.operator) /
-			defense.operator,
+				defense.operator,
 		) /
-		50 +
-		2,
+			50 +
+			2,
 	);
 	return {
 		operator,
@@ -283,10 +283,10 @@ function modifyByCriticalHit(
 			value.factors,
 			move.flags?.isCriticalHit
 				? {
-					move: {
-						isCriticalHit: true,
-					},
-				}
+						move: {
+							isCriticalHit: true,
+						},
+				  }
 				: undefined,
 		),
 	};
@@ -465,9 +465,9 @@ function getTypeModifier({
 			factors: {
 				defender: checkTeraWIthTypeMatch(defender, "Flying")
 					? {
-						item: true,
-						isTera: true,
-					}
+							item: true,
+							isTera: true,
+					  }
 					: undefined,
 			},
 		};
@@ -517,8 +517,8 @@ function getTypeModifier({
 			factors: {
 				defender: defender.isTera()
 					? {
-						isTera: true,
-					}
+							isTera: true,
+					  }
 					: undefined,
 			},
 		};
@@ -585,10 +585,10 @@ function getTypeModifier({
 		),
 		factors: defender.isTera()
 			? {
-				defender: {
-					isTera: true,
-				},
-			}
+					defender: {
+						isTera: true,
+					},
+			  }
 			: undefined,
 	};
 }
@@ -804,13 +804,13 @@ function modifyByFriendGuard({
 }: Pick<BattleStatus, "defender">): TemporalFactor {
 	return flags?.hasFriendGuard
 		? {
-			operator: 0.75,
-			factors: {
-				defender: {
-					hasFriendGuard: true,
+				operator: 0.75,
+				factors: {
+					defender: {
+						hasFriendGuard: true,
+					},
 				},
-			},
-		}
+		  }
 		: { operator: 1 };
 }
 
