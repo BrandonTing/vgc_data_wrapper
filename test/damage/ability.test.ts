@@ -338,6 +338,74 @@ test("Solar Beam in Rain WITHOUT Mega Sol still gets 0.5x penalty", () => {
 	]);
 });
 
+test("Sand still boosts Rock special defense without Mega Sol", () => {
+	const attacker = genTestMon();
+	const defender = genTestMon({ types: ["Rock"] });
+	const move = createMove({ type: "Electric", base: 80, category: "Special" });
+	const battle = new Battle({
+		attacker,
+		defender,
+		move,
+		field: { weather: "Sand" },
+	});
+	const damage = battle.getDamage();
+	// Rock SpDef 1.5x in Sand: base=25, rolls 85%–100%
+	expect(getDamangeNumberFromResult(damage)).toEqual([
+		21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25,
+	]);
+});
+
+test("Mega Sol: Rock-type defender does NOT get Sand special defense boost", () => {
+	const attacker = genTestMon({ ability: "Mega Sol" });
+	const defender = genTestMon({ types: ["Rock"] });
+	const move = createMove({ type: "Electric", base: 80, category: "Special" });
+	const battle = new Battle({
+		attacker,
+		defender,
+		move,
+		field: { weather: "Sand" },
+	});
+	const damage = battle.getDamage();
+	// No defense boost (Mega Sol treats weather as Sun): base=37, rolls 85%–100%
+	expect(getDamangeNumberFromResult(damage)).toEqual([
+		31, 31, 32, 32, 32, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 37,
+	]);
+});
+
+test("Snow still boosts Ice physical defense without Mega Sol", () => {
+	const attacker = genTestMon();
+	const defender = genTestMon({ types: ["Ice"] });
+	const move = createMove({ type: "Electric", base: 80, category: "Physical" });
+	const battle = new Battle({
+		attacker,
+		defender,
+		move,
+		field: { weather: "Snow" },
+	});
+	const damage = battle.getDamage();
+	// Ice PhyDef 1.5x in Snow: base=25, rolls 85%–100%
+	expect(getDamangeNumberFromResult(damage)).toEqual([
+		21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25,
+	]);
+});
+
+test("Mega Sol: Ice-type defender does NOT get Snow physical defense boost", () => {
+	const attacker = genTestMon({ ability: "Mega Sol" });
+	const defender = genTestMon({ types: ["Ice"] });
+	const move = createMove({ type: "Electric", base: 80, category: "Physical" });
+	const battle = new Battle({
+		attacker,
+		defender,
+		move,
+		field: { weather: "Snow" },
+	});
+	const damage = battle.getDamage();
+	// No defense boost (Mega Sol treats weather as Sun): base=37, rolls 85%–100%
+	expect(getDamangeNumberFromResult(damage)).toEqual([
+		31, 31, 32, 32, 32, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 37,
+	]);
+});
+
 test("Mega Sol: Weather Ball in clear skies becomes Fire-type at 100bp", () => {
 	// Fire-type defender: Fire vs Fire = 0.5x
 	// With 100bp: base=46, Sun boost 1.5x → 69, Fire vs Fire 0.5x → rolls

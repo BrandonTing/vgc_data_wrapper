@@ -8,7 +8,7 @@ import {
 } from "./utils";
 
 export function getDefense(
-	option: Pick<BattleStatus, "defender" | "move">,
+	option: Pick<BattleStatus, "attacker" | "defender" | "move">,
 ): TemporalFactor {
 	const { move, defender } = option;
 	function checkCountStages(stageChange: number) {
@@ -47,10 +47,16 @@ export function getDefense(
 }
 
 function modifyByWeather({
+	attacker,
 	defender,
 	field,
 	move: { category },
-}: Pick<BattleStatus, "defender" | "field" | "move">): TemporalFactor {
+}: Pick<
+	BattleStatus,
+	"attacker" | "defender" | "field" | "move"
+>): TemporalFactor {
+	const effectiveWeather =
+		attacker.ability === "Mega Sol" ? "Sun" : field?.weather;
 	const getFactor = createFactorHelper({
 		defender: {
 			weather: true,
@@ -59,7 +65,7 @@ function modifyByWeather({
 	// Snow
 	if (
 		checkMatchType(defender, "Ice") &&
-		field?.weather === "Snow" &&
+		effectiveWeather === "Snow" &&
 		category === "Physical"
 	) {
 		return getFactor(1.5);
@@ -67,7 +73,7 @@ function modifyByWeather({
 	// Sand
 	if (
 		checkMatchType(defender, "Rock") &&
-		field?.weather === "Sand" &&
+		effectiveWeather === "Sand" &&
 		category === "Special"
 	) {
 		return getFactor(1.5);
