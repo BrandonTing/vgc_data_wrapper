@@ -157,7 +157,9 @@ export function getBasePower(
 	}
 	// ====== others
 	// weather ball
-	if (move.id === 311 && field?.weather) {
+	const effectiveWeather =
+		attacker.ability === "Mega Sol" ? "Sun" : field?.weather;
+	if (move.id === 311 && effectiveWeather) {
 		return {
 			operator: 100,
 			factors: {

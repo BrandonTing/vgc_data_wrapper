@@ -247,10 +247,12 @@ function modifyByMoveEffect({
 		};
 	}
 	// solar beam & solar blade
+	const effectiveWeather =
+		attacker.ability === "Mega Sol" ? "Sun" : field?.weather;
 	if (
 		(move.id === 76 || move.id === 669) &&
-		field?.weather &&
-		field?.weather !== "Sun"
+		effectiveWeather &&
+		effectiveWeather !== "Sun"
 	) {
 		return {
 			operator: 0.5,

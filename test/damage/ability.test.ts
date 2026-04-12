@@ -241,3 +241,125 @@ test("Adaptability", () => {
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
 });
+
+test("Mega Sol: Fire move in Rain is treated as Sun (1.5x, not 0.5x)", () => {
+	const attacker = genTestMon({ ability: "Mega Sol" });
+	const defender = genTestMon();
+	const move = createMove({ type: "Fire", base: 80 });
+	const battle = new Battle({
+		attacker,
+		defender,
+		move,
+		field: { weather: "Rain" },
+	});
+	const damage = battle.getDamage();
+	expect(damage.factors.attacker.weather).toBe(true);
+	expect(damage.factors.defender.weather).toBeUndefined();
+	// base=37, *1.5=55, rolls 85%–100%
+	expect(getDamangeNumberFromResult(damage)).toEqual([
+		46, 47, 47, 48, 48, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 55,
+	]);
+});
+
+test("Mega Sol: Water move in Rain is treated as Sun (0.5x, not 1.5x)", () => {
+	const attacker = genTestMon({ ability: "Mega Sol" });
+	const defender = genTestMon();
+	const move = createMove({ type: "Water", base: 80 });
+	const battle = new Battle({
+		attacker,
+		defender,
+		move,
+		field: { weather: "Rain" },
+	});
+	const damage = battle.getDamage();
+	expect(damage.factors.defender.weather).toBe(true);
+	// base=37, *0.5=18, rolls 85%–100%
+	expect(getDamangeNumberFromResult(damage)).toEqual([
+		15, 15, 15, 15, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 18,
+	]);
+});
+
+test("Mega Sol: Weather Ball in Rain becomes Fire-type (not Water-type)", () => {
+	// Fire-type defender: Fire vs Fire = 0.5x, Water vs Fire = 2x
+	// This makes the type difference visible in the damage output.
+	const attacker = genTestMon({ ability: "Mega Sol" });
+	const defender = genTestMon({ types: ["Fire"] });
+	const weatherBall = createMove({
+		id: 311,
+		base: 50,
+		type: "Normal",
+		category: "Special",
+	});
+	const battle = new Battle({
+		attacker,
+		defender,
+		move: weatherBall,
+		field: { weather: "Rain" },
+	});
+	const damage = battle.getDamage();
+	// bp doubles to 100 (Rain weather exists), Fire-in-Sun 1.5x → pre-type base 69
+	// Fire vs Fire = 0.5x → final rolls
+	expect(getDamangeNumberFromResult(damage)).toEqual([
+		29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34,
+	]);
+});
+
+test("Mega Sol: Solar Beam in Rain has full power (no 0.5x penalty)", () => {
+	const attacker = genTestMon({ ability: "Mega Sol" });
+	const defender = genTestMon();
+	const solarBeam = createMove({ id: 76, base: 120, type: "Grass" });
+	const battle = new Battle({
+		attacker,
+		defender,
+		move: solarBeam,
+		field: { weather: "Rain" },
+	});
+	const damage = battle.getDamage();
+	// Full 120bp: base=54, rolls 85%–100%
+	expect(getDamangeNumberFromResult(damage)).toEqual([
+		45, 46, 46, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 54,
+	]);
+});
+
+test("Solar Beam in Rain WITHOUT Mega Sol still gets 0.5x penalty", () => {
+	const attacker = genTestMon();
+	const defender = genTestMon();
+	const solarBeam = createMove({ id: 76, base: 120, type: "Grass" });
+	const battle = new Battle({
+		attacker,
+		defender,
+		move: solarBeam,
+		field: { weather: "Rain" },
+	});
+	const damage = battle.getDamage();
+	// Effective 60bp: base=28, rolls 85%–100%
+	expect(getDamangeNumberFromResult(damage)).toEqual([
+		23, 24, 24, 24, 24, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 28,
+	]);
+});
+
+test("Mega Sol: Weather Ball in clear skies becomes Fire-type at 100bp", () => {
+	// Fire-type defender: Fire vs Fire = 0.5x
+	// With 100bp: base=46, Sun boost 1.5x → 69, Fire vs Fire 0.5x → rolls
+	// With 50bp (bug): base=23, Sun boost 1.5x → 34, Fire vs Fire 0.5x → much lower
+	const attacker = genTestMon({ ability: "Mega Sol" });
+	const defender = genTestMon({ types: ["Fire"] });
+	const weatherBall = createMove({
+		id: 311,
+		base: 50,
+		type: "Normal",
+		category: "Special",
+	});
+	const battle = new Battle({
+		attacker,
+		defender,
+		move: weatherBall,
+		// No field weather at all
+	});
+	const damage = battle.getDamage();
+	// 100bp, Sun boost 1.5x, Fire vs Fire 0.5x
+	// base=46, *1.5=69, random [58..69], *0.5 each:
+	expect(getDamangeNumberFromResult(damage)).toEqual([
+		29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34,
+	]);
+});
