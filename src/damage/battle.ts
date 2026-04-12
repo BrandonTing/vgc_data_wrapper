@@ -146,8 +146,8 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 		minKoIndex === 0
 			? 100
 			: minKoIndex === -1
-			  ? 0
-			  : ((dmgRollCounts - minKoIndex) / 16) * 100;
+			? 0
+			: ((dmgRollCounts - minKoIndex) / 16) * 100;
 
 	return {
 		rolls: results,
@@ -219,11 +219,13 @@ function modifyBySpreadDamage(
 
 function modifyByWeather(
 	value: TemporalFactor,
-	{ field, move }: Pick<BattleStatus, "field" | "move">,
+	{ field, move, attacker }: Pick<BattleStatus, "field" | "move" | "attacker">,
 ): TemporalFactor {
+	const effectiveWeather =
+		attacker.ability === "Mega Sol" ? "Sun" : field?.weather;
 	let modifier = 1;
 	let weatherFactor: TemporalFactor["factors"] = undefined;
-	if (field?.weather === "Rain") {
+	if (effectiveWeather === "Rain") {
 		if (move.type === "Fire") {
 			modifier = 0.5;
 			weatherFactor = {
@@ -241,12 +243,13 @@ function modifyByWeather(
 			};
 		}
 	}
-	if (field?.weather === "Sun") {
+	if (effectiveWeather === "Sun") {
 		if (move.type === "Fire") {
 			modifier = 1.5;
 			weatherFactor = {
 				attacker: {
 					weather: true,
+					ability: attacker.ability === "Mega Sol" && field?.weather !== "Sun",
 				},
 			};
 		}
@@ -259,6 +262,7 @@ function modifyByWeather(
 			weatherFactor = {
 				defender: {
 					weather: true,
+					ability: attacker.ability === "Mega Sol" && field?.weather !== "Sun",
 				},
 			};
 		}
@@ -915,25 +919,29 @@ function modifyOption(originalOpt: BattleStatus): {
 		factors.attacker = {
 			ability: true,
 		};
-	} else if (newMove.id === 311 && field?.weather) {
+	} else if (newMove.id === 311) {
 		// weatherball
-		switch (field.weather) {
-			case "Rain":
-				newMove.type = "Water";
-				break;
-			case "Sun":
-				newMove.type = "Fire";
-				break;
-			case "Sand":
-				newMove.type = "Rock";
-				break;
-			case "Snow":
-				newMove.type = "Ice";
-				break;
+		const effectiveWeather =
+			attacker.ability === "Mega Sol" ? "Sun" : field?.weather;
+		if (effectiveWeather) {
+			switch (effectiveWeather) {
+				case "Rain":
+					newMove.type = "Water";
+					break;
+				case "Sun":
+					newMove.type = "Fire";
+					break;
+				case "Sand":
+					newMove.type = "Rock";
+					break;
+				case "Snow":
+					newMove.type = "Ice";
+					break;
+			}
+			factors.attacker = {
+				weather: true,
+			};
 		}
-		factors.attacker = {
-			weather: true,
-		};
 	}
 
 	return {
