@@ -146,8 +146,8 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 		minKoIndex === 0
 			? 100
 			: minKoIndex === -1
-			  ? 0
-			  : ((dmgRollCounts - minKoIndex) / 16) * 100;
+			? 0
+			: ((dmgRollCounts - minKoIndex) / 16) * 100;
 
 	return {
 		rolls: results,
@@ -249,6 +249,7 @@ function modifyByWeather(
 			weatherFactor = {
 				attacker: {
 					weather: true,
+					ability: attacker.ability === "Mega Sol" && field?.weather !== "Sun",
 				},
 			};
 		}
@@ -261,6 +262,7 @@ function modifyByWeather(
 			weatherFactor = {
 				defender: {
 					weather: true,
+					ability: attacker.ability === "Mega Sol" && field?.weather !== "Sun",
 				},
 			};
 		}
