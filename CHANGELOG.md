@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.17
+
+### Patch Changes
+
+- ade7b91: - add Mega Sol ability
+
 ## 0.3.16
 
 ### Patch Changes
