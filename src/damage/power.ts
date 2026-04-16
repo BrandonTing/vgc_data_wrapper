@@ -407,9 +407,10 @@ function modifyByAura({
 		(move.type === "Dark" && field?.aura?.includes("Dark")) ||
 		(move.type === "Fairy" && field?.aura?.includes("Fairy")) ||
 		(move.type === "Normal" && attacker.ability === "Pixilate" && field?.aura?.includes("Fairy"));
+	const isAuraBreak = field?.aura?.includes("Aura Break");
 	return auraAffected
 		? {
-			operator: 1.33,
+			operator: isAuraBreak ? 0.75 : 1.33,
 			factors: {
 				field: {
 					aura: true,
