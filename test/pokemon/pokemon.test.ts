@@ -67,6 +67,19 @@ test("0a investmented -a nature incineroar should have 121 attack", () => {
 	expect(actualStat.attack).toBe(expectedAtk);
 });
 
+test("stage modified stat should return integer value", () => {
+	const mon = new Pokemon({
+		stats: {
+			attack: 100,
+		},
+		statStage: {
+			attack: -1,
+		},
+	});
+	const actualAtk = mon.getStat("attack");
+	expect(actualAtk).toBe(66);
+});
+
 test("get base stat from pokeapi if id is provided", async () => {
 	const incineroar = new Pokemon();
 	await incineroar.initWithId(727);
