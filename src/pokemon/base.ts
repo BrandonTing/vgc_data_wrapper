@@ -408,7 +408,9 @@ function capitalize<T extends string>(s: T) {
 }
 
 function modifyStatByStageChange(stat: number, stageChange: number): number {
-	return stageChange > 0
-		? (stat * (2 + stageChange)) / 2
-		: (stat * 2) / (2 - stageChange);
+	return Math.trunc(
+		stageChange > 0
+			? (stat * (2 + stageChange)) / 2
+			: (stat * 2) / (2 - stageChange),
+	);
 }

@@ -70,7 +70,7 @@ type Weather = "Sun" | "Rain" | "Sand" | "Snow";
 
 type Terrain = "Electric" | "Grassy" | "Misty" | "Psychic";
 
-type Aura = "Fairy" | "Dark";
+type Aura = "Fairy" | "Dark" | "Aura Break";
 
 type Ruin = "Tablets" | "Sword" | "Vessel" | "Beads";
 
@@ -91,19 +91,19 @@ export type BattleStatus = {
 
 type PokemonDmgFactor<T extends "Attacker" | "Defender"> = (T extends "Attacker"
 	? // attacker
-	  {
-			atk: TypedExtract<StatKeys, "attack" | "specialAttack" | "defense">;
-	  } & { statFrom: "Attacker" | "Defender" } & Pick<
-				Pokemon["flags"] & {},
-				"charge" | "helpingHand" | "powerSpot" | "steelySpirit"
-			> & { ruin?: TypedExtract<Ruin, "Beads" | "Sword"> }
+	{
+		atk: TypedExtract<StatKeys, "attack" | "specialAttack" | "defense">;
+	} & { statFrom: "Attacker" | "Defender" } & Pick<
+		Pokemon["flags"] & {},
+		"charge" | "helpingHand" | "powerSpot" | "steelySpirit"
+	> & { ruin?: TypedExtract<Ruin, "Beads" | "Sword"> }
 	: // defender
-	  {
-			def: TypedExtract<StatKeys, "defense" | "specialDefense">;
-	  } & Pick<
-			Pokemon["flags"] & {},
-			"hasFriendGuard" | "lightScreen" | "reflect"
-	  > & { ruin?: TypedExtract<Ruin, "Tablets" | "Vessel"> }) &
+	{
+		def: TypedExtract<StatKeys, "defense" | "specialDefense">;
+	} & Pick<
+		Pokemon["flags"] & {},
+		"hasFriendGuard" | "lightScreen" | "reflect"
+	> & { ruin?: TypedExtract<Ruin, "Tablets" | "Vessel"> }) &
 	// Common
 	Flags<TypedExtract<keyof Pokemon, "ability" | "item" | "isTera" | "status">> &
 	Flags<TypedExtract<keyof BattleFieldStatus, "weather">>;

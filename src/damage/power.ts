@@ -401,20 +401,23 @@ function modifyByTerrain({
 function modifyByAura({
 	move,
 	field,
-}: Pick<BattleStatus, "move" | "field">): TemporalFactor {
+	attacker
+}: Pick<BattleStatus, "move" | "field" | "attacker">): TemporalFactor {
 	const auraAffected =
 		(move.type === "Dark" && field?.aura?.includes("Dark")) ||
-		(move.type === "Fairy" && field?.aura?.includes("Fairy"));
+		(move.type === "Fairy" && field?.aura?.includes("Fairy")) ||
+		(move.type === "Normal" && attacker.ability === "Pixilate" && field?.aura?.includes("Fairy"));
+	const isAuraBreak = field?.aura?.includes("Aura Break");
 	return auraAffected
 		? {
-				operator: 1.33,
-				factors: {
-					field: {
-						aura: true,
-					},
+			operator: isAuraBreak ? 0.75 : 1.33,
+			factors: {
+				field: {
+					aura: true,
 				},
-		  }
+			},
+		}
 		: {
-				operator: 1,
-		  };
+			operator: 1,
+		};
 }
