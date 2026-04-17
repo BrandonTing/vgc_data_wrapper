@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.18
+
+### Patch Changes
+
+- 8171dc7: patch aura checks and remove float number display
+
 ## 0.3.17
 
 ### Patch Changes
