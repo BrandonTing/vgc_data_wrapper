@@ -307,7 +307,7 @@ function modifyByCriticalHit(
 }
 
 function modifyByRandomNum(value: number, dmgRollCounts: number): Array<number> {
-	return Array.from({ length: dmgRollCounts }, (v, i) => (100 - i) / 100).map(
+	return Array.from({ length: dmgRollCounts }, (v, i) => (100 - dmgRollCounts + 1 + i) / 100).map(
 		(roll) => Math.trunc(roll * value),
 	);
 }

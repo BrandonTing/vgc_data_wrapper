@@ -27,7 +27,7 @@ test("Pixilate with Fairy Aura", () => {
     const damage = battle.getDamage();
     const actual = getDamangeNumberFromResult(damage);
     expect(actual).toEqual([
-        132, 132, 134, 134, 138, 138, 140, 140, 144, 144, 146, 146, 150, 150, 152, 156,
+        132, 134, 134, 138, 138, 140, 140, 144, 144, 146, 146, 150, 150, 152, 156,
     ]);
     expect(damage.factors.field?.aura).toEqual(true);
     expect(damage.factors.attacker?.ability).toEqual(true);
@@ -56,7 +56,7 @@ test("Fairy move under Fairy Aura", () => {
     const damage = battle.getDamage();
     const actual = getDamangeNumberFromResult(damage);
     expect(actual).toEqual([
-        158, 162, 162, 164, 168, 168, 170, 170, 174, 176, 176, 180, 182, 182, 186, 188,
+        162, 162, 164, 168, 168, 170, 170, 174, 176, 176, 180, 182, 182, 186, 188,
     ]);
     expect(damage.factors.field?.aura).toEqual(true);
 });
@@ -84,7 +84,7 @@ test("Dark move under Dark Aura", () => {
     const damage = battle.getDamage();
     const actual = getDamangeNumberFromResult(damage);
     expect(actual).toEqual([
-        39, 40, 40, 41, 42, 42, 42, 42, 43, 44, 44, 45, 45, 45, 46, 47,
+        40, 40, 41, 42, 42, 42, 42, 43, 44, 44, 45, 45, 45, 46, 47,
     ]);
     expect(damage.factors.field?.aura).toEqual(true);
 });
@@ -112,7 +112,7 @@ test("Aura Break present (interaction test)", () => {
     const damage = battle.getDamage();
     const actual = getDamangeNumberFromResult(damage);
     expect(actual).toEqual([
-        90, 90, 92, 92, 96, 96, 96, 98, 98, 98, 102, 102, 102, 104, 104, 108,
+        90, 92, 92, 96, 96, 96, 98, 98, 98, 102, 102, 102, 104, 104, 108,
     ]);
     expect(damage.factors.field?.aura).toEqual(true);
 });
