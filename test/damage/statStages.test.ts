@@ -32,7 +32,7 @@ test("test stage changes", () => {
 	});
 	// test +c
 	const expectedWhenPlus1C = [
-		114, 115, 117, 118, 120, 121, 121, 123, 124, 126, 127, 129, 130, 132, 133,
+		115, 117, 118, 120, 121, 121, 123, 124, 126, 127, 129, 130, 132, 133,
 		135,
 	];
 	const actualWhenPlus1C = battle.getDamage();
@@ -43,7 +43,7 @@ test("test stage changes", () => {
 	// test -c
 	flutterMane.statStage.specialAttack = -1;
 	const expectedWhenMinus1C = [
-		51, 52, 52, 54, 54, 54, 55, 55, 57, 57, 57, 58, 58, 60, 60, 61,
+		52, 52, 54, 54, 54, 55, 55, 57, 57, 57, 58, 58, 60, 60, 61,
 	];
 	const actualWhenMinus1C = battle.getDamage();
 	expect(getDamangeNumberFromResult(actualWhenMinus1C)).toEqual(
@@ -54,7 +54,7 @@ test("test stage changes", () => {
 	// test +d from defender
 	incineroar.statStage.specialDefense = 1;
 	const expectedWhenPlus1D = [
-		51, 52, 52, 54, 54, 54, 55, 55, 57, 57, 57, 58, 58, 60, 60, 61,
+		52, 52, 54, 54, 54, 55, 55, 57, 57, 57, 58, 58, 60, 60, 61,
 	];
 	const actualWhenPlus1D = battle.getDamage();
 	expect(getDamangeNumberFromResult(actualWhenPlus1D)).toEqual(
@@ -64,7 +64,7 @@ test("test stage changes", () => {
 	// test d from defender
 	incineroar.statStage.specialDefense = -1;
 	const expectedWhenMinus1D = [
-		114, 115, 117, 118, 120, 121, 121, 123, 124, 126, 127, 129, 130, 132, 133,
+		115, 117, 118, 120, 121, 121, 123, 124, 126, 127, 129, 130, 132, 133,
 		135,
 	];
 	const actualWhenMinus1D = battle.getDamage();
@@ -105,7 +105,7 @@ test("test critical hit", () => {
 		move: moonblast,
 	});
 	const actual = [
-		114, 115, 117, 118, 120, 121, 121, 123, 124, 126, 127, 129, 130, 132, 133,
+		115, 117, 118, 120, 121, 121, 123, 124, 126, 127, 129, 130, 132, 133,
 		135,
 	];
 
@@ -150,7 +150,7 @@ test("test sacred sword", () => {
 		move: sacredSword,
 	});
 	const actual = [
-		106, 108, 108, 110, 112, 112, 114, 114, 116, 118, 118, 120, 122, 122, 124,
+		108, 108, 110, 112, 112, 114, 114, 116, 118, 118, 120, 122, 122, 124,
 		126,
 	];
 
