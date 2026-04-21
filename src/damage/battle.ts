@@ -43,6 +43,7 @@ export class Battle implements IBattle {
 	attacker?: Pokemon;
 	defender?: Pokemon;
 	move?: Move;
+	isChampion = true
 	constructor(option: Partial<BattleStatus>) {
 		if (option.attacker) {
 			this.attacker = option.attacker;
@@ -59,6 +60,9 @@ export class Battle implements IBattle {
 				...option.field
 			};
 		}
+		if (option.isChampion) {
+			this.isChampion = option.isChampion
+		}
 	}
 	getDamage(): DamageResult {
 		if (!this.attacker || !this.defender) {
@@ -72,6 +76,7 @@ export class Battle implements IBattle {
 			defender: this.defender,
 			move: this.move,
 			field: this.field,
+			isChampion: this.isChampion
 		});
 	}
 	setDamage(damage: number) {
@@ -92,8 +97,6 @@ export class Battle implements IBattle {
 		this.defender = curAttacker;
 	}
 }
-
-const dmgRollCounts = 16;
 
 export type TemporalFactor = {
 	operator: number;
@@ -116,7 +119,11 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 		[modifyBySpreadDamage, modifyByWeather, modifyByCriticalHit],
 		pipeOperator,
 	);
-	const possibleDamages = modifyByRandomNum(preRandomResult.operator);
+
+	// pokemon champions removed the smallest random number
+	const dmgRollCounts = originalOpt.isChampion ? 15 : 16;
+
+	const possibleDamages = modifyByRandomNum(preRandomResult.operator, dmgRollCounts);
 	let finalFactors = mergeFactorList(factors, preRandomResult.factors);
 	const hp = option.defender.getStat("hp");
 	const results: DamageResult["rolls"] = possibleDamages.map(
@@ -299,8 +306,8 @@ function modifyByCriticalHit(
 	};
 }
 
-function modifyByRandomNum(value: number): Array<number> {
-	return Array.from({ length: dmgRollCounts }, (v, i) => (85 + i) / 100).map(
+function modifyByRandomNum(value: number, dmgRollCounts: number): Array<number> {
+	return Array.from({ length: dmgRollCounts }, (v, i) => (100 - i) / 100).map(
 		(roll) => Math.trunc(roll * value),
 	);
 }

@@ -87,6 +87,7 @@ export type BattleStatus = {
 	defender: Pokemon;
 	move: Move;
 	field?: BattleFieldStatus;
+	isChampion: boolean
 };
 
 type PokemonDmgFactor<T extends "Attacker" | "Defender"> = (T extends "Attacker"
