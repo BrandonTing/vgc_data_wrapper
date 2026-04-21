@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.19
+
+### Patch Changes
+
+- 3826971: add move type check and apply champion randomness
+
 ## 0.3.18
 
 ### Patch Changes
