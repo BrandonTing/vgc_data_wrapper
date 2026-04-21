@@ -1,3 +1,4 @@
+import { isConciseBody, isConstructorDeclaration } from "typescript";
 import type { Pokemon } from "../pokemon";
 import type { Ability } from "../pokemon/typeHelper";
 import { isTerapagosStellar } from "../pokemon/utils";
@@ -43,7 +44,7 @@ export class Battle implements IBattle {
 	attacker?: Pokemon;
 	defender?: Pokemon;
 	move?: Move;
-	isChampion = false
+	isChampion = true
 	constructor(option: Partial<BattleStatus>) {
 		if (option.attacker) {
 			this.attacker = option.attacker;
@@ -60,7 +61,7 @@ export class Battle implements IBattle {
 				...option.field
 			};
 		}
-		if (option.isChampion) {
+		if (option.isChampion != undefined) {
 			this.isChampion = option.isChampion
 		}
 	}
@@ -119,7 +120,6 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 		[modifyBySpreadDamage, modifyByWeather, modifyByCriticalHit],
 		pipeOperator,
 	);
-
 	// pokemon champions removed the smallest random number
 	const dmgRollCounts = originalOpt.isChampion ? 15 : 16;
 
