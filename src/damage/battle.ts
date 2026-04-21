@@ -43,7 +43,7 @@ export class Battle implements IBattle {
 	attacker?: Pokemon;
 	defender?: Pokemon;
 	move?: Move;
-	isChampion = true
+	isChampion = false
 	constructor(option: Partial<BattleStatus>) {
 		if (option.attacker) {
 			this.attacker = option.attacker;
@@ -157,7 +157,7 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 			? 100
 			: minKoIndex === -1
 				? 0
-				: ((dmgRollCounts - minKoIndex) / 16) * 100;
+				: ((dmgRollCounts - minKoIndex) / dmgRollCounts) * 100;
 
 	return {
 		rolls: results,
