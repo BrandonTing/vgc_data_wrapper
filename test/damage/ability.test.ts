@@ -1,8 +1,4 @@
 import { expect, test } from "bun:test";
-import {
-	bundlerModuleNameResolver,
-	isConstructorDeclaration,
-} from "typescript";
 import { Battle, createMove } from "../../src";
 import { genTestMon, getDamangeNumberFromResult } from "./utils";
 test("Supreme Overlord", () => {
@@ -32,20 +28,20 @@ test("Supreme Overlord", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		85, 87, 88, 88, 90, 91, 91, 93, 94, 94, 96, 97, 97, 99, 100, 102,
+		87, 88, 88, 90, 91, 91, 93, 94, 94, 96, 97, 97, 99, 100, 102,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
 	kingGambit.ability = "Supreme Overlord 2";
 	const down2Actual = getDamangeNumberFromResult(battle.getDamage());
 	const down2Expected = [
-		93, 94, 96, 97, 97, 99, 100, 102, 102, 103, 105, 106, 106, 108, 109, 111,
+		94, 96, 97, 97, 99, 100, 102, 102, 103, 105, 106, 106, 108, 109, 111,
 	];
 	expect(down2Actual).toEqual(down2Expected);
 	kingGambit.ability = "Supreme Overlord 3";
 	const down3Actual = getDamangeNumberFromResult(battle.getDamage());
 	const down3Expected = [
-		102, 102, 103, 105, 106, 108, 108, 109, 111, 112, 114, 114, 115, 117, 118,
+		102, 103, 105, 106, 108, 108, 109, 111, 112, 114, 114, 115, 117, 118,
 		120,
 	];
 	expect(down3Actual).toEqual(down3Expected);
@@ -83,7 +79,7 @@ test("Liquid Voice", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		102, 102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116,
+		102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116,
 		120,
 	];
 	expect(actual).toEqual(expected);
@@ -110,11 +106,25 @@ test("Pixilate", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		102, 102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116,
+		102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116,
 		120,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
+	const nonNormalMove = createMove({
+		base: 90,
+		type: "Dark",
+		category: "Special",
+		target: "allAdjacentFoes",
+	});
+	battle.move = nonNormalMove;
+	const nonNormalDamage = battle.getDamage();
+	const nonNormalActual = getDamangeNumberFromResult(nonNormalDamage);
+	const nonNormalExpected = [
+		28, 28, 29, 29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33,
+	];
+	expect(nonNormalActual).toEqual(nonNormalExpected);
+	expect(nonNormalDamage.factors.attacker.ability).toBeUndefined();
 });
 
 test("Refrigerate", () => {
@@ -132,7 +142,7 @@ test("Refrigerate", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		114, 114, 116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132,
+		114, 116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132,
 		134,
 	];
 	expect(actual).toEqual(expected);
@@ -158,7 +168,7 @@ test("Aerilate", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		176, 180, 180, 182, 186, 188, 188, 192, 194, 194, 198, 200, 200, 204, 206,
+		180, 180, 182, 186, 188, 188, 192, 194, 194, 198, 200, 200, 204, 206,
 		210,
 	];
 	expect(actual).toEqual(expected);
@@ -189,7 +199,7 @@ test("Galvanize", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132, 134, 134,
+		116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132, 134, 134,
 		138,
 	];
 	expect(actual).toEqual(expected);
@@ -209,7 +219,7 @@ test("Dragonize", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		74, 74, 76, 76, 78, 78, 80, 80, 80, 82, 82, 84, 84, 86, 86, 88,
+		74, 76, 76, 78, 78, 80, 80, 80, 82, 82, 84, 84, 86, 86, 88,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -234,10 +244,9 @@ test("Adaptability", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		106, 108, 108, 110, 112, 112, 114, 114, 116, 118, 118, 120, 122, 122, 124,
+		108, 108, 110, 112, 112, 114, 114, 116, 118, 118, 120, 122, 122, 124,
 		126,
 	];
-	console.log(damage.factors);
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
 });
@@ -255,9 +264,8 @@ test("Mega Sol: Fire move in Rain is treated as Sun (1.5x, not 0.5x)", () => {
 	const damage = battle.getDamage();
 	expect(damage.factors.attacker.weather).toBe(true);
 	expect(damage.factors.defender.weather).toBeUndefined();
-	// base=37, *1.5=55, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		46, 47, 47, 48, 48, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 55,
+		47, 47, 48, 48, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 55,
 	]);
 });
 
@@ -275,7 +283,7 @@ test("Mega Sol: Water move in Rain is treated as Sun (0.5x, not 1.5x)", () => {
 	expect(damage.factors.defender.weather).toBe(true);
 	// base=37, *0.5=18, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		15, 15, 15, 15, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 18,
+		15, 15, 15, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 18,
 	]);
 });
 
@@ -300,7 +308,7 @@ test("Mega Sol: Weather Ball in Rain becomes Fire-type (not Water-type)", () => 
 	// bp doubles to 100 (Rain weather exists), Fire-in-Sun 1.5x → pre-type base 69
 	// Fire vs Fire = 0.5x → final rolls
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34,
+		29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34,
 	]);
 });
 
@@ -317,7 +325,7 @@ test("Mega Sol: Solar Beam in Rain has full power (no 0.5x penalty)", () => {
 	const damage = battle.getDamage();
 	// Full 120bp: base=54, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		45, 46, 46, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 54,
+		46, 46, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 54,
 	]);
 });
 
@@ -334,7 +342,7 @@ test("Solar Beam in Rain WITHOUT Mega Sol still gets 0.5x penalty", () => {
 	const damage = battle.getDamage();
 	// Effective 60bp: base=28, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		23, 24, 24, 24, 24, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 28,
+		24, 24, 24, 24, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 28,
 	]);
 });
 
@@ -351,7 +359,7 @@ test("Sand still boosts Rock special defense without Mega Sol", () => {
 	const damage = battle.getDamage();
 	// Rock SpDef 1.5x in Sand: base=25, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25,
+		21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25,
 	]);
 });
 
@@ -368,7 +376,7 @@ test("Mega Sol: Rock-type defender does NOT get Sand special defense boost", () 
 	const damage = battle.getDamage();
 	// No defense boost (Mega Sol treats weather as Sun): base=37, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		31, 31, 32, 32, 32, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 37,
+		31, 32, 32, 32, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 37,
 	]);
 });
 
@@ -385,7 +393,7 @@ test("Snow still boosts Ice physical defense without Mega Sol", () => {
 	const damage = battle.getDamage();
 	// Ice PhyDef 1.5x in Snow: base=25, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25,
+		21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25,
 	]);
 });
 
@@ -402,7 +410,7 @@ test("Mega Sol: Ice-type defender does NOT get Snow physical defense boost", () 
 	const damage = battle.getDamage();
 	// No defense boost (Mega Sol treats weather as Sun): base=37, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		31, 31, 32, 32, 32, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 37,
+		31, 32, 32, 32, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 37,
 	]);
 });
 
@@ -428,6 +436,6 @@ test("Mega Sol: Weather Ball in clear skies becomes Fire-type at 100bp", () => {
 	// 100bp, Sun boost 1.5x, Fire vs Fire 0.5x
 	// base=46, *1.5=69, random [58..69], *0.5 each:
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34,
+		29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34,
 	]);
 });

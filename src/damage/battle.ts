@@ -43,6 +43,7 @@ export class Battle implements IBattle {
 	attacker?: Pokemon;
 	defender?: Pokemon;
 	move?: Move;
+	isChampion = true
 	constructor(option: Partial<BattleStatus>) {
 		if (option.attacker) {
 			this.attacker = option.attacker;
@@ -59,6 +60,9 @@ export class Battle implements IBattle {
 				...option.field
 			};
 		}
+		if (option.isChampion != undefined) {
+			this.isChampion = option.isChampion
+		}
 	}
 	getDamage(): DamageResult {
 		if (!this.attacker || !this.defender) {
@@ -72,6 +76,7 @@ export class Battle implements IBattle {
 			defender: this.defender,
 			move: this.move,
 			field: this.field,
+			isChampion: this.isChampion
 		});
 	}
 	setDamage(damage: number) {
@@ -92,8 +97,6 @@ export class Battle implements IBattle {
 		this.defender = curAttacker;
 	}
 }
-
-const dmgRollCounts = 16;
 
 export type TemporalFactor = {
 	operator: number;
@@ -116,7 +119,10 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 		[modifyBySpreadDamage, modifyByWeather, modifyByCriticalHit],
 		pipeOperator,
 	);
-	const possibleDamages = modifyByRandomNum(preRandomResult.operator);
+	// pokemon champions removed the smallest random number
+	const dmgRollCounts = originalOpt.isChampion ? 15 : 16;
+
+	const possibleDamages = modifyByRandomNum(preRandomResult.operator, dmgRollCounts);
 	let finalFactors = mergeFactorList(factors, preRandomResult.factors);
 	const hp = option.defender.getStat("hp");
 	const results: DamageResult["rolls"] = possibleDamages.map(
@@ -150,7 +156,7 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 			? 100
 			: minKoIndex === -1
 				? 0
-				: ((dmgRollCounts - minKoIndex) / 16) * 100;
+				: ((dmgRollCounts - minKoIndex) / dmgRollCounts) * 100;
 
 	return {
 		rolls: results,
@@ -299,8 +305,8 @@ function modifyByCriticalHit(
 	};
 }
 
-function modifyByRandomNum(value: number): Array<number> {
-	return Array.from({ length: dmgRollCounts }, (v, i) => (85 + i) / 100).map(
+function modifyByRandomNum(value: number, dmgRollCounts: number): Array<number> {
+	return Array.from({ length: dmgRollCounts }, (v, i) => (100 - dmgRollCounts + 1 + i) / 100).map(
 		(roll) => Math.trunc(roll * value),
 	);
 }
@@ -337,7 +343,7 @@ function modifyBySameType(
 	const skinType = attacker.ability
 		? SKIN_ABILITIES[attacker.ability]
 		: undefined;
-	if (skinType) {
+	if (skinType && move.type === 'Normal') {
 		factors = mergeFactorList(factors, {
 			attacker: {
 				ability: true,
@@ -483,7 +489,7 @@ function getTypeModifier({
 	const skinType = attacker.ability
 		? SKIN_ABILITIES[attacker.ability]
 		: undefined;
-	if (skinType) {
+	if (skinType && move.type === 'Normal') {
 		if (!defender.isTera() || defender.teraType === "Stellar") {
 			// use original type
 			return {

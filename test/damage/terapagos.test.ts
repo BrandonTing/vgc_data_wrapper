@@ -31,7 +31,7 @@ test("terapagos stellar hit charizard", () => {
 		move,
 	});
 	const expected = [
-		162, 164, 166, 168, 170, 172, 174, 176, 178, 180, 182, 184, 186, 188, 190,
+		164, 166, 168, 170, 172, 174, 176, 178, 180, 182, 184, 186, 188, 190,
 		192,
 	];
 	const damage = battle.getDamage();
@@ -68,7 +68,7 @@ test("terapagos stellar hit charizard with terastorm", () => {
 		move,
 	});
 	const expected = [
-		59, 59, 60, 61, 61, 62, 62, 64, 64, 65, 66, 66, 67, 67, 68, 70,
+		59, 60, 61, 61, 62, 62, 64, 64, 65, 66, 66, 67, 67, 68, 70,
 	];
 	const damage = battle.getDamage();
 	expect(getDamangeNumberFromResult(damage)).toEqual(expected);
