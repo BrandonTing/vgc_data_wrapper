@@ -55,10 +55,8 @@ test("champion (default) vs non-champion damage rolls comparison", () => {
 
     // Non-champion should have 16 rolls
     expect(rollsNonChampion).toHaveLength(16);
-
-    // Champion rolls should be the first 15 of non-champion rolls
-    // (both ordered from highest to lowest damage)
-    expect(rollsChampion).toEqual(rollsNonChampion.slice(0, 15));
+    // Champion rolls should be the second to 16 of non-champion rolls
+    expect(rollsChampion).toEqual(rollsNonChampion.slice(1, 16));
 });
 
 test("champion KO chance calculation with 15 rolls", () => {

@@ -343,7 +343,7 @@ function modifyBySameType(
 	const skinType = attacker.ability
 		? SKIN_ABILITIES[attacker.ability]
 		: undefined;
-	if (skinType) {
+	if (skinType && move.type === 'Normal') {
 		factors = mergeFactorList(factors, {
 			attacker: {
 				ability: true,
@@ -489,7 +489,7 @@ function getTypeModifier({
 	const skinType = attacker.ability
 		? SKIN_ABILITIES[attacker.ability]
 		: undefined;
-	if (skinType) {
+	if (skinType && move.type === 'Normal') {
 		if (!defender.isTera() || defender.teraType === "Stellar") {
 			// use original type
 			return {

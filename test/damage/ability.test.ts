@@ -111,6 +111,20 @@ test("Pixilate", () => {
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
+	const nonNormalMove = createMove({
+		base: 90,
+		type: "Dark",
+		category: "Special",
+		target: "allAdjacentFoes",
+	});
+	battle.move = nonNormalMove;
+	const nonNormalDamage = battle.getDamage();
+	const nonNormalActual = getDamangeNumberFromResult(nonNormalDamage);
+	const nonNormalExpected = [
+		28, 28, 29, 29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33,
+	];
+	expect(nonNormalActual).toEqual(nonNormalExpected);
+	expect(nonNormalDamage.factors.attacker.ability).toBeUndefined();
 });
 
 test("Refrigerate", () => {
