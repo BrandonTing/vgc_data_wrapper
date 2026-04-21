@@ -1,8 +1,4 @@
 import { expect, test } from "bun:test";
-import {
-	bundlerModuleNameResolver,
-	isConstructorDeclaration,
-} from "typescript";
 import { Battle, createMove } from "../../src";
 import { genTestMon, getDamangeNumberFromResult } from "./utils";
 test("Supreme Overlord", () => {

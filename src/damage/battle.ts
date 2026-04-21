@@ -1,4 +1,3 @@
-import { isConciseBody, isConstructorDeclaration } from "typescript";
 import type { Pokemon } from "../pokemon";
 import type { Ability } from "../pokemon/typeHelper";
 import { isTerapagosStellar } from "../pokemon/utils";
