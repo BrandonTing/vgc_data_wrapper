@@ -598,35 +598,34 @@ function getTypeModifier({
 	if (checkTeraWIthTypeMatch(defender, "Stellar")) {
 		return { operator: getEffectivenessOnPokemon(move.type, defender.types) };
 	}
-	if (attacker.ability === "Scrappy") {
-		const isNormalOrFightMove =
-			move.type === "Normal" || move.type === "Fighting";
-		const defenderTypes = getPokemonCurrentType(defender);
+
+	// Scrappy ability makes Normal and Fighting moves hit Ghost types
+	const isScrappy = attacker.ability === "Scrappy";
+	const isNormalOrFightMove =
+		move.type === "Normal" || move.type === "Fighting";
+	const defenderTypes = getPokemonCurrentType(defender);
+	const isDefenderGhost = defenderTypes.includes("Ghost");
+	if (isScrappy && isNormalOrFightMove && isDefenderGhost) {
 		const defenderTypeExcludeGhost = defenderTypes.filter(
 			(type) => type !== "Ghost",
 		);
-		if (isNormalOrFightMove) {
-			return {
-				operator: getEffectivenessOnPokemon(
-					move.type,
-					defenderTypeExcludeGhost,
-				),
-				factors: defender.isTera()
-					? {
-							defender: {
-								isTera: true,
-							},
-							attacker: {
-								ability: true,
-							},
-						}
-					: {
-							attacker: {
-								ability: true,
-							},
+		return {
+			operator: getEffectivenessOnPokemon(move.type, defenderTypeExcludeGhost),
+			factors: defender.isTera()
+				? {
+						defender: {
+							isTera: true,
 						},
-			};
-		}
+						attacker: {
+							ability: true,
+						},
+					}
+				: {
+						attacker: {
+							ability: true,
+						},
+					},
+		};
 	}
 	return {
 		operator: getEffectivenessOnPokemon(
