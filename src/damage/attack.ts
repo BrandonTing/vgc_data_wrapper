@@ -1,4 +1,4 @@
-import { type TemporalFactor, createFactorHelper } from "./battle";
+import { createFactorHelper, type TemporalFactor } from "./battle";
 import type { BattleStatus } from "./config";
 import {
 	checkStatOfMoveCategoryIsHighest,

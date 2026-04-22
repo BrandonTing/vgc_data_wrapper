@@ -1,43 +1,43 @@
 {
-  "name": "vgc_data_wrapper",
-  "version": "0.3.19",
-  "module": "dist/index.js",
-  "devDependencies": {
-    "@biomejs/biome": "1.5.3",
-    "@changesets/cli": "^2.27.1",
-    "@total-typescript/ts-reset": "^0.5.1",
-    "@types/bun": "latest",
-    "tsup": "^8.0.1"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "exports": {
-    ".": "./dist/index.js",
-    "./ability.json": "./data/ability.json",
-    "./item.json": "./data/item.json",
-    "./typeChart.json": "./data/typeChart.json",
-    "./sd/*": "./data/sd/*"
-  },
-  "files": [
-    "dist",
-    "data"
-  ],
-  "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "lint": "bunx @biomejs/biome check --apply .",
-    "test-damage": "bun test **/damage/*.test.ts",
-    "test-pokemon": "bun test **/pokemon/*.test.ts",
-    "knip": "bunx knip",
-    "build": "tsup ./src/index.ts --format esm --dts ",
-    "publish": "bun run build && changeset publish"
-  },
-  "type": "module",
-  "types": "dist/index.d.ts",
-  "dependencies": {
-    "zod": "^3.22.4"
-  }
+	"name": "vgc_data_wrapper",
+	"version": "0.3.19",
+	"module": "dist/index.js",
+	"devDependencies": {
+		"@biomejs/biome": "2.4.12",
+		"@changesets/cli": "^2.27.1",
+		"@total-typescript/ts-reset": "^0.5.1",
+		"@types/bun": "latest",
+		"tsup": "^8.0.1"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"exports": {
+		".": "./dist/index.js",
+		"./ability.json": "./data/ability.json",
+		"./item.json": "./data/item.json",
+		"./typeChart.json": "./data/typeChart.json",
+		"./sd/*": "./data/sd/*"
+	},
+	"files": [
+		"dist",
+		"data"
+	],
+	"license": "MIT",
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"lint": "bunx @biomejs/biome check  --write",
+		"test-damage": "bun test **/damage/*.test.ts",
+		"test-pokemon": "bun test **/pokemon/*.test.ts",
+		"knip": "bunx knip",
+		"build": "tsup ./src/index.ts --format esm --dts ",
+		"publish": "bun run build && changeset publish"
+	},
+	"type": "module",
+	"types": "dist/index.d.ts",
+	"dependencies": {
+		"zod": "^3.22.4"
+	}
 }

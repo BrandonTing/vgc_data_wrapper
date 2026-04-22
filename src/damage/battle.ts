@@ -43,7 +43,7 @@ export class Battle implements IBattle {
 	attacker?: Pokemon;
 	defender?: Pokemon;
 	move?: Move;
-	isChampion = true
+	isChampion = true;
 	constructor(option: Partial<BattleStatus>) {
 		if (option.attacker) {
 			this.attacker = option.attacker;
@@ -57,11 +57,11 @@ export class Battle implements IBattle {
 		if (option.field) {
 			this.field = {
 				isDouble: true,
-				...option.field
+				...option.field,
 			};
 		}
-		if (option.isChampion != undefined) {
-			this.isChampion = option.isChampion
+		if (option.isChampion !== undefined) {
+			this.isChampion = option.isChampion;
 		}
 	}
 	getDamage(): DamageResult {
@@ -76,7 +76,7 @@ export class Battle implements IBattle {
 			defender: this.defender,
 			move: this.move,
 			field: this.field,
-			isChampion: this.isChampion
+			isChampion: this.isChampion,
 		});
 	}
 	setDamage(damage: number) {
@@ -122,7 +122,10 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 	// pokemon champions removed the smallest random number
 	const dmgRollCounts = originalOpt.isChampion ? 15 : 16;
 
-	const possibleDamages = modifyByRandomNum(preRandomResult.operator, dmgRollCounts);
+	const possibleDamages = modifyByRandomNum(
+		preRandomResult.operator,
+		dmgRollCounts,
+	);
 	let finalFactors = mergeFactorList(factors, preRandomResult.factors);
 	const hp = option.defender.getStat("hp");
 	const results: DamageResult["rolls"] = possibleDamages.map(
@@ -191,10 +194,10 @@ function getBasicDamage(option: BattleStatus): TemporalFactor {
 			(Math.trunc((option.attacker.level * 2) / 5 + 2) *
 				power.operator *
 				attack.operator) /
-			defense.operator,
+				defense.operator,
 		) /
-		50 +
-		2,
+			50 +
+			2,
 	);
 	return {
 		operator,
@@ -207,7 +210,7 @@ function modifyBySpreadDamage(
 	{ move, field }: Pick<BattleStatus, "move" | "field" | "attacker">,
 ): TemporalFactor {
 	let modifier = 1;
-	let factors: TemporalFactor["factors"] = undefined;
+	let factors: TemporalFactor["factors"];
 	if (
 		(move.target === "allAdjacent" || move.target === "allAdjacentFoes") &&
 		field?.isDouble
@@ -233,7 +236,7 @@ function modifyByWeather(
 	const effectiveWeather =
 		attacker.ability === "Mega Sol" ? "Sun" : field?.weather;
 	let modifier = 1;
-	let weatherFactor: TemporalFactor["factors"] = undefined;
+	let weatherFactor: TemporalFactor["factors"];
 	if (effectiveWeather === "Rain") {
 		if (move.type === "Fire") {
 			modifier = 0.5;
@@ -296,19 +299,23 @@ function modifyByCriticalHit(
 			value.factors,
 			move.flags?.isCriticalHit
 				? {
-					move: {
-						isCriticalHit: true,
-					},
-				}
+						move: {
+							isCriticalHit: true,
+						},
+					}
 				: undefined,
 		),
 	};
 }
 
-function modifyByRandomNum(value: number, dmgRollCounts: number): Array<number> {
-	return Array.from({ length: dmgRollCounts }, (v, i) => (100 - dmgRollCounts + 1 + i) / 100).map(
-		(roll) => Math.trunc(roll * value),
-	);
+function modifyByRandomNum(
+	value: number,
+	dmgRollCounts: number,
+): Array<number> {
+	return Array.from(
+		{ length: dmgRollCounts },
+		(_v, i) => (100 - dmgRollCounts + 1 + i) / 100,
+	).map((roll) => Math.trunc(roll * value));
 }
 
 function modifyBySameType(
@@ -343,7 +350,7 @@ function modifyBySameType(
 	const skinType = attacker.ability
 		? SKIN_ABILITIES[attacker.ability]
 		: undefined;
-	if (skinType && move.type === 'Normal') {
+	if (skinType && move.type === "Normal") {
 		factors = mergeFactorList(factors, {
 			attacker: {
 				ability: true,
@@ -478,9 +485,9 @@ function getTypeModifier({
 			factors: {
 				defender: checkTeraWIthTypeMatch(defender, "Flying")
 					? {
-						item: true,
-						isTera: true,
-					}
+							item: true,
+							isTera: true,
+						}
 					: undefined,
 			},
 		};
@@ -489,7 +496,7 @@ function getTypeModifier({
 	const skinType = attacker.ability
 		? SKIN_ABILITIES[attacker.ability]
 		: undefined;
-	if (skinType && move.type === 'Normal') {
+	if (skinType && move.type === "Normal") {
 		if (!defender.isTera() || defender.teraType === "Stellar") {
 			// use original type
 			return {
@@ -530,8 +537,8 @@ function getTypeModifier({
 			factors: {
 				defender: defender.isTera()
 					? {
-						isTera: true,
-					}
+							isTera: true,
+						}
 					: undefined,
 			},
 		};
@@ -598,10 +605,10 @@ function getTypeModifier({
 		),
 		factors: defender.isTera()
 			? {
-				defender: {
-					isTera: true,
-				},
-			}
+					defender: {
+						isTera: true,
+					},
+				}
 			: undefined,
 	};
 }
@@ -817,13 +824,13 @@ function modifyByFriendGuard({
 }: Pick<BattleStatus, "defender">): TemporalFactor {
 	return flags?.hasFriendGuard
 		? {
-			operator: 0.75,
-			factors: {
-				defender: {
-					hasFriendGuard: true,
+				operator: 0.75,
+				factors: {
+					defender: {
+						hasFriendGuard: true,
+					},
 				},
-			},
-		}
+			}
 		: { operator: 1 };
 }
 
