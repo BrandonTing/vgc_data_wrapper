@@ -60,7 +60,7 @@ export class Battle implements IBattle {
 				...option.field
 			};
 		}
-		if (option.isChampion != undefined) {
+		if (option.isChampion !== undefined) {
 			this.isChampion = option.isChampion
 		}
 	}
@@ -591,10 +591,10 @@ function getTypeModifier({
 	if (checkTeraWIthTypeMatch(defender, "Stellar")) {
 		return { operator: getEffectivenessOnPokemon(move.type, defender.types) };
 	}
-	if(attacker.ability === 'Scrappy') {
+	if (attacker.ability === 'Scrappy') {
 		const isNormalOrFightMove = move.type === 'Normal' || move.type === 'Fighting'
 		const isDefenderGhost = (defender.types.includes('Ghost') && !defender.isTera()) || (defender.isTera() && defender.teraType === "Ghost");
-		if(isNormalOrFightMove && isDefenderGhost) {
+		if (isNormalOrFightMove && isDefenderGhost) {
 			return {
 				operator: 1,
 				factors: defender.isTera() ? {
