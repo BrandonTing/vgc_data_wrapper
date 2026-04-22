@@ -591,6 +591,27 @@ function getTypeModifier({
 	if (checkTeraWIthTypeMatch(defender, "Stellar")) {
 		return { operator: getEffectivenessOnPokemon(move.type, defender.types) };
 	}
+	if(attacker.ability === 'Scrappy') {
+		const isNormalOrFightMove = move.type === 'Normal' || move.type === 'Fighting'
+		const isDefenderGhost = (defender.types.includes('Ghost') && !defender.isTera()) || (defender.isTera() && defender.teraType === "Ghost");
+		if(isNormalOrFightMove && isDefenderGhost) {
+			return {
+				operator: 1,
+				factors: defender.isTera() ? {
+					defender: {
+						isTera: true,
+					},
+					attacker: {
+						ability: true
+					}
+				} : {
+					attacker: {
+						ability: true
+					}
+				}
+			}
+		}
+	}
 	return {
 		operator: getEffectivenessOnPokemon(
 			move.type,
