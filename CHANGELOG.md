@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.21
+
+### Patch Changes
+
+- 890df4d: count for multiple types for scrappy
+
 ## 0.3.20
 
 ### Patch Changes
