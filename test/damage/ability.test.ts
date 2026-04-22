@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 import { Battle, createMove } from "../../src";
 import { genTestMon, getDamangeNumberFromResult } from "./utils";
+
 test("Supreme Overlord", () => {
 	const kingGambit = genTestMon({
 		types: ["Dark", "Steel"],
@@ -41,8 +42,7 @@ test("Supreme Overlord", () => {
 	kingGambit.ability = "Supreme Overlord 3";
 	const down3Actual = getDamangeNumberFromResult(battle.getDamage());
 	const down3Expected = [
-		102, 103, 105, 106, 108, 108, 109, 111, 112, 114, 114, 115, 117, 118,
-		120,
+		102, 103, 105, 106, 108, 108, 109, 111, 112, 114, 114, 115, 117, 118, 120,
 	];
 	expect(down3Actual).toEqual(down3Expected);
 });
@@ -79,8 +79,7 @@ test("Liquid Voice", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116,
-		120,
+		102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116, 120,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -106,8 +105,7 @@ test("Pixilate", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116,
-		120,
+		102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116, 120,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -142,8 +140,7 @@ test("Refrigerate", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		114, 116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132,
-		134,
+		114, 116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132, 134,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -168,8 +165,7 @@ test("Aerilate", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		180, 180, 182, 186, 188, 188, 192, 194, 194, 198, 200, 200, 204, 206,
-		210,
+		180, 180, 182, 186, 188, 188, 192, 194, 194, 198, 200, 200, 204, 206, 210,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -199,8 +195,7 @@ test("Galvanize", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132, 134, 134,
-		138,
+		116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132, 134, 134, 138,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -218,9 +213,7 @@ test("Dragonize", () => {
 	const battle = new Battle({ attacker, defender, move });
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
-	const expected = [
-		74, 76, 76, 78, 78, 80, 80, 80, 82, 82, 84, 84, 86, 86, 88,
-	];
+	const expected = [74, 76, 76, 78, 78, 80, 80, 80, 82, 82, 84, 84, 86, 86, 88];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
 });
@@ -244,8 +237,7 @@ test("Adaptability", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		108, 108, 110, 112, 112, 114, 114, 116, 118, 118, 120, 122, 122, 124,
-		126,
+		108, 108, 110, 112, 112, 114, 114, 116, 118, 118, 120, 122, 122, 124, 126,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);

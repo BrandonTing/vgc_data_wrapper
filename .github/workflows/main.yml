@@ -23,7 +23,7 @@ jobs:
           bun knip 
       - name: 'TSC'
         run: |
-          tsc 
+          bunx tsc 
 
   test:
     runs-on: ubuntu-latest

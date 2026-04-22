@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { type Stat, type StatKeys, type Type } from "../damage/config";
+import type { Stat, StatKeys, Type } from "../damage/config";
 
 const typeSchema = z
 	.object({
