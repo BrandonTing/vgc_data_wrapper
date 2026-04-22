@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.20
+
+### Patch Changes
+
+- f854196: add scrappy
+
 ## 0.3.19
 
 ### Patch Changes

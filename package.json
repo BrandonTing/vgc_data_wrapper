@@ -1,6 +1,6 @@
 {
 	"name": "vgc_data_wrapper",
-	"version": "0.3.19",
+	"version": "0.3.20",
 	"module": "dist/index.js",
 	"devDependencies": {
 		"@biomejs/biome": "2.4.12",
