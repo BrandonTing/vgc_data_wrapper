@@ -40,7 +40,7 @@ export async function getPokemonsFromPasteUrl(
 		const paste = ((await content.json()) as unknown as { paste: string })
 			.paste;
 		return await getPokemonsFromPaste(paste);
-	} catch (err) {
+	} catch (_err) {
 		throw new Error("Failed to parse info from provided paste url");
 	}
 }
@@ -59,7 +59,7 @@ export async function getPokemonsFromPaste(
 			if (pokemonResult.status === "fulfilled") {
 				return pokemonResult.value;
 			}
-			return;
+			return null;
 		})
 		.filter(Boolean);
 }
@@ -113,7 +113,7 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 			pokemon.item = item as Item;
 		}
 		return pokemon;
-	} catch (err) {
+	} catch (_err) {
 		throw new Error("Invalid Name: cannot find target pokemon");
 	}
 }
@@ -260,7 +260,7 @@ function getPasteFromPokemon(pokemon: Pokemon): string {
 	const evStr = Object.entries(pokemon.effortValues)
 		.map(([key, value]) => {
 			if (value === 0) {
-				return;
+				return null;
 			}
 			return `${value} ${getStatKeyForPaste(key)}`;
 		})

@@ -2,7 +2,7 @@ import type { Pokemon } from "../pokemon";
 import type { TemporalFactor } from "./battle";
 import type { Move, Stat, TeraTypes, Type } from "./config";
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: this is expected in generic declaration
 export function pipeModifierHelper<T, U extends (...args: any) => T>(
 	initValue: T,
 	modifiers: Array<U>,
