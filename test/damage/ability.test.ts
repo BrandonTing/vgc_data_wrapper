@@ -441,7 +441,11 @@ test("Scrappy: Normal move against Ghost-type deals neutral damage", () => {
 		types: ["Ghost"],
 		baseStat: { hp: 100, defense: 100 },
 	});
-	const normalMove = createMove({ base: 80, type: "Normal", category: "Physical" });
+	const normalMove = createMove({
+		base: 80,
+		type: "Normal",
+		category: "Physical",
+	});
 	const battle = new Battle({ attacker, defender, move: normalMove });
 	const damage = battle.getDamage();
 	// Without Scrappy, Normal vs Ghost = 0x (always misses)
@@ -461,7 +465,11 @@ test("Scrappy: Fighting move against Ghost-type deals neutral damage", () => {
 		types: ["Ghost"],
 		baseStat: { hp: 95, defense: 90 },
 	});
-	const fightingMove = createMove({ base: 75, type: "Fighting", category: "Physical" });
+	const fightingMove = createMove({
+		base: 75,
+		type: "Fighting",
+		category: "Physical",
+	});
 	const battle = new Battle({ attacker, defender, move: fightingMove });
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
@@ -495,7 +503,11 @@ test("Scrappy: Normal move against non-Ghost type uses normal effectiveness", ()
 		types: ["Water"],
 		baseStat: { hp: 100, defense: 100 },
 	});
-	const normalMove = createMove({ base: 80, type: "Normal", category: "Physical" });
+	const normalMove = createMove({
+		base: 80,
+		type: "Normal",
+		category: "Physical",
+	});
 	const battle = new Battle({ attacker, defender, move: normalMove });
 	const damage = battle.getDamage();
 	// Normal vs Water: 1x (not affected by Scrappy)
@@ -513,7 +525,11 @@ test("Scrappy: Normal move against Tera Ghost deals neutral damage", () => {
 		specialForm: "Tera",
 		baseStat: { hp: 100, defense: 100 },
 	});
-	const normalMove = createMove({ base: 80, type: "Normal", category: "Physical" });
+	const normalMove = createMove({
+		base: 80,
+		type: "Normal",
+		category: "Physical",
+	});
 	const battle = new Battle({ attacker, defender, move: normalMove });
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
