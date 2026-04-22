@@ -431,3 +431,93 @@ test("Mega Sol: Weather Ball in clear skies becomes Fire-type at 100bp", () => {
 		29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34,
 	]);
 });
+
+test("Scrappy: Normal move against Ghost-type deals neutral damage", () => {
+	const attacker = genTestMon({
+		ability: "Scrappy",
+		baseStat: { attack: 100 },
+	});
+	const defender = genTestMon({
+		types: ["Ghost"],
+		baseStat: { hp: 100, defense: 100 },
+	});
+	const normalMove = createMove({ base: 80, type: "Normal", category: "Physical" });
+	const battle = new Battle({ attacker, defender, move: normalMove });
+	const damage = battle.getDamage();
+	// Without Scrappy, Normal vs Ghost = 0x (always misses)
+	// With Scrappy, Normal vs Ghost = 1x (neutral)
+	const actual = getDamangeNumberFromResult(damage);
+	expect(actual.length).toBe(15);
+	expect(actual[0]).toBeGreaterThan(0); // Should deal damage
+	expect(damage.factors.attacker.ability).toEqual(true);
+});
+
+test("Scrappy: Fighting move against Ghost-type deals neutral damage", () => {
+	const attacker = genTestMon({
+		ability: "Scrappy",
+		baseStat: { attack: 110 },
+	});
+	const defender = genTestMon({
+		types: ["Ghost"],
+		baseStat: { hp: 95, defense: 90 },
+	});
+	const fightingMove = createMove({ base: 75, type: "Fighting", category: "Physical" });
+	const battle = new Battle({ attacker, defender, move: fightingMove });
+	const damage = battle.getDamage();
+	const actual = getDamangeNumberFromResult(damage);
+	expect(actual.length).toBe(15);
+	expect(actual[0]).toBeGreaterThan(0); // Should deal damage
+	expect(damage.factors.attacker.ability).toEqual(true);
+});
+
+test("Scrappy: Non-Normal/Fighting move against Ghost-type does NOT bypass immunity", () => {
+	const attacker = genTestMon({
+		ability: "Scrappy",
+		baseStat: { specialAttack: 100 },
+	});
+	const defender = genTestMon({
+		types: ["Ghost"],
+		baseStat: { hp: 100, specialDefense: 100 },
+	});
+	const darkMove = createMove({ base: 80, type: "Dark", category: "Special" });
+	const battle = new Battle({ attacker, defender, move: darkMove });
+	const damage = battle.getDamage();
+	// Dark vs Ghost: 2x effectiveness (NOT bypassed by Scrappy)
+	expect(damage.factors.attacker.ability).toBeUndefined();
+});
+
+test("Scrappy: Normal move against non-Ghost type uses normal effectiveness", () => {
+	const attacker = genTestMon({
+		ability: "Scrappy",
+		baseStat: { attack: 100 },
+	});
+	const defender = genTestMon({
+		types: ["Water"],
+		baseStat: { hp: 100, defense: 100 },
+	});
+	const normalMove = createMove({ base: 80, type: "Normal", category: "Physical" });
+	const battle = new Battle({ attacker, defender, move: normalMove });
+	const damage = battle.getDamage();
+	// Normal vs Water: 1x (not affected by Scrappy)
+	expect(damage.factors.attacker.ability).toBeUndefined();
+});
+
+test("Scrappy: Normal move against Tera Ghost deals neutral damage", () => {
+	const attacker = genTestMon({
+		ability: "Scrappy",
+		baseStat: { attack: 100 },
+	});
+	const defender = genTestMon({
+		types: ["Normal"],
+		teraType: "Ghost",
+		specialForm: "Tera",
+		baseStat: { hp: 100, defense: 100 },
+	});
+	const normalMove = createMove({ base: 80, type: "Normal", category: "Physical" });
+	const battle = new Battle({ attacker, defender, move: normalMove });
+	const damage = battle.getDamage();
+	const actual = getDamangeNumberFromResult(damage);
+	expect(actual[0]).toBeGreaterThan(0); // Should deal damage
+	expect(damage.factors.attacker.ability).toEqual(true);
+	expect(damage.factors.defender.isTera).toEqual(true);
+});
