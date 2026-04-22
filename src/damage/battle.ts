@@ -602,21 +602,31 @@ function getTypeModifier({
 		const isNormalOrFightMove = move.type === 'Normal' || move.type === 'Fighting'
 		const isDefenderGhost = (defender.types.includes('Ghost') && !defender.isTera()) || (defender.isTera() && defender.teraType === "Ghost");
 		if (isNormalOrFightMove && isDefenderGhost) {
-			return {
-				operator: 1,
-				factors: defender.isTera() ? {
-					defender: {
-						isTera: true,
-					},
-					attacker: {
-						ability: true
+			if (defender.isTera()) {
+				return {
+					operator: 1,
+					factors: {
+						defender: {
+							isTera: true,
+						},
+						attacker: {
+							ability: true
+						}
 					}
-				} : {
+				};
+			}
+			const nonGhostTypes = defender.types.filter(type => type !== 'Ghost');
+			const operator = nonGhostTypes.length > 0
+				? getEffectivenessOnPokemon(move.type, nonGhostTypes)
+				: 1;
+			return {
+				operator,
+				factors: {
 					attacker: {
 						ability: true
 					}
 				}
-			}
+			};
 		}
 	}
 	return {

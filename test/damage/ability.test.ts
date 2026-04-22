@@ -521,3 +521,52 @@ test("Scrappy: Normal move against Tera Ghost deals neutral damage", () => {
 	expect(damage.factors.attacker.ability).toEqual(true);
 	expect(damage.factors.defender.isTera).toEqual(true);
 });
+
+test("Scrappy: Normal move against Ghost/Steel dual-type applies Steel resistance (0.5x)", () => {
+	const attacker = genTestMon({
+		ability: "Scrappy",
+		baseStat: { attack: 100 },
+	});
+	const defenderGhostSteel = genTestMon({
+		types: ["Ghost", "Steel"],
+		baseStat: { hp: 100, defense: 100 },
+	});
+	const defenderPureGhost = genTestMon({
+		types: ["Ghost"],
+		baseStat: { hp: 100, defense: 100 },
+	});
+	const normalMove = createMove({ base: 80, type: "Normal", category: "Physical" });
+	const battleDual = new Battle({ attacker, defender: defenderGhostSteel, move: normalMove });
+	const battlePure = new Battle({ attacker, defender: defenderPureGhost, move: normalMove });
+	const dualDamage = getDamangeNumberFromResult(battleDual.getDamage());
+	const pureDamage = getDamangeNumberFromResult(battlePure.getDamage());
+	// Ghost/Steel: Scrappy removes Ghost immunity (→1x), Steel resists Normal (→0.5x) = 0.5x overall
+	// Pure Ghost: Scrappy removes Ghost immunity (→1x)
+	expect(dualDamage[0]).toBeGreaterThan(0);
+	expect(dualDamage[7]).toBeLessThan(pureDamage[7]); // 0.5x < 1x
+	expect(battleDual.getDamage().factors.attacker.ability).toEqual(true);
+});
+
+test("Scrappy: Fighting move against Ghost/Rock dual-type applies Rock super-effectiveness (2x)", () => {
+	const attacker = genTestMon({
+		ability: "Scrappy",
+		baseStat: { attack: 100 },
+	});
+	const defenderGhostRock = genTestMon({
+		types: ["Ghost", "Rock"],
+		baseStat: { hp: 100, defense: 100 },
+	});
+	const defenderPureGhost = genTestMon({
+		types: ["Ghost"],
+		baseStat: { hp: 100, defense: 100 },
+	});
+	const fightingMove = createMove({ base: 80, type: "Fighting", category: "Physical" });
+	const battleDual = new Battle({ attacker, defender: defenderGhostRock, move: fightingMove });
+	const battlePure = new Battle({ attacker, defender: defenderPureGhost, move: fightingMove });
+	const dualDamage = getDamangeNumberFromResult(battleDual.getDamage());
+	const pureDamage = getDamangeNumberFromResult(battlePure.getDamage());
+	// Ghost/Rock: Scrappy removes Ghost immunity (→1x), Rock is weak to Fighting (→2x) = 2x overall
+	// Pure Ghost: Scrappy removes Ghost immunity (→1x)
+	expect(dualDamage[7]).toBeGreaterThan(pureDamage[7]); // 2x > 1x
+	expect(battleDual.getDamage().factors.attacker.ability).toEqual(true);
+});
