@@ -10,6 +10,9 @@ export function getEffectivenessOnPokemon(
 	atkType: TeraTypes,
 	targetPokemonTypes: Array<TeraTypes>,
 ): number {
+	if (targetPokemonTypes.length === 0) {
+		return 1;
+	}
 	return targetPokemonTypes
 		.map((type) => {
 			if (atkType === "Stellar") {

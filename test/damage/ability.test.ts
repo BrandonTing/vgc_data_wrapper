@@ -432,42 +432,85 @@ test("Mega Sol: Weather Ball in clear skies becomes Fire-type at 100bp", () => {
 	]);
 });
 
-test("Scrappy: Normal move against Ghost-type deals neutral damage", () => {
-	const attacker = genTestMon({
+test("Scrappy: Normal move against Ghost-type ignores immunity", () => {
+	const kangaskhan = genTestMon({
+		types: ["Normal"],
 		ability: "Scrappy",
-		baseStat: { attack: 100 },
+		baseStat: { attack: 95 },
 	});
-	const defender = genTestMon({
-		types: ["Ghost"],
-		baseStat: { hp: 100, defense: 100 },
+	const gengar = genTestMon({
+		types: ["Ghost", "Poison"],
+		baseStat: { hp: 60, defense: 80 },
 	});
-	const normalMove = createMove({ base: 80, type: "Normal", category: "Physical" });
-	const battle = new Battle({ attacker, defender, move: normalMove });
+	const normalMove = createMove({
+		base: 120,
+		type: "Normal",
+		category: "Physical",
+	});
+	const battle = new Battle({
+		attacker: kangaskhan,
+		defender: gengar,
+		move: normalMove,
+	});
 	const damage = battle.getDamage();
 	// Without Scrappy, Normal vs Ghost = 0x (always misses)
 	// With Scrappy, Normal vs Ghost = 1x (neutral)
 	const actual = getDamangeNumberFromResult(damage);
-	expect(actual.length).toBe(15);
-	expect(actual[0]).toBeGreaterThan(0); // Should deal damage
+	const expected = [79, 79, 81, 82, 82, 84, 85, 85, 87, 87, 88, 90, 90, 91, 93];
+	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
+
+	const aegislash = genTestMon({
+		types: ["Ghost", "Steel"],
+		baseStat: { hp: 60, defense: 140 },
+	});
+
+	battle.setPokemon("defender", aegislash);
+	const damage2 = battle.getDamage();
+	const actual2 = getDamangeNumberFromResult(damage2);
+	const expected2 = [
+		24, 24, 25, 25, 26, 26, 26, 27, 27, 27, 27, 27, 28, 28, 29,
+	];
+	expect(actual2).toEqual(expected2);
+	expect(damage2.factors.attacker.ability).toEqual(true);
 });
 
-test("Scrappy: Fighting move against Ghost-type deals neutral damage", () => {
-	const attacker = genTestMon({
+test("Scrappy: Fighting move against Ghost-type ignores immunity", () => {
+	const kangaskhan = genTestMon({
 		ability: "Scrappy",
-		baseStat: { attack: 110 },
+		baseStat: { attack: 95 },
 	});
-	const defender = genTestMon({
-		types: ["Ghost"],
-		baseStat: { hp: 95, defense: 90 },
+	const gengar = genTestMon({
+		types: ["Ghost", "Poison"],
+		baseStat: { hp: 60, defense: 80 },
 	});
-	const fightingMove = createMove({ base: 75, type: "Fighting", category: "Physical" });
-	const battle = new Battle({ attacker, defender, move: fightingMove });
+	const fightingMove = createMove({
+		base: 75,
+		type: "Fighting",
+		category: "Physical",
+	});
+	const battle = new Battle({
+		attacker: kangaskhan,
+		defender: gengar,
+		move: fightingMove,
+	});
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
-	expect(actual.length).toBe(15);
-	expect(actual[0]).toBeGreaterThan(0); // Should deal damage
+	const expected = [16, 16, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 19, 19, 19];
+	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
+	const aegislash = genTestMon({
+		types: ["Ghost", "Steel"],
+		baseStat: { hp: 60, defense: 140 },
+	});
+	battle.setPokemon("defender", aegislash);
+	const damage2 = battle.getDamage();
+	const actual2 = getDamangeNumberFromResult(damage2);
+	const expected2 = [
+		42, 42, 44, 44, 44, 44, 46, 46, 46, 46, 48, 48, 48, 48, 50,
+	];
+	expect(actual2).toEqual(expected2);
+	expect(damage2.factors.attacker.ability).toEqual(true);
 });
 
 test("Scrappy: Non-Normal/Fighting move against Ghost-type does NOT bypass immunity", () => {
@@ -495,7 +538,11 @@ test("Scrappy: Normal move against non-Ghost type uses normal effectiveness", ()
 		types: ["Water"],
 		baseStat: { hp: 100, defense: 100 },
 	});
-	const normalMove = createMove({ base: 80, type: "Normal", category: "Physical" });
+	const normalMove = createMove({
+		base: 80,
+		type: "Normal",
+		category: "Physical",
+	});
 	const battle = new Battle({ attacker, defender, move: normalMove });
 	const damage = battle.getDamage();
 	// Normal vs Water: 1x (not affected by Scrappy)
@@ -513,7 +560,11 @@ test("Scrappy: Normal move against Tera Ghost deals neutral damage", () => {
 		specialForm: "Tera",
 		baseStat: { hp: 100, defense: 100 },
 	});
-	const normalMove = createMove({ base: 80, type: "Normal", category: "Physical" });
+	const normalMove = createMove({
+		base: 80,
+		type: "Normal",
+		category: "Physical",
+	});
 	const battle = new Battle({ attacker, defender, move: normalMove });
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
