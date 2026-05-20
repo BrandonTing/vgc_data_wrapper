@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.3.22
+
+### Patch Changes
+
+- 0c86532: Fix speed-based base power calculation to avoid double-counting stat stages for Electro Ball and Gyro Ball. Add a regression test confirming Choice Scarf and +1 Speed stage match at the 1.5x Electro Ball threshold.
+
 ## 0.3.21
 
 ### Patch Changes
