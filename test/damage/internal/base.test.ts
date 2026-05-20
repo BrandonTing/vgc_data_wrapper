@@ -190,6 +190,40 @@ test("correctly calculate base power for speed related moves", () => {
 	expect(basePowerGyroBall.operator).toBe(100);
 });
 
+
+test("electro ball: Choice Scarf and +1 speed stage match at the 1.5x threshold", () => {
+	const defender = genTestMon({
+		stats: {
+			speed: 100,
+		},
+	});
+	const electroBall = createMove({
+		id: 486,
+	});
+
+	const scarfAttacker = genTestMon({
+		stats: {
+			speed: 100,
+		},
+		item: "Choice Scarf",
+	});
+	const plusOneAttacker = genTestMon({
+		stats: {
+			speed: 100,
+		},
+		statStage: {
+			speed: 1,
+		},
+	});
+
+	const scarfPower = getBasePower(scarfAttacker, defender, electroBall);
+	const plusOnePower = getBasePower(plusOneAttacker, defender, electroBall);
+
+	expect(scarfPower.operator).toBe(60);
+	expect(plusOnePower.operator).toBe(60);
+	expect(scarfPower.operator).toBe(plusOnePower.operator);
+});
+
 test("correctly calculate base power for Grass knot and Low kick", () => {
 	const testPokemon = genTestMon();
 	const lowKick = createMove({
