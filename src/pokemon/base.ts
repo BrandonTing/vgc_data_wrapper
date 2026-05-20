@@ -1,6 +1,7 @@
 import type { Stat, TeraTypes, Type } from "../damage/config";
 import type { Flags } from "../typeUtils";
 import type { Ability, Item } from "./typeHelper";
+import { fetchPokemonData } from "./pokeapiFallback";
 
 export type Gender = "Male" | "Female" | "Unknown";
 
@@ -234,14 +235,7 @@ export class Pokemon implements IPokemon {
 	) {
 		this.id = id;
 		try {
-			const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-			const data = (await response.json()) as {
-				stats: Array<{ base_stat: number; stat: { name: string } }>;
-				types:
-					| [{ type: { name: string } }]
-					| [{ type: { name: string } }, { type: { name: string } }];
-				weight: number;
-			};
+			const data = await fetchPokemonData(id);
 			for (let i = 0; i < data.stats.length; i++) {
 				const stat = data.stats[i];
 				switch (stat?.stat.name) {

@@ -1,6 +1,7 @@
 import items from "../../data/item.json";
 import type { Stat, TeraTypes } from "../damage/config";
 import { type Gender, Pokemon } from "./base";
+import { fetchPokemonData } from "./pokeapiFallback";
 import { pokemonSchema } from "./schema";
 import type { Ability, Item } from "./typeHelper";
 
@@ -71,12 +72,7 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 	}
 	try {
 		// get basestat, type, weight, id from pokeapi
-		const response = await fetch(
-			`https://pokeapi.co/api/v2/pokemon/${pokemonNameConverter(
-				infoFromPaste.name,
-			)}`,
-		);
-		const data = await response.json();
+		const data = await fetchPokemonData(pokemonNameConverter(infoFromPaste.name));
 		const pokemonInfo = pokemonSchema.parse(data);
 		const { id, weight, types, stats, sprites } = pokemonInfo;
 		const {
