@@ -34,12 +34,14 @@ type Nature = {
 type SpecialForms = "None" | "Mega" | "Dynamax" | "GigaDynamax" | "Tera";
 
 type PokemonType = [Type] | [Type, Type];
+export type StatRuleset = "champions" | "mainSeries";
 type PokemonInfo = {
 	id?: number; // ID from national dex
 	name?: string;
 	level: number; // affect stat & damage calculation; default 50;
 	types: PokemonType; // Fire, Water, etc.
 	baseStat: Stat;
+	statRuleset: StatRuleset;
 	effortValues: Stat;
 	individualValues: Stat;
 	nature?: Nature;
@@ -75,6 +77,7 @@ interface IPokemon extends PokemonInfo {
 	initWithId: (
 		id: number,
 		option?: {
+			statRuleset?: StatRuleset;
 			effortValues?: Partial<Stat>;
 			individualValues?: Partial<Stat>;
 			statStage: Partial<StatStages>;
@@ -107,6 +110,7 @@ export class Pokemon implements IPokemon {
 	gender: Gender;
 	status: Status;
 	baseStat: Stat;
+	statRuleset: StatRuleset;
 	effortValues: Stat;
 	individualValues: Stat;
 	stats?: Stat;
@@ -136,10 +140,11 @@ export class Pokemon implements IPokemon {
 				| "statStage"
 			>
 		> & {
-				stats?: Partial<Stat>;
-				baseStat?: Partial<Stat>;
-				individualValues?: Partial<Stat>;
-				effortValues?: Partial<Stat>;
+					stats?: Partial<Stat>;
+					baseStat?: Partial<Stat>;
+					individualValues?: Partial<Stat>;
+					effortValues?: Partial<Stat>;
+				statRuleset?: StatRuleset;
 				statStage?: Partial<StatStages>;
 			},
 	) {
@@ -162,7 +167,9 @@ export class Pokemon implements IPokemon {
 		}
 		this.baseStat = genDefaultBaseStat(info?.baseStat);
 		this.individualValues = genDefaultIV(info?.individualValues);
+		this.statRuleset = info?.statRuleset ?? "champions";
 		this.effortValues = genDefaultEv(info?.effortValues);
+		this.validateStatConfig();
 		this.statStage = genDefaultStage(info?.statStage);
 		this.nature = info?.nature ?? {};
 		this.flags = info?.flags;
@@ -182,7 +189,7 @@ export class Pokemon implements IPokemon {
 			return this.getHp(
 				this.baseStat[key],
 				this.individualValues[key],
-				this.effortValues[key],
+				this.getInvestmentValue(key),
 			);
 		}
 		const statStages = countStageChanges ? this.statStage[key] : 0;
@@ -193,7 +200,7 @@ export class Pokemon implements IPokemon {
 			key,
 			this.baseStat[key],
 			this.individualValues[key],
-			this.effortValues[key],
+			this.getInvestmentValue(key),
 			statStages,
 		);
 	}
@@ -227,6 +234,7 @@ export class Pokemon implements IPokemon {
 	async initWithId(
 		id: number,
 		option?: {
+			statRuleset?: StatRuleset;
 			effortValues?: Partial<Stat>;
 			individualValues?: Partial<Stat>;
 			statStage: Partial<StatStages>;
@@ -271,6 +279,10 @@ export class Pokemon implements IPokemon {
 					option.effortValues,
 				);
 			}
+			if (option?.statRuleset) {
+				this.statRuleset = option.statRuleset;
+			}
+			this.validateStatConfig();
 			if (option?.individualValues) {
 				this.individualValues = Object.assign(
 					this.individualValues,
@@ -298,11 +310,14 @@ export class Pokemon implements IPokemon {
 			speed: 0,
 		};
 	}
-	private getHp(base: number, iv: number, ev: number): number {
+	private getHp(base: number, iv: number, investmentValue: number): number {
 		// Shedinja
 		if (this.id === 292) return 1;
 		return (
-			Math.trunc(((base * 2 + iv + Math.trunc(ev / 4)) * this.level) / 100) +
+			Math.trunc(
+				((base * 2 + iv + this.getContributionTerm(investmentValue)) * this.level) /
+					100,
+			) +
 			10 +
 			this.level
 		);
@@ -311,12 +326,15 @@ export class Pokemon implements IPokemon {
 		key: keyof StatStages,
 		base: number,
 		iv: number,
-		ev: number,
+		investmentValue: number,
 		stateStages: number,
 	): number {
 		return modifyStatByStageChange(
 			Math.trunc(
-				(Math.trunc(((base * 2 + iv + Math.trunc(ev / 4)) * this.level) / 100) +
+				(Math.trunc(
+					((base * 2 + iv + this.getContributionTerm(investmentValue)) * this.level) /
+						100,
+				) +
 					5) *
 					this.getNatureModifer(key),
 			),
@@ -327,6 +345,34 @@ export class Pokemon implements IPokemon {
 		if (key === this.nature.plus) return 1.1;
 		if (key === this.nature.minus) return 0.9;
 		return 1;
+	}
+	private getInvestmentValue(key: keyof Stat): number {
+		return this.effortValues[key];
+	}
+	private getContributionTerm(investmentValue: number): number {
+		if (this.statRuleset === "mainSeries") {
+			return Math.trunc(investmentValue / 4);
+		}
+		return investmentValue * 2;
+	}
+	private validateStatConfig() {
+		if (this.statRuleset !== "champions") {
+			return;
+		}
+		const stats = Object.values(this.effortValues);
+		for (const value of stats) {
+			if (!Number.isInteger(value) || value < 0 || value > 32) {
+				throw new Error(
+					"Invalid effortValues in champions mode: each stat must be an integer between 0 and 32",
+				);
+			}
+		}
+		const total = stats.reduce((sum, value) => sum + value, 0);
+		if (total > 66) {
+			throw new Error(
+				"Invalid effortValues in champions mode: total must be less than or equal to 66",
+			);
+		}
 	}
 
 	isTera() {

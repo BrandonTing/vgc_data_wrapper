@@ -45,6 +45,7 @@ export function genTestMon(partial?: RecursivePartial<Pokemon>): Pokemon {
 		name: partial?.name,
 		stats: partial?.stats,
 		baseStat: partial?.baseStat,
+		statRuleset: partial?.statRuleset ?? "mainSeries",
 		effortValues: partial?.effortValues,
 		types: getTypeHelper(partial?.types),
 		level: 50,
