@@ -42,7 +42,6 @@ type PokemonInfo = {
 	types: PokemonType; // Fire, Water, etc.
 	baseStat: Stat;
 	statRuleset: StatRuleset;
-	abilityPoints: Stat;
 	effortValues: Stat;
 	individualValues: Stat;
 	nature?: Nature;
@@ -79,7 +78,6 @@ interface IPokemon extends PokemonInfo {
 		id: number,
 		option?: {
 			statRuleset?: StatRuleset;
-			abilityPoints?: Partial<Stat>;
 			effortValues?: Partial<Stat>;
 			individualValues?: Partial<Stat>;
 			statStage: Partial<StatStages>;
@@ -113,7 +111,6 @@ export class Pokemon implements IPokemon {
 	status: Status;
 	baseStat: Stat;
 	statRuleset: StatRuleset;
-	abilityPoints: Stat;
 	effortValues: Stat;
 	individualValues: Stat;
 	stats?: Stat;
@@ -143,11 +140,10 @@ export class Pokemon implements IPokemon {
 				| "statStage"
 			>
 		> & {
-				stats?: Partial<Stat>;
-				baseStat?: Partial<Stat>;
-				individualValues?: Partial<Stat>;
-				abilityPoints?: Partial<Stat>;
-				effortValues?: Partial<Stat>;
+					stats?: Partial<Stat>;
+					baseStat?: Partial<Stat>;
+					individualValues?: Partial<Stat>;
+					effortValues?: Partial<Stat>;
 				statRuleset?: StatRuleset;
 				statStage?: Partial<StatStages>;
 			},
@@ -172,7 +168,6 @@ export class Pokemon implements IPokemon {
 		this.baseStat = genDefaultBaseStat(info?.baseStat);
 		this.individualValues = genDefaultIV(info?.individualValues);
 		this.statRuleset = info?.statRuleset ?? "champions";
-		this.abilityPoints = genDefaultEv(info?.abilityPoints);
 		this.effortValues = genDefaultEv(info?.effortValues);
 		this.validateStatConfig();
 		this.statStage = genDefaultStage(info?.statStage);
@@ -240,7 +235,6 @@ export class Pokemon implements IPokemon {
 		id: number,
 		option?: {
 			statRuleset?: StatRuleset;
-			abilityPoints?: Partial<Stat>;
 			effortValues?: Partial<Stat>;
 			individualValues?: Partial<Stat>;
 			statStage: Partial<StatStages>;
@@ -283,12 +277,6 @@ export class Pokemon implements IPokemon {
 				this.effortValues = Object.assign(
 					this.effortValues,
 					option.effortValues,
-				);
-			}
-			if (option?.abilityPoints) {
-				this.abilityPoints = Object.assign(
-					this.abilityPoints,
-					option.abilityPoints,
 				);
 			}
 			if (option?.statRuleset) {
@@ -359,10 +347,7 @@ export class Pokemon implements IPokemon {
 		return 1;
 	}
 	private getInvestmentValue(key: keyof Stat): number {
-		if (this.statRuleset === "mainSeries") {
-			return this.effortValues[key];
-		}
-		return this.abilityPoints[key];
+		return this.effortValues[key];
 	}
 	private getContributionTerm(investmentValue: number): number {
 		if (this.statRuleset === "mainSeries") {
@@ -374,17 +359,19 @@ export class Pokemon implements IPokemon {
 		if (this.statRuleset !== "champions") {
 			return;
 		}
-		const stats = Object.values(this.abilityPoints);
+		const stats = Object.values(this.effortValues);
 		for (const value of stats) {
 			if (!Number.isInteger(value) || value < 0 || value > 32) {
 				throw new Error(
-					"Invalid abilityPoints: each stat must be an integer between 0 and 32",
+					"Invalid effortValues in champions mode: each stat must be an integer between 0 and 32",
 				);
 			}
 		}
 		const total = stats.reduce((sum, value) => sum + value, 0);
 		if (total > 66) {
-			throw new Error("Invalid abilityPoints: total must be less than or equal to 66");
+			throw new Error(
+				"Invalid effortValues in champions mode: total must be less than or equal to 66",
+			);
 		}
 	}
 

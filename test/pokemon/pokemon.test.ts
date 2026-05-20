@@ -70,7 +70,7 @@ test("legacy -nature still applies 0.9", () => {
 test("champions path uses 2 * abilityPoint", () => {
 	const incineroar = new Pokemon({
 		baseStat: { attack: 115 },
-		abilityPoints: { attack: 32 },
+		effortValues: { attack: 32 },
 	});
 	expect(incineroar.getStat("attack")).toBe(167);
 });
@@ -78,7 +78,7 @@ test("champions path uses 2 * abilityPoint", () => {
 test("champions ability adjustment supports 0.9 / 1 / 1.1", () => {
 	const base = {
 		baseStat: { attack: 115 },
-		abilityPoints: { attack: 32 },
+		effortValues: { attack: 32 },
 	} as const;
 	expect(new Pokemon(base).getStat("attack")).toBe(167);
 	expect(
@@ -92,8 +92,8 @@ test("champions ability adjustment supports 0.9 / 1 / 1.1", () => {
 test("champions per-stat max is 32", () => {
 	expect(
 		() =>
-			new Pokemon({
-				abilityPoints: {
+				new Pokemon({
+				effortValues: {
 					attack: 33,
 				},
 			}),
@@ -103,8 +103,8 @@ test("champions per-stat max is 32", () => {
 test("champions total ability points max is 66", () => {
 	expect(
 		() =>
-			new Pokemon({
-				abilityPoints: {
+				new Pokemon({
+				effortValues: {
 					hp: 12,
 					attack: 12,
 					defense: 12,
