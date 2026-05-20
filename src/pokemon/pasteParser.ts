@@ -99,6 +99,7 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 			id,
 			weight,
 			types,
+			statRuleset: "mainSeries",
 			effortValues: ev,
 			individualValues: iv,
 			level,
