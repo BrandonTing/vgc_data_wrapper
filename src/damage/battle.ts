@@ -119,8 +119,7 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 		[modifyBySpreadDamage, modifyByWeather, modifyByCriticalHit],
 		pipeOperator,
 	);
-	// pokemon champions removed the smallest random number
-	const dmgRollCounts = originalOpt.isChampion ? 15 : 16;
+		const dmgRollCounts = 16;
 
 	const possibleDamages = modifyByRandomNum(
 		preRandomResult.operator,
