@@ -29,20 +29,20 @@ test("Supreme Overlord", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		87, 88, 88, 90, 91, 91, 93, 94, 94, 96, 97, 97, 99, 100, 102,
+		85, 87, 88, 88, 90, 91, 91, 93, 94, 94, 96, 97, 97, 99, 100, 102,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
 	kingGambit.ability = "Supreme Overlord 2";
 	const down2Actual = getDamangeNumberFromResult(battle.getDamage());
 	const down2Expected = [
-		94, 96, 97, 97, 99, 100, 102, 102, 103, 105, 106, 106, 108, 109, 111,
+		93, 94, 96, 97, 97, 99, 100, 102, 102, 103, 105, 106, 106, 108, 109, 111,
 	];
 	expect(down2Actual).toEqual(down2Expected);
 	kingGambit.ability = "Supreme Overlord 3";
 	const down3Actual = getDamangeNumberFromResult(battle.getDamage());
 	const down3Expected = [
-		102, 103, 105, 106, 108, 108, 109, 111, 112, 114, 114, 115, 117, 118, 120,
+		102, 102, 103, 105, 106, 108, 108, 109, 111, 112, 114, 114, 115, 117, 118, 120,
 	];
 	expect(down3Actual).toEqual(down3Expected);
 });
@@ -79,7 +79,7 @@ test("Liquid Voice", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116, 120,
+		102, 102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116, 120,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -105,7 +105,7 @@ test("Pixilate", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116, 120,
+		102, 102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116, 120,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -119,7 +119,7 @@ test("Pixilate", () => {
 	const nonNormalDamage = battle.getDamage();
 	const nonNormalActual = getDamangeNumberFromResult(nonNormalDamage);
 	const nonNormalExpected = [
-		28, 28, 29, 29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33,
+		28, 28, 28, 29, 29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33,
 	];
 	expect(nonNormalActual).toEqual(nonNormalExpected);
 	expect(nonNormalDamage.factors.attacker.ability).toBeUndefined();
@@ -140,7 +140,7 @@ test("Refrigerate", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		114, 116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132, 134,
+		114, 114, 116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132, 134,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -165,7 +165,7 @@ test("Aerilate", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		180, 180, 182, 186, 188, 188, 192, 194, 194, 198, 200, 200, 204, 206, 210,
+		176, 180, 180, 182, 186, 188, 188, 192, 194, 194, 198, 200, 200, 204, 206, 210,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -195,7 +195,7 @@ test("Galvanize", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132, 134, 134, 138,
+		116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132, 134, 134, 138,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -213,7 +213,7 @@ test("Dragonize", () => {
 	const battle = new Battle({ attacker, defender, move });
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
-	const expected = [74, 76, 76, 78, 78, 80, 80, 80, 82, 82, 84, 84, 86, 86, 88];
+	const expected = [74, 74, 76, 76, 78, 78, 80, 80, 80, 82, 82, 84, 84, 86, 86, 88];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
 });
@@ -237,7 +237,7 @@ test("Adaptability", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		108, 108, 110, 112, 112, 114, 114, 116, 118, 118, 120, 122, 122, 124, 126,
+		106, 108, 108, 110, 112, 112, 114, 114, 116, 118, 118, 120, 122, 122, 124, 126,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -257,7 +257,7 @@ test("Mega Sol: Fire move in Rain is treated as Sun (1.5x, not 0.5x)", () => {
 	expect(damage.factors.attacker.weather).toBe(true);
 	expect(damage.factors.defender.weather).toBeUndefined();
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		47, 47, 48, 48, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 55,
+		46, 47, 47, 48, 48, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 55,
 	]);
 });
 
@@ -275,7 +275,7 @@ test("Mega Sol: Water move in Rain is treated as Sun (0.5x, not 1.5x)", () => {
 	expect(damage.factors.defender.weather).toBe(true);
 	// base=37, *0.5=18, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		15, 15, 15, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 18,
+		15, 15, 15, 15, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 18,
 	]);
 });
 
@@ -300,7 +300,7 @@ test("Mega Sol: Weather Ball in Rain becomes Fire-type (not Water-type)", () => 
 	// bp doubles to 100 (Rain weather exists), Fire-in-Sun 1.5x → pre-type base 69
 	// Fire vs Fire = 0.5x → final rolls
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34,
+		29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34,
 	]);
 });
 
@@ -317,7 +317,7 @@ test("Mega Sol: Solar Beam in Rain has full power (no 0.5x penalty)", () => {
 	const damage = battle.getDamage();
 	// Full 120bp: base=54, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		46, 46, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 54,
+		45, 46, 46, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 54,
 	]);
 });
 
@@ -334,7 +334,7 @@ test("Solar Beam in Rain WITHOUT Mega Sol still gets 0.5x penalty", () => {
 	const damage = battle.getDamage();
 	// Effective 60bp: base=28, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		24, 24, 24, 24, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 28,
+		23, 24, 24, 24, 24, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 28,
 	]);
 });
 
@@ -351,7 +351,7 @@ test("Sand still boosts Rock special defense without Mega Sol", () => {
 	const damage = battle.getDamage();
 	// Rock SpDef 1.5x in Sand: base=25, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25,
+		21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25,
 	]);
 });
 
@@ -368,7 +368,7 @@ test("Mega Sol: Rock-type defender does NOT get Sand special defense boost", () 
 	const damage = battle.getDamage();
 	// No defense boost (Mega Sol treats weather as Sun): base=37, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		31, 32, 32, 32, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 37,
+		31, 31, 32, 32, 32, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 37,
 	]);
 });
 
@@ -385,7 +385,7 @@ test("Snow still boosts Ice physical defense without Mega Sol", () => {
 	const damage = battle.getDamage();
 	// Ice PhyDef 1.5x in Snow: base=25, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25,
+		21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25,
 	]);
 });
 
@@ -402,7 +402,7 @@ test("Mega Sol: Ice-type defender does NOT get Snow physical defense boost", () 
 	const damage = battle.getDamage();
 	// No defense boost (Mega Sol treats weather as Sun): base=37, rolls 85%–100%
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		31, 32, 32, 32, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 37,
+		31, 31, 32, 32, 32, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 37,
 	]);
 });
 
@@ -428,7 +428,7 @@ test("Mega Sol: Weather Ball in clear skies becomes Fire-type at 100bp", () => {
 	// 100bp, Sun boost 1.5x, Fire vs Fire 0.5x
 	// base=46, *1.5=69, random [58..69], *0.5 each:
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34,
+		29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34,
 	]);
 });
 
@@ -456,7 +456,7 @@ test("Scrappy: Normal move against Ghost-type ignores immunity", () => {
 	// Without Scrappy, Normal vs Ghost = 0x (always misses)
 	// With Scrappy, Normal vs Ghost = 1x (neutral)
 	const actual = getDamangeNumberFromResult(damage);
-	const expected = [79, 79, 81, 82, 82, 84, 85, 85, 87, 87, 88, 90, 90, 91, 93];
+	const expected = [78, 79, 79, 81, 82, 82, 84, 85, 85, 87, 87, 88, 90, 90, 91, 93];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
 
@@ -469,7 +469,7 @@ test("Scrappy: Normal move against Ghost-type ignores immunity", () => {
 	const damage2 = battle.getDamage();
 	const actual2 = getDamangeNumberFromResult(damage2);
 	const expected2 = [
-		24, 24, 25, 25, 26, 26, 26, 27, 27, 27, 27, 27, 28, 28, 29,
+		24, 24, 24, 25, 25, 26, 26, 26, 27, 27, 27, 27, 27, 28, 28, 29,
 	];
 	expect(actual2).toEqual(expected2);
 	expect(damage2.factors.attacker.ability).toEqual(true);
@@ -496,7 +496,7 @@ test("Scrappy: Fighting move against Ghost-type ignores immunity", () => {
 	});
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
-	const expected = [16, 16, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 19, 19, 19];
+	const expected = [16, 16, 16, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 19, 19, 19];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
 	const aegislash = genTestMon({
@@ -507,7 +507,7 @@ test("Scrappy: Fighting move against Ghost-type ignores immunity", () => {
 	const damage2 = battle.getDamage();
 	const actual2 = getDamangeNumberFromResult(damage2);
 	const expected2 = [
-		42, 42, 44, 44, 44, 44, 46, 46, 46, 46, 48, 48, 48, 48, 50,
+		42, 42, 42, 44, 44, 44, 44, 46, 46, 46, 46, 48, 48, 48, 48, 50,
 	];
 	expect(actual2).toEqual(expected2);
 	expect(damage2.factors.attacker.ability).toEqual(true);
