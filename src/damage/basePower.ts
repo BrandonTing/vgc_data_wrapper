@@ -54,12 +54,12 @@ export function getBasePower(
 	// electric ball
 	if (move.id === 486) {
 		const attackerSpeed = speedModifier(
-			attacker.getStat("speed"),
+			attacker.getStat("speed", false),
 			attacker.item ?? "",
 			attacker.statStage.speed,
 		);
 		const defenderSpeed = speedModifier(
-			defender.getStat("speed"),
+			defender.getStat("speed", false),
 			defender.item ?? "",
 			defender.statStage.speed,
 		);
@@ -91,12 +91,12 @@ export function getBasePower(
 	// Gyro ball
 	if (move.id === 360) {
 		const attackerSpeed = speedModifier(
-			attacker.getStat("speed"),
+			attacker.getStat("speed", false),
 			attacker.item ?? "",
 			attacker.statStage.speed,
 		);
 		const defenderSpeed = speedModifier(
-			defender.getStat("speed"),
+			defender.getStat("speed", false),
 			defender.item ?? "",
 			defender.statStage.speed,
 		);
@@ -194,26 +194,27 @@ export function getBasePower(
 }
 
 function speedModifier(baseSpeed: number, item: string, stage: number): number {
-	const stageMultiplier = getStageMultiplier(stage);
+	const { numerator: stageNumerator, denominator: stageDenominator } =
+		getStageMultiplier(stage);
 	const itemModifier =
-		// Choice Scarf
 		item === "Choice Scarf"
-			? 1.5
-			: // iron ball
-				item === "Iron Ball"
-				? 0.5
-				: 1;
-	return Math.round(
-		Math.trunc(baseSpeed * stageMultiplier * (4096 * itemModifier)) / 4096 -
-			0.001,
+			? { numerator: 3, denominator: 2 }
+			: item === "Iron Ball"
+				? { numerator: 1, denominator: 2 }
+				: { numerator: 1, denominator: 1 };
+	return Math.trunc(
+		(baseSpeed *
+			stageNumerator *
+			itemModifier.numerator) /
+			(stageDenominator * itemModifier.denominator),
 	);
 }
 
 function getStageMultiplier(stage: number) {
 	if (stage > 0) {
-		return (2 + stage) / 2;
+		return { numerator: 2 + stage, denominator: 2 };
 	}
-	return 2 / (2 - stage);
+	return { numerator: 2, denominator: 2 - stage };
 }
 
 function weightModifier(base: number, ability?: Ability) {
