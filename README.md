@@ -64,9 +64,11 @@ const damageResult = battle.getDamage();
 | level  | number | N | 50 | Affect stat & damage calculation; |
 | types  | [Type] / [Type, Type] | N | ["Normal"] |  Fire, Water, etc. |
 | baseStat  | Stat | N | 100(for each key) | [Explain](https://www.vgcguide.com/base-stats) |
-| effortValues  | Stat | N | 0(for each key) | [Explain](https://www.vgcguide.com/base-stats) |
+| statRuleset  | `champions` \| `mainSeries` | N | `champions` | Stat formula mode. Champions is the default. |
+| abilityPoints  | Stat | N | 0(for each key) | Used in Champions mode. Each stat is 0-32 and total is <= 66. |
+| effortValues  | Stat | N | 0(for each key) | Used in `mainSeries` mode. [Explain](https://www.vgcguide.com/base-stats) |
 | individualValues  | Stat | N | 31(for each key) | [Explain](https://www.vgcguide.com/base-stats) |
-| stat  | Stat | Y | - | Derived from baseStat, EV, IV and level. The real stat in game. |
+| stat  | Stat | Y | - | Derived from baseStat, IV, level, and either abilityPoints (Champions) or EV (mainSeries). |
 | statStage  | StatStages | N | 0(for each key)  | Pokemon can boost or drop stat and affect result of damage calc. The multiplier is based on the fraction 2/2 while each boost adds to the top & each drop adds to the bottom |
 | nature  | Nature | Y | - | Boost 1 stat by 1.1 or lower 1 stat by 0.9 |
 | weight  | number | N | 0 | Affect some damage calcs like Grass knot |
