@@ -415,7 +415,7 @@ test("Body Press/Foul Play/Psyshock and dynamic category behavior", () => {
 	const foulPlayMove = createMove({
 		id: 492,
 		type: "Dark",
-		base: 95,
+		base: 220,
 		category: "Physical",
 	});
 	const fpAttacker = genTestMon({
@@ -424,7 +424,7 @@ test("Body Press/Foul Play/Psyshock and dynamic category behavior", () => {
 		statRuleset: "mainSeries",
 	});
 	const fpDefender = genTestMon({
-		baseStat: { hp: 90, attack: 80, defense: 80, specialDefense: 80 },
+		baseStat: { hp: 60, attack: 80, defense: 60, specialDefense: 80 },
 		statRuleset: "mainSeries",
 	});
 	const fp0 = new Battle({
@@ -461,16 +461,60 @@ test("Body Press/Foul Play/Psyshock and dynamic category behavior", () => {
 		defender: fpStrongDefender,
 		move: foulPlayMove,
 	}).getDamage();
+	const fpTargetChance = Math.max(1, Math.floor(fpStrongDamage.koChance));
 	const fpReq = getMinAtkRequirement({
 		attacker: fpAttacker,
 		defender: fpStrongDefender,
 		move: foulPlayMove,
 		target: {
 			type: "chance",
-			value: Math.max(1, Math.floor(fpStrongDamage.koChance)),
+			value: fpTargetChance,
 		},
 	});
-	expect(fpReq.satisfied).toBe(false);
+	expect(fpReq.satisfied).toBe(true);
+	if (fpReq.satisfied) {
+		const fpEv = fpReq.investment.attack ?? 0;
+		const defenderWithReturned = genTestMon({
+			...fpStrongDefender,
+			effortValues: { ...fpStrongDefender.effortValues, attack: fpEv },
+		});
+		const returnedDamage = new Battle({
+			attacker: fpAttacker,
+			defender: defenderWithReturned,
+			move: foulPlayMove,
+		}).getDamage();
+		expect(
+			meetsTarget(
+				"atk",
+				defenderWithReturned.getStat("hp"),
+				{ type: "chance", value: fpTargetChance },
+				returnedDamage.koChance,
+				returnedDamage.rolls,
+			),
+		).toBe(true);
+		const searchEvs = getSearchEvs(fpStrongDefender.statRuleset);
+		for (const lower of searchEvs) {
+			if (lower >= fpEv) break;
+			const lowerDefender = genTestMon({
+				...fpStrongDefender,
+				effortValues: { ...fpStrongDefender.effortValues, attack: lower },
+			});
+			const lowerDamage = new Battle({
+				attacker: fpAttacker,
+				defender: lowerDefender,
+				move: foulPlayMove,
+			}).getDamage();
+			expect(
+				meetsTarget(
+					"atk",
+					lowerDefender.getStat("hp"),
+					{ type: "chance", value: fpTargetChance },
+					lowerDamage.koChance,
+					lowerDamage.rolls,
+				),
+			).toBe(false);
+		}
+	}
 
 	const psyRes = assertDefRequirement({
 		attacker: genTestMon({

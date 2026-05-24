@@ -189,6 +189,49 @@ export function getMinAtkRequirement({
 	field?: ConstructorParameters<typeof Battle>[0]["field"];
 	target: RequirementTarget;
 }): MinRequirementResult {
+	if (move.id === 492) {
+		const ruleset = defender.statRuleset;
+		const totalMax = getMaxTotalEvs(ruleset);
+		const searchEvs = getSearchEvs(ruleset);
+		const baseTotal =
+			Object.values(defender.effortValues).reduce(
+				(sum, value) => sum + value,
+				0,
+			) - defender.effortValues.attack;
+		for (const atk of searchEvs) {
+			const totalEvs = baseTotal + atk;
+			if (totalEvs > totalMax) continue;
+			const nextEvs = { ...defender.effortValues, attack: atk };
+			const { stats: _ignoredStats, ...defenderBase } = defender;
+			const tunedDefender = new Pokemon({
+				...defenderBase,
+				effortValues: nextEvs,
+			});
+			const damage = new Battle({
+				attacker,
+				defender: tunedDefender,
+				move,
+				field,
+			}).getDamage();
+			if (!meetsTarget(damage, target, "atk", tunedDefender.getStat("hp")))
+				continue;
+			return {
+				satisfied: true,
+				target,
+				investment: { attack: atk },
+				finalStats: { attack: tunedDefender.getStat("attack") },
+				damage,
+				statRuleset: ruleset,
+			};
+		}
+		return {
+			satisfied: false,
+			target,
+			reason: "No valid investment satisfies the target",
+			statRuleset: ruleset,
+		};
+	}
+
 	const ruleset = attacker.statRuleset;
 	const totalMax = getMaxTotalEvs(ruleset);
 	const searchEvs = getSearchEvs(ruleset);
