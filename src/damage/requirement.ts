@@ -163,7 +163,6 @@ export function getMinAtkRequirement({
 	const atkKey = move.category === "Physical" ? "attack" : "specialAttack";
 	const max = maxPerStat(ruleset);
 	const totalMax = maxTotal(ruleset);
-	let best: RequirementSuccess | null = null;
 	// Brute-force the move-relevant offensive EV stat from low to high for deterministic minimum search.
 	for (let atk = 0; atk <= max; atk++) {
 		const nextEvs = { ...attacker.effortValues, [atkKey]: atk };
@@ -181,7 +180,7 @@ export function getMinAtkRequirement({
 			field,
 		}).getDamage();
 		if (!meetsTarget(damage, target, "atk")) continue;
-		const candidate: RequirementSuccess = {
+		return {
 			satisfied: true,
 			target,
 			investment: { [atkKey]: atk },
@@ -189,14 +188,11 @@ export function getMinAtkRequirement({
 			damage,
 			statRuleset: ruleset,
 		};
-		if (!best || atk < (best.investment[atkKey] ?? 999)) best = candidate;
 	}
-	return (
-		best ?? {
-			satisfied: false,
-			target,
-			reason: "No valid investment satisfies the target",
-			statRuleset: ruleset,
-		}
-	);
+	return {
+		satisfied: false,
+		target,
+		reason: "No valid investment satisfies the target",
+		statRuleset: ruleset,
+	};
 }
