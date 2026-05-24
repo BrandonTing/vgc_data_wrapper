@@ -66,6 +66,7 @@ function meetsTarget(
 	damage: ReturnType<Battle["getDamage"]>,
 	target: RequirementTarget,
 	mode: "atk" | "def",
+	defenderHp: number,
 ) {
 	const { koChance } = damage;
 	const surviveChance = 100 - koChance;
@@ -76,10 +77,10 @@ function meetsTarget(
 			? koChance >= target.value
 			: surviveChance >= target.value;
 	// guaranteed-2hit: ensure min roll KOs in 2 hits (atk), or max roll fails to KO in 2 hits (def).
-	const minRollPercent = damage.rolls[0]?.percentage ?? 0;
-	const maxRollPercent = damage.rolls[damage.rolls.length - 1]?.percentage ?? 0;
-	if (mode === "atk") return minRollPercent * 2 >= 100;
-	return maxRollPercent * 2 < 100;
+	const minRollDamage = damage.rolls[0]?.number ?? 0;
+	const maxRollDamage = damage.rolls[damage.rolls.length - 1]?.number ?? 0;
+	if (mode === "atk") return minRollDamage * 2 >= defenderHp;
+	return maxRollDamage * 2 < defenderHp;
 }
 
 export function getMinDefRequirement({
@@ -99,17 +100,26 @@ export function getMinDefRequirement({
 	const defKey = usesPhysicalDefense(move) ? "defense" : "specialDefense";
 	const max = maxPerStat(ruleset);
 	const totalMax = maxTotal(ruleset);
+	const baseTotal =
+		Object.values(defender.effortValues).reduce(
+			(sum, value) => sum + value,
+			0,
+		) -
+		defender.effortValues.hp -
+		defender.effortValues[defKey];
 	let best: RequirementSuccess | null = null;
 
 	// Brute-force defensive EV pairs in ascending order; first valid minimum wins by deterministic tie-break.
 	for (let hp = 0; hp <= max; hp++) {
 		// Only the move-relevant defense stat is searched (`defense` for Physical, `specialDefense` for Special).
 		for (let def = 0; def <= max; def++) {
+			if (
+				best &&
+				hp + def > (best.investment.hp ?? 0) + (best.investment[defKey] ?? 0)
+			)
+				break;
 			const nextEvs = { ...defender.effortValues, hp, [defKey]: def };
-			const totalEvs = Object.values(nextEvs).reduce(
-				(sum, value) => sum + value,
-				0,
-			);
+			const totalEvs = baseTotal + hp + def;
 			if (totalEvs > totalMax) continue;
 			const { stats: _ignoredStats, ...defenderBase } = defender;
 			const mon = new Pokemon({ ...defenderBase, effortValues: nextEvs });
@@ -120,7 +130,7 @@ export function getMinDefRequirement({
 				move,
 				field,
 			}).getDamage();
-			if (!meetsTarget(damage, target, "def")) continue;
+			if (!meetsTarget(damage, target, "def", mon.getStat("hp"))) continue;
 			const candidate: RequirementSuccess = {
 				satisfied: true,
 				target,
@@ -170,13 +180,15 @@ export function getMinAtkRequirement({
 			: "specialAttack";
 	const max = maxPerStat(ruleset);
 	const totalMax = maxTotal(ruleset);
+	const baseTotal =
+		Object.values(attacker.effortValues).reduce(
+			(sum, value) => sum + value,
+			0,
+		) - attacker.effortValues[atkKey];
 	// Brute-force the move-relevant offensive EV stat from low to high for deterministic minimum search.
 	for (let atk = 0; atk <= max; atk++) {
 		const nextEvs = { ...attacker.effortValues, [atkKey]: atk };
-		const totalEvs = Object.values(nextEvs).reduce(
-			(sum, value) => sum + value,
-			0,
-		);
+		const totalEvs = baseTotal + atk;
 		if (totalEvs > totalMax) continue;
 		const { stats: _ignoredStats, ...attackerBase } = attacker;
 		const mon = new Pokemon({ ...attackerBase, effortValues: nextEvs });
@@ -186,7 +198,7 @@ export function getMinAtkRequirement({
 			move,
 			field,
 		}).getDamage();
-		if (!meetsTarget(damage, target, "atk")) continue;
+		if (!meetsTarget(damage, target, "atk", defender.getStat("hp"))) continue;
 		return {
 			satisfied: true,
 			target,
