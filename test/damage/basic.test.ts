@@ -26,7 +26,9 @@ test("test STAB", () => {
 		base: 90,
 		category: "Special",
 	});
-	const expected = [58, 59, 60, 60, 61, 62, 62, 63, 64, 64, 65, 66, 66, 67, 68, 69];
+	const expected = [
+		58, 59, 60, 60, 61, 62, 62, 63, 64, 64, 65, 66, 66, 67, 68, 69,
+	];
 	const battle = new Battle({
 		attacker: flutterMane,
 		defender: incineroar,
@@ -76,7 +78,8 @@ test("test offensive tera", () => {
 	battle.move = moonblast;
 	const actual = battle.getDamage();
 	const expected = [
-		102, 102, 104, 104, 106, 108, 108, 110, 110, 112, 114, 114, 116, 116, 118, 120,
+		102, 102, 104, 104, 106, 108, 108, 110, 110, 112, 114, 114, 116, 116, 118,
+		120,
 	];
 	expect(getDamangeNumberFromResult(actual)).toEqual(expected);
 	expect(actual.factors.attacker.isTera).toBe(true);
@@ -125,7 +128,9 @@ test("defensive tera", () => {
 	});
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
-	const expected = [38, 38, 39, 39, 39, 40, 40, 41, 41, 42, 42, 42, 43, 43, 44, 45];
+	const expected = [
+		38, 38, 39, 39, 39, 40, 40, 41, 41, 42, 42, 42, 43, 43, 44, 45,
+	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.defender.isTera).toBe(true);
 });

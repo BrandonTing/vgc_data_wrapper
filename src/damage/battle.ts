@@ -119,7 +119,7 @@ function getDamage(originalOpt: BattleStatus): DamageResult {
 		[modifyBySpreadDamage, modifyByWeather, modifyByCriticalHit],
 		pipeOperator,
 	);
-		const dmgRollCounts = 16;
+	const dmgRollCounts = 16;
 
 	const possibleDamages = modifyByRandomNum(
 		preRandomResult.operator,

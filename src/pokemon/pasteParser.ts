@@ -4,6 +4,10 @@ import { type Gender, Pokemon } from "./base";
 import { pokemonSchema } from "./schema";
 import type { Ability, Item } from "./typeHelper";
 
+type JsonBodyResponse = {
+	json: () => Promise<unknown>;
+};
+
 const natures: Record<string, Pokemon["nature"]> = {
 	Hardy: {},
 	Lonely: { plus: "attack", minus: "defense" },
@@ -37,8 +41,11 @@ export async function getPokemonsFromPasteUrl(
 ): Promise<Array<Pokemon>> {
 	try {
 		const content = await fetch(`${url}/json`);
-		const paste = ((await content.json()) as unknown as { paste: string })
-			.paste;
+		const paste = (
+			(await (content as unknown as JsonBodyResponse).json()) as {
+				paste: string;
+			}
+		).paste;
 		return await getPokemonsFromPaste(paste);
 	} catch (_err) {
 		throw new Error("Failed to parse info from provided paste url");
@@ -76,7 +83,7 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 				infoFromPaste.name,
 			)}`,
 		);
-		const data = await response.json();
+		const data = await (response as unknown as JsonBodyResponse).json();
 		const pokemonInfo = pokemonSchema.parse(data);
 		const { id, weight, types, stats, sprites } = pokemonInfo;
 		const {

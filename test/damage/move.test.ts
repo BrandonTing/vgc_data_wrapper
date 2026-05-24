@@ -29,7 +29,8 @@ test("freeze dry", () => {
 	});
 	const actual = getDamangeNumberFromResult(battle.getDamage());
 	const expected = [
-		228, 228, 232, 232, 240, 240, 240, 244, 244, 252, 252, 256, 256, 264, 264, 268,
+		228, 228, 232, 232, 240, 240, 240, 244, 244, 252, 252, 256, 256, 264, 264,
+		268,
 	];
 	expect(actual).toEqual(expected);
 });
@@ -124,7 +125,8 @@ test("Ivy Cudgel changes type", () => {
 	battle.setPokemon("attacker", ogerponWellspring);
 	damage = battle.getDamage();
 	actual = [
-		194, 198, 198, 200, 204, 206, 210, 210, 212, 216, 218, 218, 222, 224, 228, 230,
+		194, 198, 198, 200, 204, 206, 210, 210, 212, 216, 218, 218, 222, 224, 228,
+		230,
 	];
 	expect(getDamangeNumberFromResult(damage)).toEqual(actual);
 
@@ -151,7 +153,8 @@ test("Ivy Cudgel changes type", () => {
 	battle.setPokemon("attacker", ogerponCornerstone);
 	damage = battle.getDamage();
 	actual = [
-		388, 396, 396, 400, 408, 412, 420, 420, 424, 432, 436, 436, 444, 448, 456, 460,
+		388, 396, 396, 400, 408, 412, 420, 420, 424, 432, 436, 436, 444, 448, 456,
+		460,
 	];
 	expect(getDamangeNumberFromResult(damage)).toEqual(actual);
 });
@@ -177,7 +180,9 @@ test("Revelation Dance changes type", () => {
 		base: 90,
 	});
 
-	const actual = [29, 29, 30, 30, 30, 30, 30, 31, 31, 32, 32, 33, 33, 33, 33, 34];
+	const actual = [
+		29, 29, 30, 30, 30, 30, 30, 31, 31, 32, 32, 33, 33, 33, 33, 34,
+	];
 	const battle = new Battle({
 		attacker,
 		defender,
@@ -227,7 +232,8 @@ test("Ivy Cudgel changes type", () => {
 	battle.setPokemon("attacker", ogerponWellspring);
 	damage = battle.getDamage();
 	actual = [
-		194, 198, 198, 200, 204, 206, 210, 210, 212, 216, 218, 218, 222, 224, 228, 230,
+		194, 198, 198, 200, 204, 206, 210, 210, 212, 216, 218, 218, 222, 224, 228,
+		230,
 	];
 	expect(getDamangeNumberFromResult(damage)).toEqual(actual);
 
@@ -254,7 +260,8 @@ test("Ivy Cudgel changes type", () => {
 	battle.setPokemon("attacker", ogerponCornerstone);
 	damage = battle.getDamage();
 	actual = [
-		388, 396, 396, 400, 408, 412, 420, 420, 424, 432, 436, 436, 444, 448, 456, 460,
+		388, 396, 396, 400, 408, 412, 420, 420, 424, 432, 436, 436, 444, 448, 456,
+		460,
 	];
 	expect(getDamangeNumberFromResult(damage)).toEqual(actual);
 });
@@ -285,7 +292,8 @@ test("Tera Blast changes category", () => {
 	});
 
 	const actual = [
-		114, 114, 116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132, 134,
+		114, 114, 116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132,
+		134,
 	];
 	const battle = new Battle({
 		attacker,
@@ -389,7 +397,8 @@ test("Collision Course increase 33% when effective, including stellar tera", () 
 	});
 
 	const actualBeforeTera = [
-		304, 307, 312, 315, 320, 323, 323, 328, 331, 336, 339, 344, 347, 352, 355, 360,
+		304, 307, 312, 315, 320, 323, 323, 328, 331, 336, 339, 344, 347, 352, 355,
+		360,
 	];
 	const damage = battle.getDamage();
 	expect(getDamangeNumberFromResult(damage)).toEqual(actualBeforeTera);
@@ -438,7 +447,8 @@ test("Hadron Engine increase 33% when effective, including stellar tera", () => 
 	});
 
 	const actualBeforeTera = [
-		331, 336, 339, 344, 347, 352, 355, 360, 363, 368, 371, 376, 379, 384, 387, 392,
+		331, 336, 339, 344, 347, 352, 355, 360, 363, 368, 371, 376, 379, 384, 387,
+		392,
 	];
 	const damage = battle.getDamage();
 	expect(getDamangeNumberFromResult(damage)).toEqual(actualBeforeTera);
@@ -474,6 +484,7 @@ test("Hydro steam should have 1,5x damage in Sun", () => {
 	});
 	const damage = battle.getDamage();
 	expect(getDamangeNumberFromResult(damage)).toEqual([
-		182, 182, 186, 188, 192, 192, 194, 198, 198, 200, 204, 206, 206, 210, 212, 216,
+		182, 182, 186, 188, 192, 192, 194, 198, 198, 200, 204, 206, 206, 210, 212,
+		216,
 	]);
 });

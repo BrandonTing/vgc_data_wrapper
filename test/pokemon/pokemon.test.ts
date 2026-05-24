@@ -92,7 +92,7 @@ test("champions ability adjustment supports 0.9 / 1 / 1.1", () => {
 test("champions per-stat max is 32", () => {
 	expect(
 		() =>
-				new Pokemon({
+			new Pokemon({
 				effortValues: {
 					attack: 33,
 				},
@@ -103,7 +103,7 @@ test("champions per-stat max is 32", () => {
 test("champions total ability points max is 66", () => {
 	expect(
 		() =>
-				new Pokemon({
+			new Pokemon({
 				effortValues: {
 					hp: 12,
 					attack: 12,

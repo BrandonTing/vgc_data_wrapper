@@ -190,7 +190,6 @@ test("correctly calculate base power for speed related moves", () => {
 	expect(basePowerGyroBall.operator).toBe(100);
 });
 
-
 test("electro ball: Choice Scarf and +1 speed stage match at the 1.5x threshold", () => {
 	const defender = genTestMon({
 		stats: {
