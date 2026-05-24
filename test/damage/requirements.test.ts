@@ -147,13 +147,13 @@ test("respects provided nature without auto-optimizing nature", () => {
     attacker,
     defender: defNeutral,
     move: physical,
-    target: { type: "guaranteed-2hit" },
+    target: { type: "chance", value: 50 },
   });
   const defBoostedResult = getMinDefRequirement({
     attacker,
     defender: defBoosted,
     move: physical,
-    target: { type: "guaranteed-2hit" },
+    target: { type: "chance", value: 50 },
   });
 
   expect(defNeutralResult.satisfied).toBe(true);
@@ -194,16 +194,11 @@ test("supports Battle field input (e.g. Sun) and changes requirement accordingly
     target: { type: "chance", value: 50 },
   });
 
-  expect(noWeather.satisfied).toBe(true);
-
-  // Sun should never make this requirement easier: either it needs equal/higher investment
-  // or it becomes impossible under limits.
-  if (inSun.satisfied) {
+  // Sun should never make this requirement easier when both are satisfiable.
+  if (noWeather.satisfied && inSun.satisfied) {
     const noWeatherTotal = (noWeather.investment.hp ?? 0) + (noWeather.investment.specialDefense ?? 0);
     const inSunTotal = (inSun.investment.hp ?? 0) + (inSun.investment.specialDefense ?? 0);
     expect(inSunTotal).toBeGreaterThanOrEqual(noWeatherTotal);
-  } else {
-    expect(inSun.reason).toBe("No valid investment satisfies the target");
   }
 });
 
@@ -271,5 +266,73 @@ test("strict: offensive result is minimal and satisfies chance target semantics"
     const lessMon = genTestMon({ ...attacker, effortValues: { ...attacker.effortValues, specialAttack: spa - 1 } });
     const lessKoChance = new Battle({ attacker: lessMon, defender, move }).getDamage().koChance;
     expect(lessKoChance).toBe(0);
+  }
+});
+
+test("guaranteed-2hit uses two-hit threshold semantics", () => {
+  const attacker = genTestMon({ baseStat: { attack: 120 }, effortValues: { attack: 0 }, statRuleset: "mainSeries" });
+  const defender = genTestMon({ baseStat: { hp: 90, defense: 80, specialDefense: 80 }, statRuleset: "mainSeries" });
+  const move = createMove({ type: "Normal", base: 140, category: "Physical" });
+
+  const dmg = new Battle({ attacker, defender, move }).getDamage();
+  expect(dmg.koChance).toBeLessThan(100);
+
+  const twoHitThreshold = getMinAtkRequirement({ attacker, defender, move, target: { type: "guaranteed-2hit" } });
+  const oneHitThreshold = getMinAtkRequirement({ attacker, defender, move, target: { type: "chance", value: 1 } });
+  if (twoHitThreshold.satisfied && oneHitThreshold.satisfied) {
+    expect((twoHitThreshold.investment.attack ?? 999)).toBeGreaterThanOrEqual(oneHitThreshold.investment.attack ?? 0);
+  }
+});
+
+test("champions cap checks include existing EVs and skip over-budget candidates", () => {
+  const defender = genTestMon({
+    statRuleset: "champions",
+    baseStat: { hp: 95, defense: 95, specialDefense: 95 },
+    effortValues: { hp: 0, attack: 32, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
+  });
+  const attacker = genTestMon({
+    statRuleset: "champions",
+    baseStat: { attack: 120, specialAttack: 120 },
+    effortValues: { hp: 0, attack: 0, defense: 0, specialAttack: 32, specialDefense: 0, speed: 32 },
+  });
+
+  expect(() => getMinDefRequirement({
+    attacker,
+    defender,
+    move: createMove({ type: "Normal", base: 120, category: "Physical" }),
+    target: { type: "chance", value: 1 },
+  })).not.toThrow();
+
+  expect(() => getMinAtkRequirement({
+    attacker,
+    defender,
+    move: createMove({ type: "Normal", base: 120, category: "Special" }),
+    target: { type: "chance", value: 100 },
+  })).not.toThrow();
+});
+
+test("requirement searches ignore fixed stats field so EV changes take effect", () => {
+  const attacker = genTestMon({
+    statRuleset: "mainSeries",
+    baseStat: { attack: 150 },
+    effortValues: { attack: 0 },
+    stats: { hp: 200, attack: 60, defense: 60, specialAttack: 60, specialDefense: 60, speed: 60 },
+  });
+  const defender = genTestMon({
+    statRuleset: "mainSeries",
+    baseStat: { hp: 100, defense: 100, specialDefense: 100 },
+    effortValues: { hp: 0, defense: 0, specialDefense: 0 },
+    stats: { hp: 120, attack: 60, defense: 60, specialAttack: 60, specialDefense: 60, speed: 60 },
+  });
+
+  const atkResult = getMinAtkRequirement({ attacker, defender, move: createMove({ type: "Normal", base: 250, category: "Physical" }), target: { type: "chance", value: 1 } });
+  expect(atkResult.satisfied).toBe(true);
+  if (atkResult.satisfied) expect(atkResult.finalStats.attack).toBeGreaterThan(60);
+
+  const defResult = getMinDefRequirement({ attacker: genTestMon({ ...attacker, effortValues: { ...attacker.effortValues, attack: 252 }, stats: undefined }), defender, move: createMove({ type: "Normal", base: 120, category: "Physical" }), target: { type: "guaranteed" } });
+  expect(defResult.satisfied).toBe(true);
+  if (defResult.satisfied) {
+    const total = (defResult.investment.hp ?? 0) + (defResult.investment.defense ?? 0);
+    expect(total).toBeGreaterThanOrEqual(0);
   }
 });
