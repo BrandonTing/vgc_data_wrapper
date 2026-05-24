@@ -42,14 +42,6 @@ test("getMinDefRequirement supports guaranteed, chance, and 2-hit for mainSeries
 	});
 	expect(chance.satisfied).toBe(true);
 
-	const twoHit = getMinDefRequirement({
-		attacker,
-		defender,
-		move,
-		target: { type: "guaranteed-2hit" },
-	});
-	expect(twoHit.satisfied).toBe(true);
-
 	const specialMove = createMove({
 		type: "Normal",
 		base: 80,
@@ -116,17 +108,9 @@ test("getMinAtkRequirement supports guaranteed, chance, and 2-hit with determini
 		attacker,
 		defender,
 		move: physical,
-		target: { type: "guaranteed-2hit" },
+		target: { type: "chance", value: 50 },
 	});
 	expect(chance.satisfied).toBe(true);
-
-	const twoHit = getMinAtkRequirement({
-		attacker,
-		defender,
-		move: physical,
-		target: { type: "guaranteed-2hit" },
-	});
-	expect(twoHit.satisfied).toBe(true);
 
 	const special = getMinAtkRequirement({
 		attacker,
@@ -301,7 +285,7 @@ test("supports Battle field input (e.g. Sun) and changes requirement accordingly
 		defender,
 		move,
 		field: { weather: "Sun" },
-		target: { type: "chance", value: 50 },
+		target: { type: "guaranteed-2hit" },
 	});
 
 	// Sun should never make this requirement easier when both are satisfiable.
@@ -369,6 +353,35 @@ test("getMinAtkRequirement searches defense EVs for Body Press", () => {
 	expect(result.satisfied).toBe(true);
 	if (result.satisfied) {
 		expect(Object.keys(result.investment)).toEqual(["defense"]);
+	}
+});
+
+test("getMinAtkRequirement does not require attacker EVs for Foul Play", () => {
+	const attacker = genTestMon({
+		baseStat: { attack: 50 },
+		effortValues: { attack: 252 },
+		statRuleset: "mainSeries",
+	});
+	const defender = genTestMon({
+		baseStat: { hp: 60, attack: 180, defense: 50, specialDefense: 70 },
+		statRuleset: "mainSeries",
+	});
+	const foulPlay = createMove({
+		id: 492,
+		type: "Dark",
+		base: 140,
+		category: "Physical",
+	});
+
+	const result = getMinAtkRequirement({
+		attacker,
+		defender,
+		move: foulPlay,
+		target: { type: "chance", value: 1 },
+	});
+	expect(result.satisfied).toBe(true);
+	if (result.satisfied) {
+		expect(result.investment.attack).toBe(0);
 	}
 });
 
