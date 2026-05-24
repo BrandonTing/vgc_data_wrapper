@@ -242,7 +242,7 @@ export class Pokemon implements IPokemon {
 	) {
 		this.id = id;
 		try {
-			const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+			const response = (await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)) as any;
 			const data = (await response.json()) as {
 				stats: Array<{ base_stat: number; stat: { name: string } }>;
 				types:

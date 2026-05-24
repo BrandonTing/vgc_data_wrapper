@@ -37,7 +37,7 @@ export async function getPokemonsFromPasteUrl(
 ): Promise<Array<Pokemon>> {
 	try {
 		const content = await fetch(`${url}/json`);
-		const paste = ((await content.json()) as unknown as { paste: string })
+		const paste = ((await (content as any).json()) as unknown as { paste: string })
 			.paste;
 		return await getPokemonsFromPaste(paste);
 	} catch (_err) {
@@ -76,7 +76,7 @@ export async function getPokemonFromPaste(paste: string): Promise<Pokemon> {
 				infoFromPaste.name,
 			)}`,
 		);
-		const data = await response.json();
+		const data = await (response as any).json();
 		const pokemonInfo = pokemonSchema.parse(data);
 		const { id, weight, types, stats, sprites } = pokemonInfo;
 		const {
