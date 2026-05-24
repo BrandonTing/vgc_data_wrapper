@@ -61,6 +61,14 @@ const usesPhysicalDefense = (move: Move) =>
 	move.category === "Physical" || move.id === 473 || move.id === 540; // Psyshock & Psystrike
 const usesDefenseAsAttack = (move: Move) => move.id === 776; // Body Press
 const usesDefenderAttack = (move: Move) => move.id === 492; // Foul Play
+const getOffensiveEvKey = (
+	move: Move,
+): "attack" | "specialAttack" | "defense" =>
+	usesDefenseAsAttack(move)
+		? "defense"
+		: move.category === "Physical"
+			? "attack"
+			: "specialAttack";
 
 // Interpret forward `koChance` as either KO success (atk mode) or survival success (def mode).
 function meetsTarget(
@@ -174,11 +182,7 @@ export function getMinAtkRequirement({
 	target: RequirementTarget;
 }): MinRequirementResult {
 	const ruleset = attacker.statRuleset;
-	const atkKey = usesDefenseAsAttack(move)
-		? "defense"
-		: move.category === "Physical"
-			? "attack"
-			: "specialAttack";
+	const atkKey = getOffensiveEvKey(move);
 	const max = maxPerStat(ruleset);
 	const totalMax = maxTotal(ruleset);
 	if (usesDefenderAttack(move)) {
