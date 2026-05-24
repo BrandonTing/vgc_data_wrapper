@@ -502,7 +502,6 @@ test("getMinDefRequirement uses normalized category for dynamic-category moves",
 	}
 });
 
-
 test("strict: offensive result is minimal and satisfies chance target semantics", () => {
 	const attacker = genTestMon({
 		baseStat: { specialAttack: 200 },

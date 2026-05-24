@@ -16,8 +16,8 @@
  *   and keeping the first valid minimum candidate.
  */
 import { Pokemon } from "../pokemon";
-import { isTerapagosStellar } from "../pokemon/utils";
 import type { StatRuleset } from "../pokemon/base";
+import { isTerapagosStellar } from "../pokemon/utils";
 import { Battle } from "./battle";
 import type { Move } from "./config";
 
@@ -58,6 +58,13 @@ const maxPerStat = (ruleset: StatRuleset) =>
 	ruleset === "mainSeries" ? 252 : 32;
 const maxTotal = (ruleset: StatRuleset) =>
 	ruleset === "mainSeries" ? 510 : 66;
+const getSearchEvs = (ruleset: StatRuleset) => {
+	const max = maxPerStat(ruleset);
+	const step = ruleset === "mainSeries" ? 4 : 1;
+	const values: number[] = [];
+	for (let ev = 0; ev <= max; ev += step) values.push(ev);
+	return values;
+};
 const usesPhysicalDefense = (move: Move) =>
 	move.category === "Physical" || move.id === 473 || move.id === 540; // Psyshock & Psystrike
 const usesDefenseAsAttack = (move: Move) => move.id === 776; // Body Press
@@ -111,23 +118,32 @@ export function getMinDefRequirement({
 	target: RequirementTarget;
 }): MinRequirementResult {
 	const ruleset = defender.statRuleset;
-	const normalizedMove = { ...move, category: resolveNormalizedCategory(attacker, move) };
+	const normalizedMove = {
+		...move,
+		category: resolveNormalizedCategory(attacker, move),
+	};
 	const defKey = usesPhysicalDefense(normalizedMove)
 		? "defense"
 		: "specialDefense";
-	const max = maxPerStat(ruleset);
 	const totalMax = maxTotal(ruleset);
+	const searchEvs = getSearchEvs(ruleset);
 	const baseTotal =
-		Object.values(defender.effortValues).reduce((sum, value) => sum + value, 0) -
+		Object.values(defender.effortValues).reduce(
+			(sum, value) => sum + value,
+			0,
+		) -
 		defender.effortValues.hp -
 		defender.effortValues[defKey];
 	let best: RequirementSuccess | null = null;
 
 	// Brute-force defensive EV pairs in ascending order; first valid minimum wins by deterministic tie-break.
-	for (let hp = 0; hp <= max; hp++) {
+	for (const hp of searchEvs) {
 		// Only the move-relevant defense stat is searched (`defense` for Physical, `specialDefense` for Special).
-		for (let def = 0; def <= max; def++) {
-			if (best && hp + def > (best.investment.hp ?? 0) + (best.investment[defKey] ?? 0))
+		for (const def of searchEvs) {
+			if (
+				best &&
+				hp + def > (best.investment.hp ?? 0) + (best.investment[defKey] ?? 0)
+			)
 				break;
 			const nextEvs = { ...defender.effortValues, hp, [defKey]: def };
 			const totalEvs = baseTotal + hp + def;
@@ -184,17 +200,19 @@ export function getMinAtkRequirement({
 	target: RequirementTarget;
 }): MinRequirementResult {
 	const ruleset = attacker.statRuleset;
-	const max = maxPerStat(ruleset);
 	const totalMax = maxTotal(ruleset);
+	const searchEvs = getSearchEvs(ruleset);
 	const searchKeys = usesDefenseAsAttack(move)
 		? (["defense"] as const)
 		: (["attack", "specialAttack"] as const);
 	let best: RequirementSuccess | null = null;
 	for (const atkKey of searchKeys) {
 		const baseTotal =
-			Object.values(attacker.effortValues).reduce((sum, value) => sum + value, 0) -
-			attacker.effortValues[atkKey];
-		for (let atk = 0; atk <= max; atk++) {
+			Object.values(attacker.effortValues).reduce(
+				(sum, value) => sum + value,
+				0,
+			) - attacker.effortValues[atkKey];
+		for (const atk of searchEvs) {
 			const nextEvs = { ...attacker.effortValues, [atkKey]: atk };
 			const totalEvs = baseTotal + atk;
 			if (totalEvs > totalMax) continue;
@@ -227,10 +245,11 @@ export function getMinAtkRequirement({
 			};
 			if (
 				!best ||
-				atk < (best.investment.attack ??
-					best.investment.specialAttack ??
-					best.investment.defense ??
-					999)
+				atk <
+					(best.investment.attack ??
+						best.investment.specialAttack ??
+						best.investment.defense ??
+						999)
 			) {
 				best = candidate;
 			}
