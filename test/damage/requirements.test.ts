@@ -259,6 +259,96 @@ test("API contract and no mutation", () => {
 		expect(fail.reason.length).toBeGreaterThan(0);
 		expect("investment" in fail).toBe(false);
 	}
+
+	const defSuccess = getMinDefRequirement({
+		attacker,
+		defender,
+		move: createMove({ type: "Normal", base: 220, category: "Physical" }),
+		target: { type: "chance", value: 1 },
+	});
+	expect(defSuccess.satisfied).toBe(true);
+	if (defSuccess.satisfied) {
+		expect(defSuccess.investment).toBeDefined();
+		expect(defSuccess.finalStats).toBeDefined();
+		expect(defSuccess.damage).toBeDefined();
+		expect(defSuccess.statRuleset).toBe("mainSeries");
+	}
+	expect(attacker.effortValues).toEqual(atkBefore);
+	expect(defender.effortValues).toEqual(defBefore);
+	const defFail = getMinDefRequirement({
+		attacker,
+		defender,
+		move: createMove({ type: "Normal", base: 400, category: "Physical" }),
+		target: { type: "guaranteed" },
+	});
+	expect(defFail.satisfied).toBe(false);
+	if (!defFail.satisfied) {
+		expect(defFail.reason.length).toBeGreaterThan(0);
+		expect("investment" in defFail).toBe(false);
+	}
+});
+
+test("nature changes required investment in expected direction", () => {
+	const defender = genTestMon({
+		baseStat: { hp: 100, defense: 90, specialDefense: 90 },
+		statRuleset: "mainSeries",
+	});
+	const move = createMove({ type: "Normal", base: 220, category: "Physical" });
+	const neutral = assertAtkRequirement({
+		attacker: genTestMon({
+			baseStat: { attack: 100 },
+			statRuleset: "mainSeries",
+			nature: {},
+		}),
+		defender,
+		move,
+		target: { type: "chance", value: 50 },
+	});
+	const plusAtk = assertAtkRequirement({
+		attacker: genTestMon({
+			baseStat: { attack: 100 },
+			statRuleset: "mainSeries",
+			nature: { plus: "attack", minus: "specialAttack" },
+		}),
+		defender,
+		move,
+		target: { type: "chance", value: 50 },
+	});
+	expect(plusAtk?.ev ?? 999).toBeLessThan(neutral?.ev ?? 999);
+	expect(plusAtk?.dmg.rolls[0]?.number ?? 0).toBeGreaterThanOrEqual(
+		neutral?.dmg.rolls[0]?.number ?? 0,
+	);
+	expect(plusAtk?.ev ?? 0).toBeLessThanOrEqual(neutral?.ev ?? 0);
+	expect(plusAtk?.dmg.koChance ?? 0).toBeGreaterThanOrEqual(
+		neutral?.dmg.koChance ?? 0,
+	);
+
+	const attacker = genTestMon({
+		baseStat: { attack: 130 },
+		effortValues: { attack: 252 },
+		statRuleset: "mainSeries",
+	});
+	const defNeutral = assertDefRequirement({
+		attacker,
+		defender: genTestMon({ ...defender, nature: {} }),
+		move,
+		target: { type: "chance", value: 50 },
+	});
+	const defPlus = assertDefRequirement({
+		attacker,
+		defender: genTestMon({
+			...defender,
+			nature: { plus: "defense", minus: "specialAttack" },
+		}),
+		move,
+		target: { type: "chance", value: 50 },
+	});
+	expect((defPlus?.hp ?? 999) + (defPlus?.dv ?? 999)).toBeLessThan(
+		(defNeutral?.hp ?? 999) + (defNeutral?.dv ?? 999),
+	);
+	expect(defPlus?.dmg.rolls[0]?.number ?? 999).toBeLessThanOrEqual(
+		defNeutral?.dmg.rolls[0]?.number ?? 999,
+	);
 });
 
 test("weather and field modifiers are reflected by reverse API", () => {
@@ -350,7 +440,7 @@ test("Body Press/Foul Play/Psyshock and dynamic category behavior", () => {
 		defender: fpDefender,
 		move: foulPlayMove,
 	}).getDamage();
-	expect(fp252.rolls[0]?.number).toBe(fp0.rolls[0]?.number);
+	expect(fp252.rolls[0]?.number ?? 0).toBe(fp0.rolls[0]?.number ?? 0);
 	const fpLowerDefAtk = new Battle({
 		attacker: fpAttacker,
 		defender: genTestMon({
@@ -362,13 +452,25 @@ test("Body Press/Foul Play/Psyshock and dynamic category behavior", () => {
 	expect(fpLowerDefAtk.rolls[0]?.number ?? 0).toBeGreaterThan(
 		fp0.rolls[0]?.number ?? 0,
 	);
-	const fpReq = assertAtkRequirement({
-		attacker: fpAttacker,
-		defender: fpDefender,
-		move: foulPlayMove,
-		target: { type: "chance", value: 0 },
+	const fpStrongDefender = genTestMon({
+		...fpDefender,
+		effortValues: { ...fpDefender.effortValues, attack: 252 },
 	});
-	expect(fpReq?.ev ?? 999).toBe(0);
+	const fpStrongDamage = new Battle({
+		attacker: fpAttacker,
+		defender: fpStrongDefender,
+		move: foulPlayMove,
+	}).getDamage();
+	const fpReq = getMinAtkRequirement({
+		attacker: fpAttacker,
+		defender: fpStrongDefender,
+		move: foulPlayMove,
+		target: {
+			type: "chance",
+			value: Math.max(1, Math.floor(fpStrongDamage.koChance)),
+		},
+	});
+	expect(fpReq.satisfied).toBe(false);
 
 	const psyRes = assertDefRequirement({
 		attacker: genTestMon({
@@ -465,3 +567,70 @@ test("ruleset EV caps and failure coverage", () => {
 	expect(zeroReq.satisfied).toBe(true);
 	if (zeroReq.satisfied) expect(Object.values(zeroReq.investment)[0]).toBe(0);
 });
+
+test("mainSeries EV-cap boundaries include unrelated EVs", () => {
+	const attacker = genTestMon({
+		statRuleset: "mainSeries",
+		baseStat: { attack: 130 },
+		effortValues: { speed: 252, specialAttack: 252 },
+	});
+	const defender = genTestMon({
+		statRuleset: "mainSeries",
+		baseStat: { hp: 90, defense: 90, specialDefense: 90 },
+		effortValues: { speed: 252, attack: 252 },
+	});
+	const atkRes = getMinAtkRequirement({
+		attacker,
+		defender,
+		move: createMove({ type: "Normal", base: 120, category: "Physical" }),
+		target: { type: "chance", value: 0 },
+	});
+	expect(atkRes.satisfied).toBe(true);
+	if (atkRes.satisfied) {
+		const total = Object.values({
+			...attacker.effortValues,
+			...atkRes.investment,
+		}).reduce((a, b) => a + b, 0);
+		expect(total).toBeLessThanOrEqual(510);
+		const invested =
+			atkRes.investment.attack ??
+			atkRes.investment.specialAttack ??
+			atkRes.investment.defense ??
+			0;
+		expect(invested).toBeLessThanOrEqual(252);
+	}
+	const defRes = getMinDefRequirement({
+		attacker,
+		defender,
+		move: createMove({ type: "Normal", base: 120, category: "Physical" }),
+		target: { type: "chance", value: 0 },
+	});
+	expect(defRes.satisfied).toBe(true);
+	if (defRes.satisfied) {
+		const total = Object.values({
+			...defender.effortValues,
+			...defRes.investment,
+		}).reduce((a, b) => a + b, 0);
+		expect(total).toBeLessThanOrEqual(510);
+		expect(defRes.investment.hp ?? 0).toBeLessThanOrEqual(252);
+		const axis = "defense" in defRes.investment ? "defense" : "specialDefense";
+		expect(defRes.investment[axis] ?? 0).toBeLessThanOrEqual(252);
+	}
+});
+
+test("boundary target semantics stay stable", () => {
+	expect(
+		meetsTarget("atk", 100, { type: "chance", value: 100 }, 100, [
+			{ number: 50 },
+		]),
+	).toBe(true);
+	expect(
+		meetsTarget("atk", 100, { type: "guaranteed-2hit" }, 50, [{ number: 50 }]),
+	).toBe(true);
+	expect(
+		meetsTarget("def", 100, { type: "guaranteed-2hit" }, 50, [{ number: 50 }]),
+	).toBe(false);
+});
+
+// TODO: add fixture-level deterministic tie-break assertion for equal-total (hp + defense-axis)
+// candidates; expected behavior is lower HP wins when totals are equal.
