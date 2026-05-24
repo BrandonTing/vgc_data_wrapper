@@ -34,6 +34,10 @@ type Nature = {
 type SpecialForms = "None" | "Mega" | "Dynamax" | "GigaDynamax" | "Tera";
 
 type PokemonType = [Type] | [Type, Type];
+type JsonBodyResponse = {
+	json: () => Promise<unknown>;
+};
+
 export type StatRuleset = "champions" | "mainSeries";
 type PokemonInfo = {
 	id?: number; // ID from national dex
@@ -140,10 +144,10 @@ export class Pokemon implements IPokemon {
 				| "statStage"
 			>
 		> & {
-					stats?: Partial<Stat>;
-					baseStat?: Partial<Stat>;
-					individualValues?: Partial<Stat>;
-					effortValues?: Partial<Stat>;
+				stats?: Partial<Stat>;
+				baseStat?: Partial<Stat>;
+				individualValues?: Partial<Stat>;
+				effortValues?: Partial<Stat>;
 				statRuleset?: StatRuleset;
 				statStage?: Partial<StatStages>;
 			},
@@ -242,7 +246,9 @@ export class Pokemon implements IPokemon {
 	) {
 		this.id = id;
 		try {
-			const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+			const response = (await fetch(
+				`https://pokeapi.co/api/v2/pokemon/${id}`,
+			)) as unknown as JsonBodyResponse;
 			const data = (await response.json()) as {
 				stats: Array<{ base_stat: number; stat: { name: string } }>;
 				types:
@@ -315,7 +321,8 @@ export class Pokemon implements IPokemon {
 		if (this.id === 292) return 1;
 		return (
 			Math.trunc(
-				((base * 2 + iv + this.getContributionTerm(investmentValue)) * this.level) /
+				((base * 2 + iv + this.getContributionTerm(investmentValue)) *
+					this.level) /
 					100,
 			) +
 			10 +
@@ -332,7 +339,8 @@ export class Pokemon implements IPokemon {
 		return modifyStatByStageChange(
 			Math.trunc(
 				(Math.trunc(
-					((base * 2 + iv + this.getContributionTerm(investmentValue)) * this.level) /
+					((base * 2 + iv + this.getContributionTerm(investmentValue)) *
+						this.level) /
 						100,
 				) +
 					5) *

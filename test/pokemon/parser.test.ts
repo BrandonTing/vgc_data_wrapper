@@ -12,10 +12,7 @@ beforeEach(() => {
 				id: isLandorus ? 645 : 727,
 				weight: isLandorus ? 680 : 830,
 				types: isLandorus
-					? [
-							{ type: { name: "ground" } },
-							{ type: { name: "flying" } },
-						]
+					? [{ type: { name: "ground" } }, { type: { name: "flying" } }]
 					: [{ type: { name: "fire" } }, { type: { name: "dark" } }],
 				stats: isLandorus
 					? [
@@ -36,7 +33,7 @@ beforeEach(() => {
 						],
 				sprites: { front_default: "https://img.test/mon.png" },
 			}),
-		} as Response;
+		} as unknown as Response;
 	}) as typeof fetch;
 });
 

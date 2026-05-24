@@ -27,7 +27,8 @@ test("Pixilate with Fairy Aura", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	expect(actual).toEqual([
-		132, 132, 134, 134, 138, 138, 140, 140, 144, 144, 146, 146, 150, 150, 152, 156,
+		132, 132, 134, 134, 138, 138, 140, 140, 144, 144, 146, 146, 150, 150, 152,
+		156,
 	]);
 	expect(damage.factors.field?.aura).toEqual(true);
 	expect(damage.factors.attacker?.ability).toEqual(true);
@@ -56,7 +57,8 @@ test("Fairy move under Fairy Aura", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	expect(actual).toEqual([
-		158, 162, 162, 164, 168, 168, 170, 170, 174, 176, 176, 180, 182, 182, 186, 188,
+		158, 162, 162, 164, 168, 168, 170, 170, 174, 176, 176, 180, 182, 182, 186,
+		188,
 	]);
 	expect(damage.factors.field?.aura).toEqual(true);
 });

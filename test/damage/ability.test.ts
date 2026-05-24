@@ -42,7 +42,8 @@ test("Supreme Overlord", () => {
 	kingGambit.ability = "Supreme Overlord 3";
 	const down3Actual = getDamangeNumberFromResult(battle.getDamage());
 	const down3Expected = [
-		102, 102, 103, 105, 106, 108, 108, 109, 111, 112, 114, 114, 115, 117, 118, 120,
+		102, 102, 103, 105, 106, 108, 108, 109, 111, 112, 114, 114, 115, 117, 118,
+		120,
 	];
 	expect(down3Actual).toEqual(down3Expected);
 });
@@ -79,7 +80,8 @@ test("Liquid Voice", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		102, 102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116, 120,
+		102, 102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116,
+		120,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -105,7 +107,8 @@ test("Pixilate", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		102, 102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116, 120,
+		102, 102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116,
+		120,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -140,7 +143,8 @@ test("Refrigerate", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		114, 114, 116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132, 134,
+		114, 114, 116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132,
+		134,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -165,7 +169,8 @@ test("Aerilate", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		176, 180, 180, 182, 186, 188, 188, 192, 194, 194, 198, 200, 200, 204, 206, 210,
+		176, 180, 180, 182, 186, 188, 188, 192, 194, 194, 198, 200, 200, 204, 206,
+		210,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -195,7 +200,8 @@ test("Galvanize", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132, 134, 134, 138,
+		116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132, 134, 134,
+		138,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -213,7 +219,9 @@ test("Dragonize", () => {
 	const battle = new Battle({ attacker, defender, move });
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
-	const expected = [74, 74, 76, 76, 78, 78, 80, 80, 80, 82, 82, 84, 84, 86, 86, 88];
+	const expected = [
+		74, 74, 76, 76, 78, 78, 80, 80, 80, 82, 82, 84, 84, 86, 86, 88,
+	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
 });
@@ -237,7 +245,8 @@ test("Adaptability", () => {
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
 	const expected = [
-		106, 108, 108, 110, 112, 112, 114, 114, 116, 118, 118, 120, 122, 122, 124, 126,
+		106, 108, 108, 110, 112, 112, 114, 114, 116, 118, 118, 120, 122, 122, 124,
+		126,
 	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
@@ -456,7 +465,9 @@ test("Scrappy: Normal move against Ghost-type ignores immunity", () => {
 	// Without Scrappy, Normal vs Ghost = 0x (always misses)
 	// With Scrappy, Normal vs Ghost = 1x (neutral)
 	const actual = getDamangeNumberFromResult(damage);
-	const expected = [78, 79, 79, 81, 82, 82, 84, 85, 85, 87, 87, 88, 90, 90, 91, 93];
+	const expected = [
+		78, 79, 79, 81, 82, 82, 84, 85, 85, 87, 87, 88, 90, 90, 91, 93,
+	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
 
@@ -496,7 +507,9 @@ test("Scrappy: Fighting move against Ghost-type ignores immunity", () => {
 	});
 	const damage = battle.getDamage();
 	const actual = getDamangeNumberFromResult(damage);
-	const expected = [16, 16, 16, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 19, 19, 19];
+	const expected = [
+		16, 16, 16, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 19, 19, 19,
+	];
 	expect(actual).toEqual(expected);
 	expect(damage.factors.attacker.ability).toEqual(true);
 	const aegislash = genTestMon({
