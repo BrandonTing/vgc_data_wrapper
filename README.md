@@ -202,6 +202,135 @@ export type DamageResult = {
 |  getEffectivenessOnPokemon | (moveType: Type, pokemonTypes: Array<Type>) | number | Calculate how certain move is effectivve on target pokemon. |
 
 
+#### Reverse requirement APIs
+The package also provides two helper APIs for reverse damage planning:
+
+- `getMinDefRequirement`: find the minimum defensive investment needed to survive a target threshold.
+- `getMinAtkRequirement`: find the minimum offensive investment needed to KO a target threshold.
+
+Both APIs:
+- reuse the same forward damage pipeline (`Battle#getDamage`) for validation,
+
+Input shape note
+- The requirement APIs take the same core battle inputs used by forward damage calculation (`attacker`, `defender`, `move`) plus optional `field` and a `target`.
+- In other words, it is effectively a reverse-search wrapper around a subset of `Battle` inputs.
+
+```ts
+type RequirementInput = {
+  attacker: Pokemon;
+  defender: Pokemon;
+  move: Move;
+  field?: BattleFieldStatus; // optional, same semantics as Battle field
+  target:
+    | { type: "guaranteed" }
+    | { type: "chance"; value: number }
+    | { type: "guaranteed-2hit" };
+};
+```
+
+- are synchronous,
+- support both `mainSeries` and `champions` stat rulesets,
+- support threshold targets:
+  - `{ type: "guaranteed" }`
+  - `{ type: "chance", value: number }`
+  - `{ type: "guaranteed-2hit" }`
+
+Example: defensive requirement (mainSeries)
+```
+import { Pokemon, createMove, getMinDefRequirement } from "vgc_data_wrapper";
+
+const attacker = new Pokemon({
+  statRuleset: "mainSeries",
+  level: 50,
+  types: ["Fire"],
+  baseStat: {
+    hp: 90,
+    attack: 120,
+    defense: 90,
+    specialAttack: 90,
+    specialDefense: 90,
+    speed: 90,
+  },
+  effortValues: { hp: 0, attack: 252, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
+  nature: { plus: "attack", minus: "specialAttack" },
+});
+
+const defender = new Pokemon({
+  statRuleset: "mainSeries",
+  level: 50,
+  types: ["Grass"],
+  baseStat: {
+    hp: 95,
+    attack: 80,
+    defense: 95,
+    specialAttack: 80,
+    specialDefense: 95,
+    speed: 60,
+  },
+});
+
+const move = createMove({ type: "Fire", base: 100, category: "Physical" });
+
+const result = getMinDefRequirement({
+  attacker,
+  defender,
+  move,
+  field: { weather: "Sun" },
+  target: { type: "chance", value: 75 },
+});
+
+// result.satisfied === true/false
+// if true, result.investment includes minimum hp/defense values
+```
+
+Example: offensive requirement (champions)
+```
+import { Pokemon, createMove, getMinAtkRequirement } from "vgc_data_wrapper";
+
+const attacker = new Pokemon({
+  statRuleset: "champions",
+  level: 50,
+  types: ["Electric"],
+  baseStat: {
+    hp: 80,
+    attack: 70,
+    defense: 70,
+    specialAttack: 125,
+    specialDefense: 80,
+    speed: 110,
+  },
+  nature: { plus: "specialAttack", minus: "attack" },
+});
+
+const defender = new Pokemon({
+  statRuleset: "champions",
+  level: 50,
+  types: ["Water"],
+  baseStat: {
+    hp: 100,
+    attack: 70,
+    defense: 90,
+    specialAttack: 70,
+    specialDefense: 95,
+    speed: 60,
+  },
+  nature: { plus: "specialDefense", minus: "attack" },
+});
+
+const move = createMove({ type: "Electric", base: 90, category: "Special" });
+
+const result = getMinAtkRequirement({
+  attacker,
+  defender,
+  move,
+  target: { type: "guaranteed-2hit" },
+});
+
+// result.satisfied === true/false
+// if true, result.investment includes minimum specialAttack value
+```
+
+
 ## Roadmap
 - usage data
   - [Smogon](https://www.smogon.com/stats/) has lots of usage information from Pokemon Showdown ready to be utilized but in txt or chaos json form.
