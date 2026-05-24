@@ -620,5 +620,53 @@ test("boundary target semantics stay stable", () => {
 	).toBe(false);
 });
 
+test("getMinAtkRequirement does not optimize defender Attack for Foul Play", () => {
+	const foulPlayMove = createMove({
+		id: 492,
+		type: "Dark",
+		base: 220,
+		category: "Physical",
+	});
+	const attacker = genTestMon({
+		baseStat: { attack: 30 },
+		effortValues: { attack: 0 },
+		statRuleset: "mainSeries",
+	});
+	const defender = genTestMon({
+		baseStat: { hp: 100, attack: 80, defense: 80, specialDefense: 80 },
+		effortValues: { hp: 0, attack: 0, defense: 0, specialDefense: 0, speed: 0 },
+		statRuleset: "mainSeries",
+	});
+	const defenderAtk252 = genTestMon({
+		...defender,
+		effortValues: { ...defender.effortValues, attack: 252 },
+	});
+	const lowAtkDamage = new Battle({
+		attacker,
+		defender,
+		move: foulPlayMove,
+	}).getDamage();
+	const highAtkDamage = new Battle({
+		attacker,
+		defender: defenderAtk252,
+		move: foulPlayMove,
+	}).getDamage();
+	expect(highAtkDamage.rolls[0]?.number ?? 0).toBeGreaterThan(
+		lowAtkDamage.rolls[0]?.number ?? 0,
+	);
+	const target = {
+		type: "chance",
+		value: 1,
+	} as const;
+	const req = getMinAtkRequirement({
+		attacker,
+		defender,
+		move: foulPlayMove,
+		target,
+	});
+	expect(req.satisfied).toBe(false);
+	if (!req.satisfied) expect(req.reason.length).toBeGreaterThan(0);
+});
+
 // TODO: add fixture-level deterministic tie-break assertion for equal-total (hp + defense-axis)
 // candidates; expected behavior is lower HP wins when totals are equal.
