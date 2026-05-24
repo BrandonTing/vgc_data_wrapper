@@ -473,6 +473,36 @@ test("strict: defensive result is minimal and satisfies guaranteed target semant
 	}
 });
 
+test("getMinDefRequirement uses normalized category for dynamic-category moves", () => {
+	const move = createMove({
+		id: 851,
+		type: "Normal",
+		base: 80,
+		category: "Special",
+	});
+	const attacker = genTestMon({
+		baseStat: { attack: 150, specialAttack: 80 },
+		teraType: "Stellar",
+		specialForm: "Tera",
+		statRuleset: "mainSeries",
+	});
+	const defender = genTestMon({
+		baseStat: { hp: 100, defense: 120, specialDefense: 70 },
+		statRuleset: "mainSeries",
+	});
+	const result = getMinDefRequirement({
+		attacker,
+		defender,
+		move,
+		target: { type: "chance", value: 80 },
+	});
+	expect(result.satisfied).toBe(true);
+	if (result.satisfied) {
+		expect(Object.keys(result.investment).sort()).toEqual(["defense", "hp"]);
+	}
+});
+
+
 test("strict: offensive result is minimal and satisfies chance target semantics", () => {
 	const attacker = genTestMon({
 		baseStat: { specialAttack: 200 },

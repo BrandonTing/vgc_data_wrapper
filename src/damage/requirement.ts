@@ -16,6 +16,7 @@
  *   and keeping the first valid minimum candidate.
  */
 import { Pokemon } from "../pokemon";
+import { isTerapagosStellar } from "../pokemon/utils";
 import type { StatRuleset } from "../pokemon/base";
 import { Battle } from "./battle";
 import type { Move } from "./config";
@@ -60,6 +61,19 @@ const maxTotal = (ruleset: StatRuleset) =>
 const usesPhysicalDefense = (move: Move) =>
 	move.category === "Physical" || move.id === 473 || move.id === 540; // Psyshock & Psystrike
 const usesDefenseAsAttack = (move: Move) => move.id === 776; // Body Press
+const resolveNormalizedCategory = (attacker: Pokemon, move: Move) => {
+	if (move.id === 906 && isTerapagosStellar(attacker)) {
+		return attacker.getStat("attack") > attacker.getStat("specialAttack")
+			? "Physical"
+			: "Special";
+	}
+	if (move.id === 851 && attacker.isTera()) {
+		return attacker.getStat("attack") > attacker.getStat("specialAttack")
+			? "Physical"
+			: "Special";
+	}
+	return move.category;
+};
 
 // Interpret forward `koChance` as either KO success (atk mode) or survival success (def mode).
 function meetsTarget(
@@ -97,7 +111,10 @@ export function getMinDefRequirement({
 	target: RequirementTarget;
 }): MinRequirementResult {
 	const ruleset = defender.statRuleset;
-	const defKey = usesPhysicalDefense(move) ? "defense" : "specialDefense";
+	const normalizedMove = { ...move, category: resolveNormalizedCategory(attacker, move) };
+	const defKey = usesPhysicalDefense(normalizedMove)
+		? "defense"
+		: "specialDefense";
 	const max = maxPerStat(ruleset);
 	const totalMax = maxTotal(ruleset);
 	const baseTotal =
@@ -167,46 +184,64 @@ export function getMinAtkRequirement({
 	target: RequirementTarget;
 }): MinRequirementResult {
 	const ruleset = attacker.statRuleset;
-	const atkKey = usesDefenseAsAttack(move)
-		? "defense"
-		: move.category === "Physical"
-			? "attack"
-			: "specialAttack";
 	const max = maxPerStat(ruleset);
 	const totalMax = maxTotal(ruleset);
-	const baseTotal =
-		Object.values(attacker.effortValues).reduce((sum, value) => sum + value, 0) -
-		attacker.effortValues[atkKey];
-	// Brute-force the move-relevant offensive EV stat from low to high for deterministic minimum search.
-	for (let atk = 0; atk <= max; atk++) {
-		const nextEvs = { ...attacker.effortValues, [atkKey]: atk };
-		const totalEvs = Object.values(nextEvs).reduce(
-			(sum, value) => sum + value,
-			0,
-		);
-		if (totalEvs > totalMax) continue;
-		const { stats: _ignoredStats, ...attackerBase } = attacker;
-		const mon = new Pokemon({ ...attackerBase, effortValues: nextEvs });
-		const damage = new Battle({
-			attacker: mon,
-			defender,
-			move,
-			field,
-		}).getDamage();
-		if (!meetsTarget(damage, target, "atk", defender.getStat("hp"))) continue;
-		return {
-			satisfied: true,
-			target,
-			investment: { [atkKey]: atk },
-			finalStats: { [atkKey]: mon.getStat(atkKey) },
-			damage,
-			statRuleset: ruleset,
-		};
+	const searchKeys = usesDefenseAsAttack(move)
+		? (["defense"] as const)
+		: (["attack", "specialAttack"] as const);
+	let best: RequirementSuccess | null = null;
+	for (const atkKey of searchKeys) {
+		const baseTotal =
+			Object.values(attacker.effortValues).reduce((sum, value) => sum + value, 0) -
+			attacker.effortValues[atkKey];
+		for (let atk = 0; atk <= max; atk++) {
+			const nextEvs = { ...attacker.effortValues, [atkKey]: atk };
+			const totalEvs = baseTotal + atk;
+			if (totalEvs > totalMax) continue;
+			const { stats: _ignoredStats, ...attackerBase } = attacker;
+			const mon = new Pokemon({ ...attackerBase, effortValues: nextEvs });
+			const normalizedMove = {
+				...move,
+				category: resolveNormalizedCategory(mon, move),
+			};
+			const effectiveAtkKey = usesDefenseAsAttack(normalizedMove)
+				? "defense"
+				: normalizedMove.category === "Physical"
+					? "attack"
+					: "specialAttack";
+			if (effectiveAtkKey !== atkKey) continue;
+			const damage = new Battle({
+				attacker: mon,
+				defender,
+				move,
+				field,
+			}).getDamage();
+			if (!meetsTarget(damage, target, "atk", defender.getStat("hp"))) continue;
+			const candidate: RequirementSuccess = {
+				satisfied: true,
+				target,
+				investment: { [atkKey]: atk },
+				finalStats: { [atkKey]: mon.getStat(atkKey) },
+				damage,
+				statRuleset: ruleset,
+			};
+			if (
+				!best ||
+				atk < (best.investment.attack ??
+					best.investment.specialAttack ??
+					best.investment.defense ??
+					999)
+			) {
+				best = candidate;
+			}
+		}
 	}
-	return {
-		satisfied: false,
-		target,
-		reason: "No valid investment satisfies the target",
-		statRuleset: ruleset,
-	};
+	return (
+		best ?? {
+			satisfied: false,
+			target,
+			reason: "No valid investment satisfies the target",
+			statRuleset: ruleset,
+		}
+	);
 }
