@@ -17,6 +17,7 @@
  */
 import { Pokemon } from "../pokemon";
 import type { StatRuleset } from "../pokemon/base";
+import { getMaxTotalEvs, getSearchEvs } from "../pokemon/effortValue";
 import { isTerapagosStellar } from "../pokemon/utils";
 import { Battle } from "./battle";
 import type { Move } from "./config";
@@ -54,17 +55,6 @@ type RequirementSuccess = {
 
 export type MinRequirementResult = RequirementSuccess | RequirementFailure;
 
-const maxPerStat = (ruleset: StatRuleset) =>
-	ruleset === "mainSeries" ? 252 : 32;
-const maxTotal = (ruleset: StatRuleset) =>
-	ruleset === "mainSeries" ? 510 : 66;
-const getSearchEvs = (ruleset: StatRuleset) => {
-	const max = maxPerStat(ruleset);
-	const step = ruleset === "mainSeries" ? 4 : 1;
-	const values: number[] = [];
-	for (let ev = 0; ev <= max; ev += step) values.push(ev);
-	return values;
-};
 const usesPhysicalDefense = (move: Move) =>
 	move.category === "Physical" || move.id === 473 || move.id === 540; // Psyshock & Psystrike
 const usesDefenseAsAttack = (move: Move) => move.id === 776; // Body Press
@@ -125,7 +115,7 @@ export function getMinDefRequirement({
 	const defKey = usesPhysicalDefense(normalizedMove)
 		? "defense"
 		: "specialDefense";
-	const totalMax = maxTotal(ruleset);
+	const totalMax = getMaxTotalEvs(ruleset);
 	const searchEvs = getSearchEvs(ruleset);
 	const baseTotal =
 		Object.values(defender.effortValues).reduce(
@@ -200,7 +190,7 @@ export function getMinAtkRequirement({
 	target: RequirementTarget;
 }): MinRequirementResult {
 	const ruleset = attacker.statRuleset;
-	const totalMax = maxTotal(ruleset);
+	const totalMax = getMaxTotalEvs(ruleset);
 	const searchEvs = getSearchEvs(ruleset);
 	const searchKeys = usesDefenseAsAttack(move)
 		? (["defense"] as const)
