@@ -606,6 +606,86 @@ test("mainSeries EV-cap boundaries include unrelated EVs", () => {
 	}
 });
 
+test("champions real-world tuned cases from manual verification", () => {
+	const championsAtk = assertAtkRequirement({
+		attacker: genTestMon({
+			statRuleset: "champions",
+			level: 50,
+			types: ["Electric"],
+			baseStat: {
+				hp: 80,
+				attack: 70,
+				defense: 70,
+				specialAttack: 125,
+				specialDefense: 80,
+				speed: 110,
+			},
+			nature: { plus: "specialAttack", minus: "attack" },
+		}),
+		defender: genTestMon({
+			statRuleset: "champions",
+			level: 50,
+			types: ["Water"],
+			baseStat: {
+				hp: 100,
+				attack: 70,
+				defense: 90,
+				specialAttack: 70,
+				specialDefense: 95,
+				speed: 60,
+			},
+			nature: { plus: "specialDefense", minus: "attack" },
+		}),
+		move: createMove({
+			type: "Electric",
+			base: 55,
+			category: "Special",
+		}),
+		target: { type: "guaranteed-2hit" },
+	});
+	expect(championsAtk?.axis).toBe("specialAttack");
+	expect(championsAtk?.ev).toBe(17);
+
+	const championsDef = assertDefRequirement({
+		attacker: genTestMon({
+			statRuleset: "champions",
+			level: 50,
+			types: ["Fire"],
+			baseStat: {
+				hp: 84,
+				attack: 78,
+				defense: 78,
+				specialAttack: 109,
+				specialDefense: 85,
+				speed: 100,
+			},
+		}),
+		defender: genTestMon({
+			statRuleset: "champions",
+			level: 50,
+			types: ["Steel", "Fairy"],
+			baseStat: {
+				hp: 95,
+				attack: 80,
+				defense: 115,
+				specialAttack: 95,
+				specialDefense: 110,
+				speed: 50,
+			},
+		}),
+		move: createMove({
+			type: "Fire",
+			base: 90,
+			category: "Special",
+		}),
+		field: { weather: "Sun" },
+		target: { type: "chance", value: 75 },
+	});
+	expect(championsDef?.defAxis).toBe("specialDefense");
+	expect(championsDef?.hp).toBe(1);
+	expect(championsDef?.dv).toBe(1);
+});
+
 test("boundary target semantics stay stable", () => {
 	expect(
 		meetsTarget("atk", 100, { type: "chance", value: 100 }, 100, [
