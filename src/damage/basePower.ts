@@ -203,9 +203,7 @@ function speedModifier(baseSpeed: number, item: string, stage: number): number {
 				? { numerator: 1, denominator: 2 }
 				: { numerator: 1, denominator: 1 };
 	return Math.trunc(
-		(baseSpeed *
-			stageNumerator *
-			itemModifier.numerator) /
+		(baseSpeed * stageNumerator * itemModifier.numerator) /
 			(stageDenominator * itemModifier.denominator),
 	);
 }
