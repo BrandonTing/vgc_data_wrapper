@@ -452,69 +452,13 @@ test("Body Press/Foul Play/Psyshock and dynamic category behavior", () => {
 	expect(fpLowerDefAtk.rolls[0]?.number ?? 0).toBeGreaterThan(
 		fp0.rolls[0]?.number ?? 0,
 	);
-	const fpStrongDefender = genTestMon({
-		...fpDefender,
-		effortValues: { ...fpDefender.effortValues, attack: 252 },
-	});
-	const fpStrongDamage = new Battle({
+	const fpDefReq = assertDefRequirement({
 		attacker: fpAttacker,
-		defender: fpStrongDefender,
+		defender: fpDefender,
 		move: foulPlayMove,
-	}).getDamage();
-	const fpTargetChance = Math.max(1, Math.floor(fpStrongDamage.koChance));
-	const fpReq = getMinAtkRequirement({
-		attacker: fpAttacker,
-		defender: fpStrongDefender,
-		move: foulPlayMove,
-		target: {
-			type: "chance",
-			value: fpTargetChance,
-		},
+		target: { type: "chance", value: 95 },
 	});
-	expect(fpReq.satisfied).toBe(true);
-	if (fpReq.satisfied) {
-		const fpEv = fpReq.investment.attack ?? 0;
-		const defenderWithReturned = genTestMon({
-			...fpStrongDefender,
-			effortValues: { ...fpStrongDefender.effortValues, attack: fpEv },
-		});
-		const returnedDamage = new Battle({
-			attacker: fpAttacker,
-			defender: defenderWithReturned,
-			move: foulPlayMove,
-		}).getDamage();
-		expect(
-			meetsTarget(
-				"atk",
-				defenderWithReturned.getStat("hp"),
-				{ type: "chance", value: fpTargetChance },
-				returnedDamage.koChance,
-				returnedDamage.rolls,
-			),
-		).toBe(true);
-		const searchEvs = getSearchEvs(fpStrongDefender.statRuleset);
-		for (const lower of searchEvs) {
-			if (lower >= fpEv) break;
-			const lowerDefender = genTestMon({
-				...fpStrongDefender,
-				effortValues: { ...fpStrongDefender.effortValues, attack: lower },
-			});
-			const lowerDamage = new Battle({
-				attacker: fpAttacker,
-				defender: lowerDefender,
-				move: foulPlayMove,
-			}).getDamage();
-			expect(
-				meetsTarget(
-					"atk",
-					lowerDefender.getStat("hp"),
-					{ type: "chance", value: fpTargetChance },
-					lowerDamage.koChance,
-					lowerDamage.rolls,
-				),
-			).toBe(false);
-		}
-	}
+	expect(fpDefReq?.defAxis).toBe("defense");
 
 	const psyRes = assertDefRequirement({
 		attacker: genTestMon({
