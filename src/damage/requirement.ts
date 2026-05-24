@@ -57,6 +57,9 @@ const maxPerStat = (ruleset: StatRuleset) =>
 	ruleset === "mainSeries" ? 252 : 32;
 const maxTotal = (ruleset: StatRuleset) =>
 	ruleset === "mainSeries" ? 510 : 66;
+const usesPhysicalDefense = (move: Move) =>
+	move.category === "Physical" || move.id === 473 || move.id === 540; // Psyshock & Psystrike
+const usesDefenseAsAttack = (move: Move) => move.id === 776; // Body Press
 
 // Interpret forward `koChance` as either KO success (atk mode) or survival success (def mode).
 function meetsTarget(
@@ -93,7 +96,7 @@ export function getMinDefRequirement({
 	target: RequirementTarget;
 }): MinRequirementResult {
 	const ruleset = defender.statRuleset;
-	const defKey = move.category === "Physical" ? "defense" : "specialDefense";
+	const defKey = usesPhysicalDefense(move) ? "defense" : "specialDefense";
 	const max = maxPerStat(ruleset);
 	const totalMax = maxTotal(ruleset);
 	let best: RequirementSuccess | null = null;
@@ -160,7 +163,11 @@ export function getMinAtkRequirement({
 	target: RequirementTarget;
 }): MinRequirementResult {
 	const ruleset = attacker.statRuleset;
-	const atkKey = move.category === "Physical" ? "attack" : "specialAttack";
+	const atkKey = usesDefenseAsAttack(move)
+		? "defense"
+		: move.category === "Physical"
+			? "attack"
+			: "specialAttack";
 	const max = maxPerStat(ruleset);
 	const totalMax = maxTotal(ruleset);
 	// Brute-force the move-relevant offensive EV stat from low to high for deterministic minimum search.

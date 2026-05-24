@@ -315,6 +315,63 @@ test("supports Battle field input (e.g. Sun) and changes requirement accordingly
 	}
 }, 30000);
 
+test("getMinDefRequirement uses physical defense for Psyshock/Psystrike", () => {
+	const attacker = genTestMon({
+		baseStat: { specialAttack: 130 },
+		effortValues: { specialAttack: 252 },
+		statRuleset: "mainSeries",
+	});
+	const defender = genTestMon({
+		baseStat: { hp: 95, defense: 120, specialDefense: 60 },
+		statRuleset: "mainSeries",
+	});
+	const psyshock = createMove({
+		id: 473,
+		type: "Psychic",
+		base: 80,
+		category: "Special",
+	});
+
+	const result = getMinDefRequirement({
+		attacker,
+		defender,
+		move: psyshock,
+		target: { type: "guaranteed-2hit" },
+	});
+	expect(result.satisfied).toBe(true);
+	if (result.satisfied) {
+		expect(Object.keys(result.investment).sort()).toEqual(["defense", "hp"]);
+	}
+});
+
+test("getMinAtkRequirement searches defense EVs for Body Press", () => {
+	const attacker = genTestMon({
+		baseStat: { attack: 70, defense: 140 },
+		statRuleset: "mainSeries",
+	});
+	const defender = genTestMon({
+		baseStat: { hp: 100, defense: 110, specialDefense: 100 },
+		statRuleset: "mainSeries",
+	});
+	const bodyPress = createMove({
+		id: 776,
+		type: "Fighting",
+		base: 80,
+		category: "Physical",
+	});
+
+	const result = getMinAtkRequirement({
+		attacker,
+		defender,
+		move: bodyPress,
+		target: { type: "guaranteed-2hit" },
+	});
+	expect(result.satisfied).toBe(true);
+	if (result.satisfied) {
+		expect(Object.keys(result.investment)).toEqual(["defense"]);
+	}
+});
+
 function calcKoChanceWithDefInvestment({
 	attacker,
 	defender,
