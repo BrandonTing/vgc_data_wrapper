@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.4.0
+
+### Minor Changes
+
+- d4b2a18: Add reverse requirement APIs updates and CI/performance fixes from the PR thread.
+
 ## 0.3.22
 
 ### Patch Changes
