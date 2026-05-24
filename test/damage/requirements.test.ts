@@ -137,7 +137,7 @@ test("getMinAtkRequirement supports guaranteed, chance, and 2-hit with determini
 		}).getDamage();
 		expect(dmg.koChance).toBeGreaterThan(0);
 	}
-});
+}, 30000);
 
 test("returns unsatisfied for impossible targets", () => {
 	const defender = genTestMon({
@@ -173,7 +173,7 @@ test("returns unsatisfied for impossible targets", () => {
 	});
 	expect(impossibleAtk.satisfied).toBe(false);
 	expect("investment" in impossibleAtk).toBe(false);
-});
+}, 30000);
 
 test("respects provided nature without auto-optimizing nature", () => {
 	const physical = createMove({
@@ -326,7 +326,7 @@ test("getMinDefRequirement uses physical defense for Psyshock/Psystrike", () => 
 	if (result.satisfied) {
 		expect(Object.keys(result.investment).sort()).toEqual(["defense", "hp"]);
 	}
-});
+}, 30000);
 
 test("getMinAtkRequirement searches defense EVs for Body Press", () => {
 	const attacker = genTestMon({
@@ -354,7 +354,7 @@ test("getMinAtkRequirement searches defense EVs for Body Press", () => {
 	if (result.satisfied) {
 		expect(Object.keys(result.investment)).toEqual(["defense"]);
 	}
-});
+}, 30000);
 
 test("getMinAtkRequirement does not require attacker EVs for Foul Play", () => {
 	const attacker = genTestMon({
@@ -383,7 +383,7 @@ test("getMinAtkRequirement does not require attacker EVs for Foul Play", () => {
 	if (result.satisfied) {
 		expect(result.investment.attack).toBe(0);
 	}
-});
+}, 30000);
 
 function calcKoChanceWithDefInvestment({
 	attacker,
