@@ -234,6 +234,10 @@ type RequirementInput = {
   - `{ type: "guaranteed" }`
   - `{ type: "chance", value: number }`
   - `{ type: "guaranteed-2hit" }`
+- Foul Play note:
+  - defensive reverse requirements (`getMinDefRequirement`) are supported.
+  - offensive reverse requirements (`getMinAtkRequirement`) are intentionally not recommended for Foul Play, because damage scales from the target's Attack stat rather than the user's offensive EV.
+  - for offensive Foul Play planning against common sets, keep the target set fixed and use `Battle#getDamage` directly.
 
 Example: defensive requirement (mainSeries)
 ```

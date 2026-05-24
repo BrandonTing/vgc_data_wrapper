@@ -11,6 +11,9 @@
  * - Reuses the existing forward pipeline (`Battle#getDamage`) for every candidate,
  *   so reverse results always match normal damage calculation behavior.
  * - Supports `guaranteed`, `chance`, and `guaranteed-2hit` targets.
+ * - Foul Play (id: 492) is supported for defensive reverse calculations
+ *   (`getMinDefRequirement`), but intentionally not for offensive reverse search
+ *   (`getMinAtkRequirement`) because its damage scales from the target's Attack.
  * - Respects ruleset limits (`mainSeries` vs `champions`) and provided nature.
  * - Deterministic tie-break by iterating from lower investment to higher investment
  *   and keeping the first valid minimum candidate.
