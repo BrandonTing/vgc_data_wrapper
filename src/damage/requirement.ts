@@ -60,6 +60,7 @@ const maxTotal = (ruleset: StatRuleset) =>
 const usesPhysicalDefense = (move: Move) =>
 	move.category === "Physical" || move.id === 473 || move.id === 540; // Psyshock & Psystrike
 const usesDefenseAsAttack = (move: Move) => move.id === 776; // Body Press
+const usesDefenderAttack = (move: Move) => move.id === 492; // Foul Play
 
 // Interpret forward `koChance` as either KO success (atk mode) or survival success (def mode).
 function meetsTarget(
@@ -180,6 +181,30 @@ export function getMinAtkRequirement({
 			: "specialAttack";
 	const max = maxPerStat(ruleset);
 	const totalMax = maxTotal(ruleset);
+	if (usesDefenderAttack(move)) {
+		const damage = new Battle({
+			attacker,
+			defender,
+			move,
+			field,
+		}).getDamage();
+		if (!meetsTarget(damage, target, "atk", defender.getStat("hp"))) {
+			return {
+				satisfied: false,
+				target,
+				reason: "No valid investment satisfies the target",
+				statRuleset: ruleset,
+			};
+		}
+		return {
+			satisfied: true,
+			target,
+			investment: { attack: 0 },
+			finalStats: { attack: attacker.getStat("attack") },
+			damage,
+			statRuleset: ruleset,
+		};
+	}
 	const baseTotal =
 		Object.values(attacker.effortValues).reduce(
 			(sum, value) => sum + value,
