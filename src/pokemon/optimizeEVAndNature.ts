@@ -162,6 +162,7 @@ function clonePokemonLike(
 	effortValues: Stat,
 ): Pokemon {
 	return new Pokemon({
+		id: pokemon.id,
 		level: pokemon.level,
 		baseStat: cloneStats(pokemon.baseStat),
 		individualValues: cloneStats(pokemon.individualValues),

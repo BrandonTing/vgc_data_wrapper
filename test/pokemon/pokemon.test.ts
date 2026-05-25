@@ -248,6 +248,36 @@ test("optimizer should throw on inconsistent manual stats", () => {
 	);
 });
 
+test("optimizer should accept derived stats for Shedinja", () => {
+	const pokemon = new Pokemon({
+		id: 292,
+		statRuleset: "champions",
+		baseStat: {
+			hp: 1,
+			attack: 90,
+			defense: 45,
+			specialAttack: 30,
+			specialDefense: 30,
+			speed: 40,
+		},
+		effortValues: {
+			hp: 32,
+			attack: 32,
+			speed: 2,
+		},
+		individualValues: {
+			hp: 31,
+			attack: 31,
+			defense: 31,
+			specialAttack: 31,
+			specialDefense: 31,
+			speed: 31,
+		},
+	});
+
+	expect(() => optimizeEVAndNature(pokemon)).not.toThrow();
+});
+
 test("optimizer should preserve minus target when input nature has minus", () => {
 	const pokemon = new Pokemon({
 		statRuleset: "champions",
