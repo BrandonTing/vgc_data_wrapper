@@ -16,7 +16,6 @@ test("get power without any modifiers", () => {
 		defender: testMon,
 		move: testMove,
 		field: {},
-		isChampion: true,
 	});
 	expect(power.operator).toBe(95);
 	expect(power.factors).toEqual({
@@ -42,7 +41,6 @@ test("get power with type enhancing item", () => {
 		defender: testMon,
 		move: testMove,
 		field: {},
-		isChampion: true,
 	});
 	expect(power.operator).toBe(114);
 	expect(power.factors?.attacker?.item).toBe(true);

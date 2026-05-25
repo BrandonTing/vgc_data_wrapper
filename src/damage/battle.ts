@@ -43,7 +43,6 @@ export class Battle implements IBattle {
 	attacker?: Pokemon;
 	defender?: Pokemon;
 	move?: Move;
-	isChampion = true;
 	constructor(option: Partial<BattleStatus>) {
 		if (option.attacker) {
 			this.attacker = option.attacker;
@@ -60,9 +59,6 @@ export class Battle implements IBattle {
 				...option.field,
 			};
 		}
-		if (option.isChampion !== undefined) {
-			this.isChampion = option.isChampion;
-		}
 	}
 	getDamage(): DamageResult {
 		if (!this.attacker || !this.defender) {
@@ -76,7 +72,6 @@ export class Battle implements IBattle {
 			defender: this.defender,
 			move: this.move,
 			field: this.field,
-			isChampion: this.isChampion,
 		});
 	}
 	setDamage(damage: number) {
