@@ -3,7 +3,7 @@ import { createMove } from "../../src";
 import { Battle } from "../../src/damage/battle";
 import { genTestMon, getDamangeNumberFromResult } from "./utils";
 
-test("champion (default) uses standard 16 damage rolls", () => {
+test("damage uses standard 16 damage rolls", () => {
 	const attacker = genTestMon({
 		types: ["Normal"],
 		baseStat: {
@@ -28,29 +28,16 @@ test("champion (default) uses standard 16 damage rolls", () => {
 		category: "Special",
 	});
 
-	const battleChampion = new Battle({
+	const battle = new Battle({
 		attacker,
 		defender,
 		move,
 	});
-	const battleNonChampion = new Battle({
-		attacker,
-		defender,
-		move,
-		isChampion: false,
-	});
-
-	const rollsChampion = getDamangeNumberFromResult(battleChampion.getDamage());
-	const rollsNonChampion = getDamangeNumberFromResult(
-		battleNonChampion.getDamage(),
-	);
-
-	expect(rollsChampion).toHaveLength(16);
-	expect(rollsNonChampion).toHaveLength(16);
-	expect(rollsChampion).toEqual(rollsNonChampion);
+	const rolls = getDamangeNumberFromResult(battle.getDamage());
+	expect(rolls).toHaveLength(16);
 });
 
-test("champion KO chance uses standard 16-roll denominator", () => {
+test("KO chance uses standard 16-roll denominator", () => {
 	const attacker = genTestMon({
 		types: ["Normal"],
 		baseStat: {
@@ -75,21 +62,11 @@ test("champion KO chance uses standard 16-roll denominator", () => {
 		category: "Special",
 	});
 
-	const championResult = new Battle({
+	const result = new Battle({
 		attacker,
 		defender,
 		move,
-		isChampion: true,
 	}).getDamage();
-
-	const nonChampionResult = new Battle({
-		attacker,
-		defender,
-		move,
-		isChampion: false,
-	}).getDamage();
-
-	expect(championResult.rolls).toHaveLength(16);
-	expect(nonChampionResult.rolls).toHaveLength(16);
-	expect(championResult.koChance).toBe(nonChampionResult.koChance);
+	expect(result.rolls).toHaveLength(16);
+	expect(result.koChance % 6.25).toBe(0);
 });
