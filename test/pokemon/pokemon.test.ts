@@ -357,7 +357,7 @@ test("optimizer may choose minus nature when original nature has no minus", () =
 	expect(result.optimized.nature.minus).toBe("specialAttack");
 });
 
-test("optimizer should improve only when statAcceptReduction is provided", () => {
+test("optimizer should find larger improvement when statAcceptReduction is provided", () => {
 	const pokemon = new Pokemon({
 		statRuleset: "champions",
 		baseStat: {
@@ -369,17 +369,16 @@ test("optimizer should improve only when statAcceptReduction is provided", () =>
 			speed: 60,
 		},
 		effortValues: {
-			attack: 10,
+			defense: 11,
 			specialAttack: 10,
-			speed: 11,
-		},
-		nature: {
-			plus: "attack",
 		},
 	});
 
 	const withoutReduction = optimizeEVAndNature(pokemon);
-	expect(withoutReduction.foundImprovement).toBe(false);
+	expect(withoutReduction.foundImprovement).toBe(true);
+	if (!withoutReduction.foundImprovement) {
+		throw new Error("Expected baseline improvement");
+	}
 
 	const withReduction = optimizeEVAndNature(pokemon, {
 		statAcceptReduction: ["specialAttack"],
@@ -388,7 +387,10 @@ test("optimizer should improve only when statAcceptReduction is provided", () =>
 	if (!withReduction.foundImprovement) {
 		throw new Error("Expected improvement");
 	}
+	expect(withReduction.savedEffortValues).toBeGreaterThan(
+		withoutReduction.savedEffortValues,
+	);
 	expect(withReduction.optimized.stats.specialAttack).toBeLessThanOrEqual(
-		pokemon.getStats(false).specialAttack,
+		withoutReduction.optimized.stats.specialAttack,
 	);
 });
