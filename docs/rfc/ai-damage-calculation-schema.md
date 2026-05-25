@@ -74,7 +74,9 @@ Optional: `field`.
 - `moveId?: number` (canonical identifier)
 - `moveName?: string` (optional normalized metadata)
 
-Aliases and fuzzy names belong to normalization tooling (#147), not `calculateDamage` input.
+Canonical IDs should align with the repository's existing internal data layer identifiers.
+
+The deterministic AI schema must not introduce a second identifier system. Alias handling, fuzzy names, and alternate identifier mapping belong to the normalization layer (#147), not the deterministic damage calculation schema.
 
 ## Stats and stat modes
 
@@ -94,7 +96,9 @@ No shorthand keys in canonical deterministic schema (`atk`, `def`, `spa`, `spd`,
 `statMode: "derived" | "manual"`
 
 - `derived` mode requires derived inputs (`baseStat`, optional EV/IV/nature), rejects `stats`.
-- `manual` mode requires `stats`, rejects derived-only fields.
+- `manual` mode requires `stats`; `stats` are authoritative.
+- Derived-stat fields (`baseStat`, `effortValues`, `individualValues`, `nature`, `level`) may be present as informational metadata in `manual` mode, but they must not override or re-derive `stats`.
+- If both `stats` and derived fields exist, the deterministic adapter must calculate from `stats` in `manual` mode.
 
 Derived/manual modes must be mutually exclusive.
 
@@ -124,6 +128,27 @@ Even when SDKs validate input, adapter-level default materialization remains req
 
 Effort-value validation is ruleset-dependent and must reject impossible totals.
 
+
+## Manual mode legality validation
+
+`manual` mode changes stat authority semantics, but it does not disable legality validation.
+
+The implementation should reject obviously impossible battle states when enough information is available.
+
+Examples include:
+
+- invalid level values
+- negative stats
+- impossible stat ranges
+- invalid `statRuleset` values
+- mechanically impossible stat combinations when sufficient metadata is provided
+
+This validation should be best-effort in v1.
+
+The goal is to preserve deterministic battle correctness without requiring full cartridge legality validation or full team-builder reconstruction logic.
+
+Exhaustive legality validation is out of scope for v1.
+
 ## Special form and status
 
 - Use `specialForm` (not `isTera`).
@@ -139,7 +164,11 @@ No new side-shape abstractions (for example `attackerSide`/`defenderSide`) in v1
 
 ## Output schema
 
-Output mirrors existing `DamageResult`.
+The v1 AI-facing output schema should remain structurally identical to the existing `DamageResult` shape.
+
+`AiDamageCalcOutput` should be compatible with `DamageResult` rather than introducing an adapter-specific projection.
+
+If richer AI-specific output is needed in the future, it should be introduced additively in a separate version or wrapper.
 
 Canonical output fields remain:
 
