@@ -150,7 +150,7 @@ function getAllowedNatures(originalNature: Nature): Nature[] {
 function getDerivedStats(pokemon: Pokemon): Stat {
 	const clone = clonePokemonLike(
 		pokemon,
-		cloneNature(pokemon.nature),
+		pokemon.nature,
 		cloneStats(pokemon.effortValues),
 	);
 	return clone.getStats(false);
