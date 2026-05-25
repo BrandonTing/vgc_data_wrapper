@@ -112,7 +112,9 @@ const pokemon = new Pokemon({
 	},
 });
 
-const result = optimizeEVAndNature(pokemon);
+const result = optimizeEVAndNature(pokemon, {
+	statAcceptReduction: ["specialAttack"], // optional, non-HP only
+});
 
 if (result.foundImprovement) {
 	console.log(result.savedEffortValues); // EVs saved
@@ -123,10 +125,12 @@ if (result.foundImprovement) {
 
 Notes:
 - Preserves all six final stats exactly.
+- If `statAcceptReduction` is provided, listed non-HP stats may be optimized to lower final values (`<=` original).
 - Optimizes EV + nature only (IVs are not optimized).
 - Respects the Pokémon's active `statRuleset` (`champions` or `mainSeries`).
 - Returns deterministic output via fixed tie-break rules.
 - Throws if manual `stats` are inconsistent with derived stats.
+- Throws if `statAcceptReduction` includes `hp`.
 
 ##### Stat & StatStages
 ```
