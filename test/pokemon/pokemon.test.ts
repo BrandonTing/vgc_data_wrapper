@@ -324,3 +324,35 @@ test("optimizer should reject hp in statAcceptReduction", () => {
 		}),
 	).toThrow("HP reduction is not supported");
 });
+
+test("optimizer may choose minus nature when original nature has no minus", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			attack: 10,
+			specialAttack: 10,
+			speed: 11,
+		},
+		nature: {
+			plus: "attack",
+		},
+	});
+
+	const result = optimizeEVAndNature(pokemon, {
+		statAcceptReduction: ["specialAttack"],
+	});
+	expect(result.foundImprovement).toBe(true);
+	if (!result.foundImprovement) {
+		throw new Error("Expected improvement");
+	}
+	expect(result.original.nature.minus).toBeUndefined();
+	expect(result.optimized.nature.minus).toBe("specialAttack");
+});
