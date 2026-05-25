@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.4.1
+
+### Patch Changes
+
+- 4b3a09e: Add documentation for `optimizeEVAndNature` in the README and align optimizer-focused Pokemon tests to champions ruleset scenarios.
+
 ## 0.4.0
 
 ### Minor Changes
