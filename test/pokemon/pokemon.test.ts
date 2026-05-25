@@ -162,6 +162,10 @@ test("champions optimizer should find lower-EV equivalent spreads", () => {
 	}
 
 	expect(result.optimized.effortValues.speed).toBe(9);
+	expect(result.optimized.nature).toEqual({
+		plus: "defense",
+		minus: "speed",
+	});
 	expect(result.savedEffortValues).toBe(2);
 	expect(result.original.stats).toEqual(result.optimized.stats);
 });
