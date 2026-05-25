@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { Pokemon } from "../../src/pokemon";
+import { optimizeEVAndNature, Pokemon } from "../../src/pokemon";
 
 test("default champions path: 0 investment incineroar should have 170 hp & 135 attack", () => {
 	const incineroar = new Pokemon({
@@ -137,4 +137,109 @@ test("get base stat from pokeapi if id is provided", async () => {
 	const actualStat = incineroar.getStats();
 	expect(actualStat.hp).toBe(expectedHP);
 	expect(actualStat.attack).toBe(expectedAtk);
+});
+
+test("champions optimizer should find lower-EV equivalent spreads", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			defense: 11,
+		},
+	});
+
+	const result = optimizeEVAndNature(pokemon);
+	expect(result.foundImprovement).toBe(true);
+	if (!result.foundImprovement) {
+		throw new Error("Expected improvement");
+	}
+
+	expect(result.optimized.effortValues.speed).toBe(9);
+	expect(result.savedEffortValues).toBe(2);
+	expect(result.original.stats).toEqual(result.optimized.stats);
+});
+
+test("optimizer should preserve valid breakpoint EVs", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			attack: 32,
+		},
+		nature: {
+			plus: "attack",
+			minus: "specialAttack",
+		},
+	});
+
+	const result = optimizeEVAndNature(pokemon);
+	expect(result.foundImprovement).toBe(false);
+});
+
+test("optimizer should have deterministic tie-breaks", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			attack: 1,
+			defense: 2,
+		},
+		nature: {
+			plus: "attack",
+			minus: "specialAttack",
+		},
+	});
+
+	const first = optimizeEVAndNature(pokemon);
+	const second = optimizeEVAndNature(pokemon);
+
+	expect(first).toEqual(second);
+	if (first.foundImprovement) {
+		expect(first.optimized.nature).toEqual(pokemon.nature);
+	}
+});
+
+test("optimizer should throw on inconsistent manual stats", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			attack: 4,
+		},
+		stats: {
+			attack: 999,
+		},
+	});
+
+	expect(() => optimizeEVAndNature(pokemon)).toThrow(
+		"Provided manual stats are inconsistent",
+	);
 });

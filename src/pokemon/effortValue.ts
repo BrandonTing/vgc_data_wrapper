@@ -1,6 +1,6 @@
 import type { StatRuleset } from "./base";
 
-const getMaxEvPerStat = (ruleset: StatRuleset) =>
+export const getMaxEvPerStat = (ruleset: StatRuleset) =>
 	ruleset === "mainSeries" ? 252 : 32;
 
 export const getMaxTotalEvs = (ruleset: StatRuleset) =>
