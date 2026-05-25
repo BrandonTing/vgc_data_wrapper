@@ -186,7 +186,7 @@ test("optimizer should preserve valid breakpoint EVs", () => {
 		},
 		nature: {
 			plus: "attack",
-			minus: "specialAttack",
+			minus: "speed",
 		},
 	});
 
@@ -211,7 +211,7 @@ test("optimizer should have deterministic tie-breaks", () => {
 		},
 		nature: {
 			plus: "attack",
-			minus: "specialAttack",
+			minus: "speed",
 		},
 	});
 
@@ -295,7 +295,7 @@ test("optimizer should allow lowered non-HP stats when statAcceptReduction is se
 		},
 		nature: {
 			plus: "attack",
-			minus: "specialAttack",
+			minus: "speed",
 		},
 	});
 
@@ -306,6 +306,7 @@ test("optimizer should allow lowered non-HP stats when statAcceptReduction is se
 	if (!result.foundImprovement) {
 		throw new Error("Expected improvement");
 	}
+	expect(result.optimized.nature.minus).toBe("speed");
 	expect(result.optimized.stats.specialAttack).toBeLessThanOrEqual(
 		result.original.stats.specialAttack,
 	);
