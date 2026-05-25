@@ -90,6 +90,44 @@ const damageResult = battle.getDamage();
 
 * Other properties can be updated directly without using specific method for now. 
 
+##### EV/Nature optimizer: `optimizeEVAndNature`
+
+Use this helper when you want to keep a Pokémon's final stats exactly the same while reducing EV cost (and optionally changing nature).
+
+```ts
+import { Pokemon, optimizeEVAndNature } from "vgc_data_wrapper";
+
+const pokemon = new Pokemon({
+	statRuleset: "champions", // also supports "mainSeries"
+	baseStat: {
+		hp: 95,
+		attack: 115,
+		defense: 90,
+		specialAttack: 80,
+		specialDefense: 90,
+		speed: 60,
+	},
+	effortValues: {
+		defense: 11,
+	},
+});
+
+const result = optimizeEVAndNature(pokemon);
+
+if (result.foundImprovement) {
+	console.log(result.savedEffortValues); // EVs saved
+	console.log(result.optimized.effortValues);
+	console.log(result.optimized.nature);
+}
+```
+
+Notes:
+- Preserves all six final stats exactly.
+- Optimizes EV + nature only (IVs are not optimized).
+- Respects the Pokémon's active `statRuleset` (`champions` or `mainSeries`).
+- Returns deterministic output via fixed tie-break rules.
+- Throws if manual `stats` are inconsistent with derived stats.
+
 ##### Stat & StatStages
 ```
 const statProps = [
