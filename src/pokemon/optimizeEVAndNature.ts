@@ -6,6 +6,10 @@ type Nature = Pokemon["nature"];
 type StatKey = keyof Stat;
 type NonHpStatKey = Exclude<StatKey, "hp">;
 
+type OptimizeEVAndNatureOptions = {
+	statAcceptReduction?: StatKey[];
+};
+
 type OptimizeEVAndNatureSnapshot = {
 	effortValues: Stat;
 	nature: Nature;
@@ -53,7 +57,9 @@ const NATURES: Nature[] = [
 
 export function optimizeEVAndNature(
 	pokemon: Pokemon,
+	options?: OptimizeEVAndNatureOptions,
 ): OptimizeEVAndNatureResult {
+	const reducibleStats = getReducibleStats(options);
 	const originalStats = pokemon.getStats(false);
 	const derivedStats = getDerivedStats(pokemon);
 	if (!statsEqual(originalStats, derivedStats)) {
@@ -70,9 +76,15 @@ export function optimizeEVAndNature(
 		totalEffortValues: originalTotal,
 	};
 
-	const best = NATURES.reduce(
+	const targetNatures = getAllowedNatures(originalNature);
+	const best = targetNatures.reduce(
 		(currentBest, nature) => {
-			const candidate = buildCandidateEvs(pokemon, originalStats, nature);
+			const candidate = buildCandidateEvs(
+				pokemon,
+				originalStats,
+				nature,
+				reducibleStats,
+			);
 			if (!candidate) return currentBest;
 
 			if (
@@ -87,35 +99,52 @@ export function optimizeEVAndNature(
 			effortValues: Stat;
 			nature: Nature;
 			totalEffortValues: number;
+			stats: Stat;
 		},
 	);
 
-	const optimized = best ?? {
-		effortValues: originalEvs,
-		nature: originalNature,
-		totalEffortValues: originalTotal,
-	};
-
-	const savedEffortValues = originalTotal - optimized.totalEffortValues;
-	const optimizedSnapshot = {
-		effortValues: optimized.effortValues,
-		nature: optimized.nature,
-		stats: cloneStats(originalStats),
-		totalEffortValues: optimized.totalEffortValues,
-	};
-
-	if (savedEffortValues > 0) {
+	if (!best) {
 		return {
-			original,
-			optimized: optimizedSnapshot,
-			savedEffortValues,
-			foundImprovement: true,
+			foundImprovement: false,
+		};
+	}
+
+	const savedEffortValues = originalTotal - best.totalEffortValues;
+	if (savedEffortValues <= 0) {
+		return {
+			foundImprovement: false,
 		};
 	}
 
 	return {
-		foundImprovement: false,
+		original,
+		optimized: {
+			effortValues: best.effortValues,
+			nature: best.nature,
+			stats: best.stats,
+			totalEffortValues: best.totalEffortValues,
+		},
+		savedEffortValues,
+		foundImprovement: true,
 	};
+}
+
+function getReducibleStats(options?: OptimizeEVAndNatureOptions): Set<StatKey> {
+	const reducibleStats = new Set<StatKey>();
+	for (const key of options?.statAcceptReduction ?? []) {
+		if (key === "hp") {
+			throw new Error("HP reduction is not supported");
+		}
+		reducibleStats.add(key);
+	}
+	return reducibleStats;
+}
+
+function getAllowedNatures(originalNature: Nature): Nature[] {
+	if (!originalNature.minus) {
+		return NATURES;
+	}
+	return NATURES.filter((nature) => nature.minus === originalNature.minus);
 }
 
 function getDerivedStats(pokemon: Pokemon): Stat {
@@ -146,9 +175,10 @@ function buildCandidateEvs(
 	pokemon: Pokemon,
 	targetStats: Stat,
 	nature: Nature,
+	reducibleStats: Set<StatKey>,
 ) {
 	const maxPerStat = getMaxEvPerStat(pokemon.statRuleset);
-	const effortValues = {
+	const effortValues: Stat = {
 		hp: 0,
 		attack: 0,
 		defense: 0,
@@ -164,6 +194,7 @@ function buildCandidateEvs(
 			targetStats[key],
 			nature,
 			maxPerStat,
+			reducibleStats.has(key),
 		);
 		if (ev === null) return null;
 		effortValues[key] = ev;
@@ -174,7 +205,22 @@ function buildCandidateEvs(
 		return null;
 	}
 
-	return { effortValues, nature: cloneNature(nature), totalEffortValues };
+	const stats = clonePokemonLike(pokemon, nature, effortValues).getStats(false);
+	for (const key of STAT_KEYS) {
+		if (!reducibleStats.has(key) && stats[key] !== targetStats[key]) {
+			return null;
+		}
+		if (reducibleStats.has(key) && stats[key] > targetStats[key]) {
+			return null;
+		}
+	}
+
+	return {
+		effortValues,
+		nature: cloneNature(nature),
+		totalEffortValues,
+		stats,
+	};
 }
 
 function findMinEvForStat(
@@ -183,9 +229,10 @@ function findMinEvForStat(
 	targetStat: number,
 	nature: Nature,
 	maxPerStat: number,
+	allowReduction: boolean,
 ): number | null {
 	for (let ev = 0; ev <= maxPerStat; ev++) {
-		const effortValues = {
+		const effortValues: Stat = {
 			hp: 0,
 			attack: 0,
 			defense: 0,
@@ -198,6 +245,10 @@ function findMinEvForStat(
 			statKey,
 			false,
 		);
+		if (allowReduction) {
+			if (value <= targetStat) return ev;
+			continue;
+		}
 		if (value === targetStat) return ev;
 		if (value > targetStat) return null;
 	}

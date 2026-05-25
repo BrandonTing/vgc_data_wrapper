@@ -247,3 +247,79 @@ test("optimizer should throw on inconsistent manual stats", () => {
 		"Provided manual stats are inconsistent",
 	);
 });
+
+test("optimizer should preserve minus target when input nature has minus", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			attack: 10,
+			defense: 11,
+		},
+		nature: {
+			minus: "specialAttack",
+		},
+	});
+
+	const result = optimizeEVAndNature(pokemon, {
+		statAcceptReduction: ["specialAttack"],
+	});
+
+	if (result.foundImprovement) {
+		expect(result.optimized.nature.minus).toBe("specialAttack");
+	}
+});
+
+test("optimizer should allow lowered non-HP stats when statAcceptReduction is set", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			attack: 10,
+			specialAttack: 10,
+			speed: 11,
+		},
+		nature: {
+			plus: "attack",
+			minus: "specialAttack",
+		},
+	});
+
+	const result = optimizeEVAndNature(pokemon, {
+		statAcceptReduction: ["specialAttack"],
+	});
+	expect(result.foundImprovement).toBe(true);
+	if (!result.foundImprovement) {
+		throw new Error("Expected improvement");
+	}
+	expect(result.optimized.stats.specialAttack).toBeLessThanOrEqual(
+		result.original.stats.specialAttack,
+	);
+	expect(result.optimized.stats.attack).toBe(result.original.stats.attack);
+	expect(result.optimized.stats.speed).toBe(result.original.stats.speed);
+});
+
+test("optimizer should reject hp in statAcceptReduction", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+	});
+	expect(() =>
+		optimizeEVAndNature(pokemon, {
+			statAcceptReduction: ["hp"],
+		}),
+	).toThrow("HP reduction is not supported");
+});
