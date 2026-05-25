@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { Pokemon } from "../../src/pokemon";
+import { optimizeEVAndNature, Pokemon } from "../../src/pokemon";
 
 test("default champions path: 0 investment incineroar should have 170 hp & 135 attack", () => {
 	const incineroar = new Pokemon({
@@ -137,4 +137,395 @@ test("get base stat from pokeapi if id is provided", async () => {
 	const actualStat = incineroar.getStats();
 	expect(actualStat.hp).toBe(expectedHP);
 	expect(actualStat.attack).toBe(expectedAtk);
+});
+
+test("champions optimizer should find lower-EV equivalent spreads", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			defense: 11,
+		},
+	});
+
+	const result = optimizeEVAndNature(pokemon);
+	expect(result.foundImprovement).toBe(true);
+	if (!result.foundImprovement) {
+		throw new Error("Expected improvement");
+	}
+
+	expect(result.optimized.effortValues.speed).toBe(9);
+	expect(result.optimized.nature).toEqual({
+		plus: "defense",
+		minus: "speed",
+	});
+	expect(result.savedEffortValues).toBe(2);
+	expect(result.original.stats).toEqual(result.optimized.stats);
+});
+
+test("optimizer should preserve valid breakpoint EVs", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			attack: 32,
+		},
+		nature: {
+			plus: "attack",
+			minus: "speed",
+		},
+	});
+
+	const result = optimizeEVAndNature(pokemon);
+	expect(result.foundImprovement).toBe(false);
+});
+
+test("optimizer should have deterministic tie-breaks", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			attack: 1,
+			defense: 2,
+		},
+		nature: {
+			plus: "attack",
+			minus: "speed",
+		},
+	});
+
+	const first = optimizeEVAndNature(pokemon);
+	const second = optimizeEVAndNature(pokemon);
+
+	expect(first).toEqual(second);
+	if (first.foundImprovement) {
+		expect(first.optimized.nature).toEqual(pokemon.nature);
+	}
+});
+
+test("optimizer should throw on inconsistent manual stats", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			attack: 4,
+		},
+		stats: {
+			attack: 999,
+		},
+	});
+
+	expect(() => optimizeEVAndNature(pokemon)).toThrow(
+		"Provided manual stats are inconsistent",
+	);
+});
+
+test("optimizer should normalize wasted EVs in mainSeries", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "mainSeries",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+		},
+		effortValues: {
+			attack: 6,
+		},
+	});
+
+	const result = optimizeEVAndNature(pokemon);
+	expect(result.foundImprovement).toBe(true);
+	if (!result.foundImprovement) {
+		throw new Error("Expected improvement");
+	}
+	expect(result.optimized.effortValues.attack).toBe(4);
+	expect(result.savedEffortValues).toBe(2);
+	expect(result.original.stats).toEqual(result.optimized.stats);
+});
+
+test("optimizer should preserve mainSeries breakpoint EVs", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "mainSeries",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+		},
+		effortValues: {
+			attack: 252,
+		},
+		nature: {
+			plus: "attack",
+			minus: "speed",
+		},
+	});
+
+	const result = optimizeEVAndNature(pokemon);
+	expect(result.foundImprovement).toBe(false);
+});
+
+test("optimizer should accept consistent manual stats", () => {
+	const derivedPokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		individualValues: {
+			hp: 31,
+			attack: 31,
+			defense: 31,
+			specialAttack: 31,
+			specialDefense: 31,
+			speed: 31,
+		},
+		effortValues: {
+			attack: 4,
+			defense: 8,
+			speed: 10,
+		},
+		nature: {
+			plus: "attack",
+			minus: "specialAttack",
+		},
+	});
+
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		individualValues: {
+			hp: 31,
+			attack: 31,
+			defense: 31,
+			specialAttack: 31,
+			specialDefense: 31,
+			speed: 31,
+		},
+		effortValues: {
+			attack: 4,
+			defense: 8,
+			speed: 10,
+		},
+		nature: {
+			plus: "attack",
+			minus: "specialAttack",
+		},
+		stats: derivedPokemon.getStats(false),
+	});
+
+	expect(() => optimizeEVAndNature(pokemon)).not.toThrow();
+});
+
+test("optimizer should accept derived stats for Shedinja", () => {
+	const pokemon = new Pokemon({
+		id: 292,
+		statRuleset: "champions",
+		baseStat: {
+			hp: 1,
+			attack: 90,
+			defense: 45,
+			specialAttack: 30,
+			specialDefense: 30,
+			speed: 40,
+		},
+		effortValues: {
+			hp: 32,
+			attack: 32,
+			speed: 2,
+		},
+		individualValues: {
+			hp: 31,
+			attack: 31,
+			defense: 31,
+			specialAttack: 31,
+			specialDefense: 31,
+			speed: 31,
+		},
+	});
+
+	expect(() => optimizeEVAndNature(pokemon)).not.toThrow();
+});
+
+test("optimizer should preserve minus target when input nature has minus", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			attack: 10,
+			defense: 11,
+		},
+		nature: {
+			minus: "specialAttack",
+		},
+	});
+
+	const result = optimizeEVAndNature(pokemon, {
+		statAcceptReduction: ["specialAttack"],
+	});
+
+	if (result.foundImprovement) {
+		expect(result.optimized.nature.minus).toBe("specialAttack");
+	}
+});
+
+test("optimizer should allow lowered non-HP stats when statAcceptReduction is set", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			attack: 10,
+			specialAttack: 10,
+			speed: 11,
+		},
+		nature: {
+			plus: "attack",
+			minus: "speed",
+		},
+	});
+
+	const result = optimizeEVAndNature(pokemon, {
+		statAcceptReduction: ["specialAttack"],
+	});
+	expect(result.foundImprovement).toBe(true);
+	if (!result.foundImprovement) {
+		throw new Error("Expected improvement");
+	}
+	expect(result.optimized.nature.minus).toBe("speed");
+	expect(result.optimized.stats.specialAttack).toBeLessThanOrEqual(
+		result.original.stats.specialAttack,
+	);
+	expect(result.optimized.stats.attack).toBe(result.original.stats.attack);
+	expect(result.optimized.stats.speed).toBe(result.original.stats.speed);
+});
+
+test("optimizer should reject hp in statAcceptReduction", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+	});
+	expect(() =>
+		optimizeEVAndNature(pokemon, {
+			statAcceptReduction: ["hp"],
+		}),
+	).toThrow("HP reduction is not supported");
+});
+
+test("optimizer may choose minus nature when original nature has no minus", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			attack: 10,
+			specialAttack: 10,
+			speed: 11,
+		},
+		nature: {
+			plus: "attack",
+		},
+	});
+
+	const result = optimizeEVAndNature(pokemon, {
+		statAcceptReduction: ["specialAttack"],
+	});
+	expect(result.foundImprovement).toBe(true);
+	if (!result.foundImprovement) {
+		throw new Error("Expected improvement");
+	}
+	expect(result.original.nature.minus).toBeUndefined();
+	expect(result.optimized.nature.minus).toBe("specialAttack");
+});
+
+test("optimizer should find larger improvement when statAcceptReduction is provided", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		effortValues: {
+			defense: 11,
+			specialAttack: 10,
+		},
+	});
+
+	const withoutReduction = optimizeEVAndNature(pokemon);
+	expect(withoutReduction.foundImprovement).toBe(true);
+	if (!withoutReduction.foundImprovement) {
+		throw new Error("Expected baseline improvement");
+	}
+
+	const withReduction = optimizeEVAndNature(pokemon, {
+		statAcceptReduction: ["specialAttack"],
+	});
+	expect(withReduction.foundImprovement).toBe(true);
+	if (!withReduction.foundImprovement) {
+		throw new Error("Expected improvement");
+	}
+	expect(withReduction.savedEffortValues).toBeGreaterThan(
+		withoutReduction.savedEffortValues,
+	);
+	expect(withReduction.optimized.stats.specialAttack).toBeLessThanOrEqual(
+		withoutReduction.optimized.stats.specialAttack,
+	);
 });
