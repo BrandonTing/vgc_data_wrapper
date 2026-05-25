@@ -150,7 +150,7 @@ function getAllowedNatures(originalNature: Nature): Nature[] {
 function getDerivedStats(pokemon: Pokemon): Stat {
 	const clone = clonePokemonLike(
 		pokemon,
-		undefined,
+		cloneNature(pokemon.nature),
 		cloneStats(pokemon.effortValues),
 	);
 	return clone.getStats(false);
@@ -158,7 +158,7 @@ function getDerivedStats(pokemon: Pokemon): Stat {
 
 function clonePokemonLike(
 	pokemon: Pokemon,
-	nature: Nature | undefined,
+	nature: Nature,
 	effortValues: Stat,
 ): Pokemon {
 	return new Pokemon({
@@ -168,7 +168,7 @@ function clonePokemonLike(
 		individualValues: cloneStats(pokemon.individualValues),
 		effortValues,
 		statRuleset: pokemon.statRuleset,
-		nature: nature ?? cloneNature(pokemon.nature),
+		nature: cloneNature(nature),
 	});
 }
 
