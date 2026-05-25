@@ -248,6 +248,111 @@ test("optimizer should throw on inconsistent manual stats", () => {
 	);
 });
 
+test("optimizer should normalize wasted EVs in mainSeries", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "mainSeries",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+		},
+		effortValues: {
+			attack: 6,
+		},
+	});
+
+	const result = optimizeEVAndNature(pokemon);
+	expect(result.foundImprovement).toBe(true);
+	if (!result.foundImprovement) {
+		throw new Error("Expected improvement");
+	}
+	expect(result.optimized.effortValues.attack).toBe(4);
+	expect(result.savedEffortValues).toBe(2);
+	expect(result.original.stats).toEqual(result.optimized.stats);
+});
+
+test("optimizer should preserve mainSeries breakpoint EVs", () => {
+	const pokemon = new Pokemon({
+		statRuleset: "mainSeries",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+		},
+		effortValues: {
+			attack: 252,
+		},
+		nature: {
+			plus: "attack",
+			minus: "speed",
+		},
+	});
+
+	const result = optimizeEVAndNature(pokemon);
+	expect(result.foundImprovement).toBe(false);
+});
+
+test("optimizer should accept consistent manual stats", () => {
+	const derivedPokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		individualValues: {
+			hp: 31,
+			attack: 31,
+			defense: 31,
+			specialAttack: 31,
+			specialDefense: 31,
+			speed: 31,
+		},
+		effortValues: {
+			attack: 4,
+			defense: 8,
+			speed: 10,
+		},
+		nature: {
+			plus: "attack",
+			minus: "specialAttack",
+		},
+	});
+
+	const pokemon = new Pokemon({
+		statRuleset: "champions",
+		baseStat: {
+			hp: 95,
+			attack: 115,
+			defense: 90,
+			specialAttack: 80,
+			specialDefense: 90,
+			speed: 60,
+		},
+		individualValues: {
+			hp: 31,
+			attack: 31,
+			defense: 31,
+			specialAttack: 31,
+			specialDefense: 31,
+			speed: 31,
+		},
+		effortValues: {
+			attack: 4,
+			defense: 8,
+			speed: 10,
+		},
+		nature: {
+			plus: "attack",
+			minus: "specialAttack",
+		},
+		stats: derivedPokemon.getStats(false),
+	});
+
+	expect(() => optimizeEVAndNature(pokemon)).not.toThrow();
+});
+
 test("optimizer should accept derived stats for Shedinja", () => {
 	const pokemon = new Pokemon({
 		id: 292,
