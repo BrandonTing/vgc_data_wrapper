@@ -14,7 +14,7 @@ The deterministic adapter is responsible for:
 - Supporting `statMode: "derived" | "manual"`.
 - Applying documented mechanical defaults for stable adapter construction.
 - Executing deterministic damage calculation through the existing engine.
-- Returning output compatible with `DamageResult` (`rolls`, `koChance`, `factors`).
+- Returning output compatible with `DamageResult` (`rolls`, `koChance`, `factors`), where `koChance` is a percentage (`0..100`).
 
 ## Out of scope (v1)
 

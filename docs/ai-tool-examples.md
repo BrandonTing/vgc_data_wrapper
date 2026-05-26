@@ -133,7 +133,7 @@ Optional key: `field`.
 The AI-facing output is compatible with `DamageResult` and includes:
 
 - `rolls` (ordered low → high)
-- `koChance`
+- `koChance` (percentage in `0..100`, not `0..1`)
 - `factors`
 
 Example (abridged):

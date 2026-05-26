@@ -275,10 +275,10 @@ export const AiDamageCalcOutputSchema = z
 		koChance: z.number(),
 		factors: z
 			.object({
-				attacker: z.record(z.any()),
-				defender: z.record(z.any()),
-				move: z.record(z.any()),
-				field: z.record(z.any()),
+				attacker: z.record(z.unknown()),
+				defender: z.record(z.unknown()),
+				move: z.record(z.unknown()),
+				field: z.record(z.unknown()),
 			})
 			.strict(),
 	})
