@@ -177,6 +177,7 @@ Canonical output fields remain:
 - `factors`
 
 `rolls` is output-only, deterministic, and ordered from lowest to highest damage.
+`koChance` follows the current engine representation as a percentage in `0..100` (for example, `37.5`), not a `0..1` fraction.
 
 ## Unknown keys, aliases, and errors
 
