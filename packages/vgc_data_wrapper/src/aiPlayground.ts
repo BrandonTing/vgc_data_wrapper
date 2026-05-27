@@ -60,7 +60,7 @@ export function buildGroundingNotes(
 ): string[] {
 	const notes: string[] = [];
 	const hasGuaranteedClaim = /guaranteed\s+ohko/i.test(aiExplanation);
-	if (hasGuaranteedClaim && result.koChance < 1) {
+	if (hasGuaranteedClaim && result.koChance < 100) {
 		notes.push(
 			"AI claims guaranteed OHKO, but deterministic koChance is below 100%.",
 		);

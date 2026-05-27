@@ -78,3 +78,13 @@ test("buildGroundingNotes catches deterministic mismatch", () => {
 	);
 	expect(notes.length).toBeGreaterThan(0);
 });
+
+test("buildGroundingNotes flags non-guaranteed partial OHKO chance", () => {
+	const notes = buildGroundingNotes(
+		{ koChance: 93.75, rolls: [], factors: {} as never },
+		"Guaranteed OHKO",
+	);
+	expect(notes).toContain(
+		"AI claims guaranteed OHKO, but deterministic koChance is below 100%.",
+	);
+});
