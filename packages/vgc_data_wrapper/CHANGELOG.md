@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.4.2
+
+### Patch Changes
+
+- 3621bcc: Package-only Milestone A release note: migrate repository to Bun workspaces while preserving package publish behavior and package outputs.
+
 ## 0.4.1
 
 ### Patch Changes
