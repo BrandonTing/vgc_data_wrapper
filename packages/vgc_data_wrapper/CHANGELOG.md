@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.4.3
+
+### Patch Changes
+
+- 49b6c5c: Fix the workspace release command so Changesets publishes from the repository root.
+
 ## 0.4.2
 
 ### Patch Changes
