@@ -9,6 +9,10 @@
     "knip": "bun run --filter vgc_data_wrapper knip",
     "lint": "bun run --filter vgc_data_wrapper lint",
     "test-pokemon": "bun run --filter vgc_data_wrapper test-pokemon",
-    "test-damage": "bun run --filter vgc_data_wrapper test-damage"
+    "test-damage": "bun run --filter vgc_data_wrapper test-damage",
+    "release": "bun run --filter vgc_data_wrapper build && bunx changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1"
   }
 }
