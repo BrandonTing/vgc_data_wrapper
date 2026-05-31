@@ -1,7 +1,6 @@
 {
-  "extends": "./packages/vgc_data_wrapper/tsconfig.json",
-  "include": [
-    "packages/vgc_data_wrapper/src/**/*.ts",
-    "packages/vgc_data_wrapper/test/**/*.ts"
+  "files": [],
+  "references": [
+    { "path": "./packages/vgc_data_wrapper/tsconfig.typecheck.json" }
   ]
 }

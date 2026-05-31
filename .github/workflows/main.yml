@@ -23,7 +23,7 @@ jobs:
           bun knip 
       - name: 'TSC'
         run: |
-          bunx tsc
+          bunx tsc --build
       - name: 'Check AI Playground'
         run: |
           bun check:ai-playground

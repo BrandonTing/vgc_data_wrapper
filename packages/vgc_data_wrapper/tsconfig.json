@@ -19,5 +19,6 @@
 		"noUncheckedIndexedAccess": true,
 		"noErrorTruncation": true
 	},
+	"include": ["src/**/*.ts", "test/**/*.ts"],
 	"exclude": ["__script__"]
 }

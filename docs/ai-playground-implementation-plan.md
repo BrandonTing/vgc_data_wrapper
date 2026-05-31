@@ -141,7 +141,7 @@ Acceptance criteria:
 ### Core package regression gate
 
 - Passes:
-  - `bunx tsc`
+  - `bunx tsc --build`
   - `bun knip`
   - `bun lint`
   - `bun test-pokemon`
