@@ -46,7 +46,7 @@ Treat the corrected pseudocode below as a design sketch and re-check the officia
 
 ## Target outcome of the next step
 
-Milestones B, C, and D have established the runnable SvelteKit scaffold, deterministic panels, TanStack AI tool definition, SvelteKit streaming route, Svelte client integration, visible Tool Call Trace, and CI-safe stubbed turn. The next step is hardening: add browser-level mocked/stubbed coverage and optionally run a manual OpenAI-key verification without making the real provider a default CI dependency.
+Milestones B, C, and D have established the runnable SvelteKit scaffold, deterministic panels, TanStack AI tool definition, SvelteKit streaming route, Svelte client integration, visible Tool Call Trace, and CI-safe mocked TanStack turn. The next step is hardening: add browser-level mocked TanStack coverage and optionally run a manual OpenAI-key verification without making the real provider a default CI dependency.
 
 ## Milestone breakdown
 
@@ -322,8 +322,8 @@ test('deterministic panel + tool trace smoke', async ({ page }) => {
   await expect(page.getByTestId('normalized-panel')).toBeVisible();
   await expect(page.getByTestId('result-panel')).toBeVisible();
 
-  // stub /api/chat response with one tool-call trace entry
-  await page.click('[data-testid="ask-ai"]');
+  // /api/chat/mock runs TanStack chat with a provider-free model adapter
+  await page.click('[data-testid="run-mock-ai"]');
   await expect(page.getByTestId('tool-trace')).toContainText('calculateAiDamage');
 });
 ```
@@ -332,13 +332,13 @@ test('deterministic panel + tool trace smoke', async ({ page }) => {
 
 - App has explicit `typecheck`, `test`, and `e2e` scripts.
 - Tool-call trace includes raw args and raw result payload.
-- Smoke e2e runs without real provider key (mock/stub mode).
+- Smoke e2e runs without a real provider key through the mocked TanStack adapter.
 - Optional real-provider integration test is non-blocking/nightly only.
 
 ### 7) Optional manual OpenAI verification
 
 1. Copy `apps/ai-playground/.env.example` to `apps/ai-playground/.env`.
 2. Set `OPENAI_API_KEY` in that local ignored file.
-3. Start the SvelteKit app and run the CI-safe stubbed tool turn first.
+3. Start the SvelteKit app and run the CI-safe mocked TanStack tool turn first.
 4. Click **Run optional OpenAI turn** and inspect the visible trace.
 5. Record model schema, retry, and grounding issues separately from deterministic adapter behavior.

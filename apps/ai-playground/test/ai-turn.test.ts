@@ -1,34 +1,54 @@
 import { describe, expect, test } from "bun:test";
-import { buildStubbedAiToolTurn } from "../src/lib/ai-turn";
+import { chat, type StreamChunk } from "@tanstack/ai";
+import { createMockDamageTextAdapter } from "../src/lib/adapters/mock-damage-text";
 import { SAMPLE_AI_DAMAGE_INPUT } from "../src/lib/playground-state";
 import {
   CALCULATE_AI_DAMAGE_TOOL_NAME,
+  CALCULATE_AI_DAMAGE_TRACE_EVENT,
+  calculateAiDamageTool,
   inspectCalculateAiDamageToolCall,
+  type CalculateAiDamageTrace,
 } from "../src/lib/tools/calculate-ai-damage";
 
-describe("calculateAiDamage AI tool turn", () => {
-  test("executes the deterministic tool before creating a grounded stub explanation", () => {
-    const turn = buildStubbedAiToolTurn(SAMPLE_AI_DAMAGE_INPUT);
+async function runMockedTanStackTurn(): Promise<StreamChunk[]> {
+  const chunks: StreamChunk[] = [];
+  const stream = chat({
+    adapter: createMockDamageTextAdapter(SAMPLE_AI_DAMAGE_INPUT),
+    messages: [{ role: "user", content: "Calculate deterministic damage" }],
+    tools: [calculateAiDamageTool],
+  });
+  for await (const chunk of stream) chunks.push(chunk);
+  return chunks;
+}
 
-    expect(turn.mode).toBe("stub");
-    expect(turn.trace.toolName).toBe(CALCULATE_AI_DAMAGE_TOOL_NAME);
-    expect(turn.trace.schemaValidation).toEqual({ isValid: true, issues: [] });
-    expect(turn.trace.normalizedArguments?.field.isDouble).toBe(true);
-    expect(turn.trace.stateTransitions).toEqual([
-      "awaiting-input",
-      "input-streaming",
-      "input-complete",
-      "executing",
-      "complete",
-    ]);
-    expect(turn.trace.rawDeterministicResult?.rolls.length).toBeGreaterThan(0);
-    expect(turn.modelResponse).toContain("deterministic calculateAiDamage tool returned");
-    expect(turn.groundingNotes).toEqual([]);
+describe("calculateAiDamage AI tool turn", () => {
+  test("runs the deterministic tool through the mocked TanStack AI agent loop", async () => {
+    const chunks = await runMockedTanStackTurn();
+    const types = chunks.map((chunk) => chunk.type);
+    const traceEvent = chunks.find(
+      (chunk) => chunk.type === "CUSTOM" && chunk.name === CALCULATE_AI_DAMAGE_TRACE_EVENT,
+    );
+    const trace = traceEvent?.type === "CUSTOM" ? (traceEvent.value as CalculateAiDamageTrace) : null;
+    const response = chunks
+      .filter((chunk) => chunk.type === "TEXT_MESSAGE_CONTENT")
+      .map((chunk) => chunk.delta)
+      .join("");
+
+    expect(types).toContain("TOOL_CALL_START");
+    expect(types).toContain("TOOL_CALL_ARGS");
+    expect(types).toContain("TOOL_CALL_END");
+    expect(types).toContain("TOOL_CALL_RESULT");
+    expect(types.indexOf("TOOL_CALL_RESULT")).toBeLessThan(types.indexOf("TEXT_MESSAGE_CONTENT"));
+    expect(trace?.schemaValidation).toEqual({ isValid: true, issues: [] });
+    expect(trace?.normalizedArguments?.field.isDouble).toBe(true);
+    expect(trace?.rawDeterministicResult?.rolls.length).toBeGreaterThan(0);
+    expect(response).toContain("deterministic calculateAiDamage tool returned");
   });
 
   test("records validation failure without executing deterministic damage", () => {
     const trace = inspectCalculateAiDamageToolCall({});
 
+    expect(trace.toolName).toBe(CALCULATE_AI_DAMAGE_TOOL_NAME);
     expect(trace.schemaValidation.isValid).toBe(false);
     expect(trace.normalizedArguments).toBeNull();
     expect(trace.rawDeterministicResult).toBeNull();

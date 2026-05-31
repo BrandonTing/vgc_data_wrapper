@@ -11,7 +11,7 @@
     <h2>AI ↔ deterministic contract</h2>
     <p>
       {#if turn}
-        <strong>{turn.mode === "stub" ? "CI-safe stub" : "OpenAI"}</strong>
+        <strong>{turn.mode === "mock" ? "CI-safe TanStack mock" : "OpenAI"}</strong>
         executed <code>{turn.trace.toolName}</code> before explanation.
       {:else}
         Run an AI tool turn to inspect the complete contract trace.

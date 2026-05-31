@@ -19,8 +19,6 @@
   let evaluation = $state(evaluateDeterministicInput(SAMPLE_AI_DAMAGE_INPUT_TEXT));
   let aiTurn = $state<AiToolTurn | null>(null);
   let aiError = $state<string | null>(null);
-  let realProviderTrace: CalculateAiDamageTrace | null = null;
-  let realProviderStates: ToolStateTransition[] = [];
 
   const snapshot = $derived(evaluation.snapshot);
   const validation = $derived(
@@ -31,53 +29,66 @@
         }
       : snapshot?.validation,
   );
+  function createTraceChat(connectionUrl: string, mode: AiToolTurn["mode"]) {
+    let trace: CalculateAiDamageTrace | null = null;
+    let states: ToolStateTransition[] = [];
 
-  function recordRealProviderState(state: ToolStateTransition) {
-    if (realProviderStates.at(-1) !== state) realProviderStates.push(state);
+    function recordState(state: ToolStateTransition) {
+      if (states.at(-1) !== state) states.push(state);
+    }
+
+    const client = createChat({
+      connection: fetchServerSentEvents(connectionUrl),
+      onChunk(chunk) {
+        if (chunk.type === "TOOL_CALL_START") recordState("awaiting-input");
+        if (chunk.type === "TOOL_CALL_ARGS") recordState("input-streaming");
+        if (chunk.type === "TOOL_CALL_END") {
+          recordState("input-complete");
+          recordState("executing");
+        }
+        if (chunk.type === "TOOL_CALL_RESULT") recordState("complete");
+        if (chunk.type === "RUN_ERROR") recordState("error");
+      },
+      onCustomEvent(eventType, data) {
+        if (eventType === CALCULATE_AI_DAMAGE_TRACE_EVENT) {
+          trace = data as CalculateAiDamageTrace;
+        }
+      },
+      onFinish(message) {
+        if (!trace?.rawDeterministicResult) return;
+        const modelResponse = message.parts
+          .filter((part) => part.type === "text")
+          .map((part) => part.content)
+          .join("\n");
+        aiTurn = {
+          mode,
+          trace: {
+            ...trace,
+            stateTransitions: states.length > 0 ? states : trace.stateTransitions,
+          },
+          modelResponse,
+          groundingNotes: buildGroundingNotes(trace.rawDeterministicResult, modelResponse),
+        };
+      },
+    });
+
+    return {
+      client,
+      reset() {
+        trace = null;
+        states = [];
+        client.clear();
+      },
+    };
   }
 
-  const chat = createChat({
-    connection: fetchServerSentEvents("/api/chat"),
-    onChunk(chunk) {
-      if (chunk.type === "TOOL_CALL_START") recordRealProviderState("awaiting-input");
-      if (chunk.type === "TOOL_CALL_ARGS") recordRealProviderState("input-streaming");
-      if (chunk.type === "TOOL_CALL_END") {
-        recordRealProviderState("input-complete");
-        recordRealProviderState("executing");
-      }
-      if (chunk.type === "TOOL_CALL_RESULT") recordRealProviderState("complete");
-      if (chunk.type === "RUN_ERROR") recordRealProviderState("error");
-    },
-    onCustomEvent(eventType, data) {
-      if (eventType === CALCULATE_AI_DAMAGE_TRACE_EVENT) {
-        realProviderTrace = data as CalculateAiDamageTrace;
-      }
-    },
-    onFinish(message) {
-      if (!realProviderTrace?.rawDeterministicResult) return;
-      const modelResponse = message.parts
-        .filter((part) => part.type === "text")
-        .map((part) => part.content)
-        .join("\n");
-      aiTurn = {
-        mode: "openai",
-        trace: {
-          ...realProviderTrace,
-          stateTransitions:
-            realProviderStates.length > 0
-              ? realProviderStates
-              : realProviderTrace.stateTransitions,
-        },
-        modelResponse,
-        groundingNotes: buildGroundingNotes(
-          realProviderTrace.rawDeterministicResult,
-          modelResponse,
-        ),
-      };
-    },
-  });
+  const mockChat = createTraceChat("/api/chat/mock", "mock");
+  const openAiChat = createTraceChat("/api/chat", "openai");
 
-  onDestroy(() => chat.dispose());
+  onDestroy(() => {
+    mockChat.client.dispose();
+    openAiChat.client.dispose();
+  });
 
   function runDeterministicPanels() {
     evaluation = evaluateDeterministicInput(rawInputText);
@@ -99,40 +110,30 @@
     return evaluation.snapshot.rawInput;
   }
 
-  async function runStubbedAiTurn() {
-    const rawStructuredInput = getValidRawInput();
-    if (!rawStructuredInput) return;
-    aiError = null;
-    try {
-      const response = await fetch("/api/chat/stub", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ rawStructuredInput }),
-      });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.error ?? "Stubbed AI tool turn failed");
-      aiTurn = body as AiToolTurn;
-    } catch (error) {
-      aiError = error instanceof Error ? error.message : String(error);
-    }
-  }
-
-  async function runOpenAiTurn() {
+  async function runStreamedAiTurn(
+    activeChat: ReturnType<typeof createTraceChat>,
+  ) {
     const rawStructuredInput = getValidRawInput();
     if (!rawStructuredInput) return;
     aiError = null;
     aiTurn = null;
-    realProviderTrace = null;
-    realProviderStates = [];
-    chat.clear();
-    chat.updateForwardedProps({ rawStructuredInput });
+    activeChat.reset();
+    activeChat.client.updateForwardedProps({ rawStructuredInput });
     try {
-      await chat.sendMessage(
+      await activeChat.client.sendMessage(
         "Call calculateAiDamage for the provided structured state, then explain only its deterministic result.",
       );
     } catch (error) {
       aiError = error instanceof Error ? error.message : String(error);
     }
+  }
+
+  async function runMockAiTurn() {
+    await runStreamedAiTurn(mockChat);
+  }
+
+  async function runOpenAiTurn() {
+    await runStreamedAiTurn(openAiChat);
   }
 </script>
 
@@ -261,16 +262,16 @@
         <h2 id="ai-tool-turn-heading">Invoke calculateAiDamage before explanation</h2>
       </div>
       <div class="actions">
-        <button type="button" data-testid="run-stubbed-ai" onclick={runStubbedAiTurn}>
-          Run CI-safe stub
+        <button type="button" data-testid="run-mock-ai" disabled={mockChat.client.isLoading} onclick={runMockAiTurn}>
+          {mockChat.client.isLoading ? "Running TanStack mock…" : "Run CI-safe TanStack mock"}
         </button>
-        <button class="secondary" type="button" data-testid="run-openai" disabled={chat.isLoading} onclick={runOpenAiTurn}>
-          {chat.isLoading ? "Waiting for OpenAI…" : "Run optional OpenAI turn"}
+        <button class="secondary" type="button" data-testid="run-openai" disabled={openAiChat.client.isLoading} onclick={runOpenAiTurn}>
+          {openAiChat.client.isLoading ? "Waiting for OpenAI…" : "Run optional OpenAI turn"}
         </button>
       </div>
     </header>
     <p class="panel-copy">
-      The default stub executes the same deterministic tool contract without a provider key. The optional OpenAI turn uses the server-only <code>OPENAI_API_KEY</code> when configured.
+      The default mock runs through TanStack AI chat orchestration and executes the deterministic tool without a provider key. The optional OpenAI turn uses the server-only <code>OPENAI_API_KEY</code> when configured.
     </p>
     {#if aiError}<p class="ai-error" data-testid="ai-error">{aiError}</p>{/if}
   </section>

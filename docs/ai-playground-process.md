@@ -138,14 +138,14 @@ Use this exact startup sequence at the beginning of the next implementation sess
    - root workspace manifest exists (`package.json` with `workspaces`)
    - package is under `packages/vgc_data_wrapper`
 8. Confirm the completed Milestone D tool-calling slice still passes `bun test:ai-playground` and `bun check:ai-playground`.
-9. Run the CI-safe stubbed AI tool turn before any optional real-provider verification.
+9. Run the CI-safe mocked TanStack AI tool turn before any optional real-provider verification.
 10. Optionally set `OPENAI_API_KEY` and run one manual OpenAI turn to evaluate real model tool-calling reliability.
 
 ### Next validation block: hardening + optional real-provider verification
 
 The next focused block should:
 
-- add browser-level mocked/stubbed coverage for the deterministic panels and visible Tool Call Trace;
+- add browser-level mocked TanStack coverage for the deterministic panels and visible Tool Call Trace;
 - keep the default test path provider-key-free;
 - optionally run a manual OpenAI-key verification after the CI-safe path passes;
 - record any real-model schema ergonomics, grounding, or retry issues without weakening the deterministic adapter contract.
@@ -155,7 +155,7 @@ The next focused block should:
 1. Copy `apps/ai-playground/.env.example` to `apps/ai-playground/.env`.
 2. Set `OPENAI_API_KEY` in that local ignored file.
 3. Start the app with `bun run --filter @vgc/ai-playground dev`.
-4. Run the CI-safe stub first, then click **Run optional OpenAI turn**.
+4. Run the CI-safe TanStack mock first, then click **Run optional OpenAI turn**.
 5. Inspect the visible trace: raw args, schema validation, normalized/defaulted args, state transitions, raw deterministic result, model response, and grounding notes.
 
 The key stays server-side and real-provider verification remains optional and non-blocking.
@@ -164,10 +164,10 @@ The key stays server-side and real-provider verification remains optional and no
 
 Before hardening, confirm all are true:
 
-- the stubbed AI turn invokes the deterministic tool before explanation;
+- the mocked TanStack AI turn invokes the deterministic tool before explanation;
 - the visible trace includes raw args, validation, normalization, state transitions, raw result, explanation, and grounding notes;
 - the real-provider route uses TanStack AI `chat(...)` and `toServerSentEventsResponse(...)`;
-- missing `OPENAI_API_KEY` fails explicitly without affecting the default stubbed flow.
+- missing `OPENAI_API_KEY` fails explicitly without affecting the default mocked TanStack flow.
 
 
 ## Next phase execution checklist (Milestone B + C + D)
