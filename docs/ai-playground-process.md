@@ -129,7 +129,7 @@ A phase-1 build is complete when:
 Use this exact startup sequence at the beginning of the next implementation session:
 
 1. `bun install`
-2. `bunx tsc --build`
+2. `bun check:package`
 3. `bun knip`
 4. `bun lint`
 5. `bun test-pokemon`

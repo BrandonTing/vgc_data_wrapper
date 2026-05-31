@@ -21,9 +21,9 @@ jobs:
       - name: 'Knip'
         run: |
           bun knip 
-      - name: 'TSC'
+      - name: 'Check Package'
         run: |
-          bunx tsc --build
+          bun check:package
       - name: 'Check AI Playground'
         run: |
           bun check:ai-playground

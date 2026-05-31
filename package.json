@@ -11,6 +11,7 @@
     "test-pokemon": "bun run --filter vgc_data_wrapper test-pokemon",
     "test-damage": "bun run --filter vgc_data_wrapper test-damage",
     "release": "bun run --filter vgc_data_wrapper build && bunx changeset publish",
+    "check:package": "bun run --filter vgc_data_wrapper check",
     "check:ai-playground": "bun run --filter @vgc/ai-playground check",
     "build:ai-playground": "bun run --filter @vgc/ai-playground build",
     "test:ai-playground": "bun run --filter @vgc/ai-playground test"
