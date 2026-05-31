@@ -23,7 +23,10 @@ jobs:
           bun knip 
       - name: 'TSC'
         run: |
-          bunx tsc 
+          bunx tsc
+      - name: 'Check AI Playground'
+        run: |
+          bun check:ai-playground
 
   test:
     runs-on: ubuntu-latest
@@ -43,4 +46,7 @@ jobs:
       - name: 'Test Damage'
         run: |
           bun test-damage
+      - name: 'Test AI Playground'
+        run: |
+          bun test:ai-playground
 
