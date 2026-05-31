@@ -7,9 +7,12 @@ import {
   type PlaygroundSnapshot,
 } from "vgc_data_wrapper";
 
+/** Stable model-facing name for the deterministic damage tool. */
 export const CALCULATE_AI_DAMAGE_TOOL_NAME = "calculateAiDamage";
+/** SSE custom-event name used to expose deterministic trace details to the client. */
 export const CALCULATE_AI_DAMAGE_TRACE_EVENT = "calculateAiDamageTrace";
 
+/** Lifecycle states displayed by the tool-call trace UI. */
 export type ToolStateTransition =
   | "awaiting-input"
   | "input-streaming"
@@ -18,6 +21,7 @@ export type ToolStateTransition =
   | "complete"
   | "error";
 
+/** Deterministic evidence captured around one calculateAiDamage invocation. */
 export type CalculateAiDamageTrace = {
   toolName: typeof CALCULATE_AI_DAMAGE_TOOL_NAME;
   rawArguments: unknown;
@@ -34,6 +38,7 @@ const outputJsonSchema = zodToJsonSchema(
   AiDamageCalcOutputSchema,
 ) as JSONSchema;
 
+/** Builds trace evidence without throwing when tool arguments fail adapter validation. */
 export function inspectCalculateAiDamageToolCall(
   rawArguments: unknown,
 ): CalculateAiDamageTrace {
@@ -58,6 +63,7 @@ export function inspectCalculateAiDamageToolCall(
   };
 }
 
+/** Executes validated tool arguments or throws a path-aware error for the model turn. */
 export function executeCalculateAiDamageToolCall(rawArguments: unknown): {
   trace: CalculateAiDamageTrace;
   result: NonNullable<CalculateAiDamageTrace["rawDeterministicResult"]>;
@@ -73,6 +79,7 @@ export function executeCalculateAiDamageToolCall(rawArguments: unknown): {
   return { trace, result: trace.rawDeterministicResult };
 }
 
+/** JSON-schema tool contract presented to the model. */
 export const calculateAiDamageDefinition = toolDefinition({
   name: CALCULATE_AI_DAMAGE_TOOL_NAME,
   description:
@@ -81,6 +88,7 @@ export const calculateAiDamageDefinition = toolDefinition({
   outputSchema: outputJsonSchema,
 });
 
+/** Server implementation that returns raw deterministic output and emits trace evidence. */
 export const calculateAiDamageTool = calculateAiDamageDefinition.server(
   async (rawArguments, context) => {
     const { trace, result } = executeCalculateAiDamageToolCall(rawArguments);

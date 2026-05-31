@@ -1,6 +1,7 @@
 import { buildStubbedAiToolTurn } from "$lib/ai-turn";
 import { json, type RequestHandler } from "@sveltejs/kit";
 
+/** Executes the provider-free tool turn used by CI and local trace debugging. */
 export const POST: RequestHandler = async ({ request }) => {
   try {
     const body: unknown = await request.json();

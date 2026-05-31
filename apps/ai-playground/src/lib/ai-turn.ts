@@ -4,6 +4,7 @@ import {
   type CalculateAiDamageTrace,
 } from "./tools/calculate-ai-damage";
 
+/** Observable model-turn data rendered by the Tool Call Trace panel. */
 export type AiToolTurn = {
   mode: "stub" | "openai";
   trace: CalculateAiDamageTrace;
@@ -11,6 +12,7 @@ export type AiToolTurn = {
   groundingNotes: string[];
 };
 
+/** Runs a provider-free deterministic tool turn and creates a grounded CI-safe explanation. */
 export function buildStubbedAiToolTurn(rawArguments: unknown): AiToolTurn {
   const { trace, result } = executeCalculateAiDamageToolCall(rawArguments);
   const lowRoll = result.rolls.at(0);

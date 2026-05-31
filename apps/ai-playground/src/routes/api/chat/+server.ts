@@ -11,6 +11,7 @@ const SYSTEM_PROMPT = `You are explaining deterministic Pokemon damage output.
 You MUST call calculateAiDamage exactly once using the provided resolved structured battle state before making any damage or KO claim.
 After tool execution, explain only the raw tool result. Never invent modifiers or guarantees.`;
 
+/** Streams an optional real-provider turn while keeping the OpenAI key server-side. */
 export const POST: RequestHandler = async ({ request }) => {
   if (!process.env.OPENAI_API_KEY) {
     return json(

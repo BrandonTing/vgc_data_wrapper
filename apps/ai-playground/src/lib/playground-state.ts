@@ -1,6 +1,7 @@
 import { buildAiPlaygroundSnapshot } from "vgc_data_wrapper";
 import type { PlaygroundSnapshot } from "vgc_data_wrapper";
 
+/** Minimal valid battle state used to demonstrate adapter-applied defaults. */
 export const SAMPLE_AI_DAMAGE_INPUT = {
   attacker: {
     statMode: "derived",
@@ -34,18 +35,21 @@ export const SAMPLE_AI_DAMAGE_INPUT = {
   },
 } as const;
 
+/** Pretty-printed editor seed for the raw structured-input panel. */
 export const SAMPLE_AI_DAMAGE_INPUT_TEXT = JSON.stringify(
   SAMPLE_AI_DAMAGE_INPUT,
   null,
   2,
 );
 
+/** Separates JSON parsing failures from adapter validation and execution output. */
 export type DeterministicEvaluation = {
   rawInputText: string;
   parseError: string | null;
   snapshot: PlaygroundSnapshot | null;
 };
 
+/** Parses editor JSON and delegates validation, normalization, and execution to the package adapter. */
 export function evaluateDeterministicInput(
   rawInputText: string,
 ): DeterministicEvaluation {
