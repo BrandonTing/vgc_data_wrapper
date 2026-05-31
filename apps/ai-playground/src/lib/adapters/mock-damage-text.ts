@@ -8,7 +8,7 @@ import {
   type ModelMessage,
   type StreamChunk,
 } from "@tanstack/ai";
-import { CALCULATE_AI_DAMAGE_TOOL_NAME } from "$lib/tools/calculate-ai-damage";
+import { CALCULATE_AI_DAMAGE_TOOL_NAME } from "../tools/calculate-ai-damage";
 
 const MOCK_MODEL = "mock-damage-explainer";
 const TOOL_CALL_ID = "mock-calculate-ai-damage";
