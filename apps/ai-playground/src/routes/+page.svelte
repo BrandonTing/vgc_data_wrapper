@@ -4,7 +4,6 @@
   import { buildGroundingNotes } from "vgc_data_wrapper";
   import JsonPanel from "$lib/components/JsonPanel.svelte";
   import ToolCallTrace from "$lib/components/ToolCallTrace.svelte";
-  import { deterministicAdapterSmoke } from "$lib/deterministic-adapter-smoke";
   import type { AiToolTurn } from "$lib/ai-turn";
   import type {
     CalculateAiDamageTrace,
@@ -156,13 +155,6 @@
         tool-call trace now remains visibly grounded in that kernel.
       </p>
     </div>
-    <aside aria-label="Local package smoke check">
-      <p class="eyebrow">Workspace adapter</p>
-      <strong class:ready={deterministicAdapterSmoke.importReady}>
-        {deterministicAdapterSmoke.importReady ? "Ready" : "Unavailable"}
-      </strong>
-      <p><code>{deterministicAdapterSmoke.packageName}</code></p>
-    </aside>
   </header>
 
   <section class="pipeline" aria-label="Deterministic adapter pipeline">
@@ -354,7 +346,6 @@
     line-height: 1.65;
   }
 
-  aside,
   .panel,
   .pipeline {
     border: 1px solid #d0dbd3;
@@ -363,18 +354,6 @@
     box-shadow: 0 1rem 2.5rem rgb(49 78 62 / 7%);
   }
 
-  aside {
-    min-width: 11rem;
-    padding: 1rem;
-  }
-
-  aside p:last-child {
-    margin: 0.75rem 0 0;
-    color: #53685d;
-    font-size: 0.75rem;
-  }
-
-  strong.ready,
   .status {
     display: inline-block;
     padding: 0.42rem 0.65rem;
@@ -384,7 +363,6 @@
     text-transform: uppercase;
   }
 
-  strong.ready,
   .success {
     background: #dcefe2;
     color: #26633b;
@@ -540,10 +518,6 @@
     .hero,
     .observability-grid {
       grid-template-columns: 1fr;
-    }
-
-    aside {
-      min-width: 0;
     }
 
     .panel-heading {
