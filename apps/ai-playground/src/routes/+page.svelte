@@ -1,0 +1,558 @@
+<script lang="ts">
+  import { onDestroy } from "svelte";
+  import { createChat, fetchServerSentEvents } from "@tanstack/ai-svelte";
+  import { buildGroundingNotes } from "vgc_data_wrapper";
+  import JsonPanel from "$lib/components/JsonPanel.svelte";
+  import ToolCallTrace from "$lib/components/ToolCallTrace.svelte";
+  import { deterministicAdapterSmoke } from "$lib/deterministic-adapter-smoke";
+  import type { AiToolTurn } from "$lib/ai-turn";
+  import type {
+    CalculateAiDamageTrace,
+    ToolStateTransition,
+  } from "$lib/tools/calculate-ai-damage";
+  import { CALCULATE_AI_DAMAGE_TRACE_EVENT } from "$lib/tools/calculate-ai-damage";
+  import {
+    evaluateDeterministicInput,
+    SAMPLE_AI_DAMAGE_INPUT_TEXT,
+  } from "$lib/playground-state";
+
+  let rawInputText = $state(SAMPLE_AI_DAMAGE_INPUT_TEXT);
+  let evaluation = $state(evaluateDeterministicInput(SAMPLE_AI_DAMAGE_INPUT_TEXT));
+  let aiTurn = $state<AiToolTurn | null>(null);
+  let aiError = $state<string | null>(null);
+  let realProviderTrace: CalculateAiDamageTrace | null = null;
+  let realProviderStates: ToolStateTransition[] = [];
+
+  const snapshot = $derived(evaluation.snapshot);
+  const validation = $derived(
+    evaluation.parseError
+      ? {
+          isValid: false,
+          issues: [{ path: "root", message: evaluation.parseError }],
+        }
+      : snapshot?.validation,
+  );
+
+  function recordRealProviderState(state: ToolStateTransition) {
+    if (realProviderStates.at(-1) !== state) realProviderStates.push(state);
+  }
+
+  const chat = createChat({
+    connection: fetchServerSentEvents("/api/chat"),
+    onChunk(chunk) {
+      if (chunk.type === "TOOL_CALL_START") recordRealProviderState("awaiting-input");
+      if (chunk.type === "TOOL_CALL_ARGS") recordRealProviderState("input-streaming");
+      if (chunk.type === "TOOL_CALL_END") {
+        recordRealProviderState("input-complete");
+        recordRealProviderState("executing");
+      }
+      if (chunk.type === "TOOL_CALL_RESULT") recordRealProviderState("complete");
+      if (chunk.type === "RUN_ERROR") recordRealProviderState("error");
+    },
+    onCustomEvent(eventType, data) {
+      if (eventType === CALCULATE_AI_DAMAGE_TRACE_EVENT) {
+        realProviderTrace = data as CalculateAiDamageTrace;
+      }
+    },
+    onFinish(message) {
+      if (!realProviderTrace?.rawDeterministicResult) return;
+      const modelResponse = message.parts
+        .filter((part) => part.type === "text")
+        .map((part) => part.content)
+        .join("\n");
+      aiTurn = {
+        mode: "openai",
+        trace: {
+          ...realProviderTrace,
+          stateTransitions:
+            realProviderStates.length > 0
+              ? realProviderStates
+              : realProviderTrace.stateTransitions,
+        },
+        modelResponse,
+        groundingNotes: buildGroundingNotes(
+          realProviderTrace.rawDeterministicResult,
+          modelResponse,
+        ),
+      };
+    },
+  });
+
+  onDestroy(() => chat.dispose());
+
+  function runDeterministicPanels() {
+    evaluation = evaluateDeterministicInput(rawInputText);
+  }
+
+  function resetSample() {
+    rawInputText = SAMPLE_AI_DAMAGE_INPUT_TEXT;
+    aiTurn = null;
+    aiError = null;
+    runDeterministicPanels();
+  }
+
+  function getValidRawInput(): unknown | null {
+    runDeterministicPanels();
+    if (!evaluation.snapshot?.validation.isValid) {
+      aiError = "Resolve structured input validation errors before running an AI tool turn.";
+      return null;
+    }
+    return evaluation.snapshot.rawInput;
+  }
+
+  async function runStubbedAiTurn() {
+    const rawStructuredInput = getValidRawInput();
+    if (!rawStructuredInput) return;
+    aiError = null;
+    try {
+      const response = await fetch("/api/chat/stub", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ rawStructuredInput }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error ?? "Stubbed AI tool turn failed");
+      aiTurn = body as AiToolTurn;
+    } catch (error) {
+      aiError = error instanceof Error ? error.message : String(error);
+    }
+  }
+
+  async function runOpenAiTurn() {
+    const rawStructuredInput = getValidRawInput();
+    if (!rawStructuredInput) return;
+    aiError = null;
+    aiTurn = null;
+    realProviderTrace = null;
+    realProviderStates = [];
+    chat.clear();
+    chat.updateForwardedProps({ rawStructuredInput });
+    try {
+      await chat.sendMessage(
+        "Call calculateAiDamage for the provided structured state, then explain only its deterministic result.",
+      );
+    } catch (error) {
+      aiError = error instanceof Error ? error.message : String(error);
+    }
+  }
+</script>
+
+<svelte:head>
+  <title>AI Damage Tool Playground</title>
+  <meta
+    name="description"
+    content="Inspect structured deterministic AI damage adapter inputs and outputs."
+  />
+</svelte:head>
+
+<main>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Milestone D · AI tool-call observability</p>
+      <h1>AI Damage Tool Playground</h1>
+      <p class="lede">
+        Inspect how authored structured battle state becomes validated,
+        defaulted, and executed by the deterministic damage adapter. Model
+        tool-call trace now remains visibly grounded in that kernel.
+      </p>
+    </div>
+    <aside aria-label="Local package smoke check">
+      <p class="eyebrow">Workspace adapter</p>
+      <strong class:ready={deterministicAdapterSmoke.importReady}>
+        {deterministicAdapterSmoke.importReady ? "Ready" : "Unavailable"}
+      </strong>
+      <p><code>{deterministicAdapterSmoke.packageName}</code></p>
+    </aside>
+  </header>
+
+  <section class="pipeline" aria-label="Deterministic adapter pipeline">
+    <span>Raw authored input</span>
+    <b aria-hidden="true">→</b>
+    <span>Schema validation</span>
+    <b aria-hidden="true">→</b>
+    <span>Normalized state</span>
+    <b aria-hidden="true">→</b>
+    <span>DamageResult</span>
+  </section>
+
+  <section class="editor panel" aria-labelledby="raw-input-heading">
+    <header class="panel-heading">
+      <div>
+        <p class="eyebrow">Panel 1</p>
+        <h2 id="raw-input-heading">Raw Structured Input</h2>
+      </div>
+      <div class="actions">
+        <button class="secondary" type="button" onclick={resetSample}>
+          Reset sample
+        </button>
+        <button
+          type="button"
+          data-testid="run-deterministic"
+          onclick={runDeterministicPanels}
+        >
+          Run deterministic adapter
+        </button>
+      </div>
+    </header>
+    <p class="panel-copy">
+      Edit canonical <code>AiDamageCalcInput</code> JSON. The adapter rejects
+      unsupported aliases and materializes omitted mechanical defaults.
+    </p>
+    <textarea
+      bind:value={rawInputText}
+      data-testid="raw-input"
+      spellcheck="false"
+      aria-label="Raw structured AI damage input"
+    ></textarea>
+  </section>
+
+  <section class="panel validation" data-testid="validation-panel">
+    <header class="panel-heading">
+      <div>
+        <p class="eyebrow">Panel 2</p>
+        <h2>Schema Validation Result</h2>
+      </div>
+      {#if validation?.isValid}
+        <strong class="status success" data-testid="schema-valid">Valid</strong>
+      {:else}
+        <strong class="status error" data-testid="schema-invalid">Invalid</strong>
+      {/if}
+    </header>
+
+    {#if validation?.isValid}
+      <p class="success-copy">The authored JSON matches <code>AiDamageCalcInputSchema</code>.</p>
+    {:else if validation}
+      <ul class="issues">
+        {#each validation.issues as issue}
+          <li>
+            <code>{issue.path}</code>
+            <span>{issue.message}</span>
+          </li>
+        {/each}
+      </ul>
+    {/if}
+  </section>
+
+  <section class="observability-grid" aria-label="Deterministic observability panels">
+    <JsonPanel
+      eyebrow="Panel 3"
+      title="Normalized / Defaulted Input"
+      value={snapshot?.normalizedInput}
+      testId="normalized-panel"
+    />
+    <JsonPanel
+      eyebrow="Panel 4"
+      title="Raw DamageResult"
+      value={snapshot?.result}
+      testId="result-panel"
+    />
+  </section>
+
+  {#if snapshot?.groundingNotes.length}
+    <section class="panel defaults" data-testid="default-notes">
+      <header>
+        <p class="eyebrow">Adapter materialization notes</p>
+        <h2>Defaults applied before execution</h2>
+      </header>
+      <ul>
+        {#each snapshot.groundingNotes as note}
+          <li>{note}</li>
+        {/each}
+      </ul>
+    </section>
+  {/if}
+
+  <section class="panel ai-controls" aria-labelledby="ai-tool-turn-heading">
+    <header class="panel-heading">
+      <div>
+        <p class="eyebrow">AI tool turn</p>
+        <h2 id="ai-tool-turn-heading">Invoke calculateAiDamage before explanation</h2>
+      </div>
+      <div class="actions">
+        <button type="button" data-testid="run-stubbed-ai" onclick={runStubbedAiTurn}>
+          Run CI-safe stub
+        </button>
+        <button class="secondary" type="button" data-testid="run-openai" disabled={chat.isLoading} onclick={runOpenAiTurn}>
+          {chat.isLoading ? "Waiting for OpenAI…" : "Run optional OpenAI turn"}
+        </button>
+      </div>
+    </header>
+    <p class="panel-copy">
+      The default stub executes the same deterministic tool contract without a provider key. The optional OpenAI turn uses the server-only <code>OPENAI_API_KEY</code> when configured.
+    </p>
+    {#if aiError}<p class="ai-error" data-testid="ai-error">{aiError}</p>{/if}
+  </section>
+
+  <ToolCallTrace turn={aiTurn} />
+</main>
+
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+
+  :global(body) {
+    margin: 0;
+    background: #f3f5f1;
+    color: #18251e;
+    font-family:
+      Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", sans-serif;
+  }
+
+  main {
+    width: min(100% - 2rem, 76rem);
+    margin: 0 auto;
+    padding: 4rem 0 6rem;
+  }
+
+  h1,
+  h2,
+  p {
+    margin-top: 0;
+  }
+
+  h1 {
+    max-width: 12ch;
+    margin-bottom: 1rem;
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    letter-spacing: -0.08em;
+    line-height: 0.95;
+  }
+
+  h2 {
+    margin-bottom: 0;
+    font-size: 1.2rem;
+  }
+
+  code,
+  textarea {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: end;
+  }
+
+  .eyebrow {
+    margin-bottom: 0.5rem;
+    color: #53685d;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .lede {
+    max-width: 48rem;
+    margin-bottom: 0;
+    color: #405149;
+    font-size: 1.1rem;
+    line-height: 1.65;
+  }
+
+  aside,
+  .panel,
+  .pipeline {
+    border: 1px solid #d0dbd3;
+    border-radius: 0.9rem;
+    background: #fbfcfa;
+    box-shadow: 0 1rem 2.5rem rgb(49 78 62 / 7%);
+  }
+
+  aside {
+    min-width: 11rem;
+    padding: 1rem;
+  }
+
+  aside p:last-child {
+    margin: 0.75rem 0 0;
+    color: #53685d;
+    font-size: 0.75rem;
+  }
+
+  strong.ready,
+  .status {
+    display: inline-block;
+    padding: 0.42rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  strong.ready,
+  .success {
+    background: #dcefe2;
+    color: #26633b;
+  }
+
+  .error {
+    background: #f6dddd;
+    color: #8f2929;
+  }
+
+  .pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+    margin: 2.5rem 0 1rem;
+    padding: 0.85rem 1rem;
+    color: #53685d;
+    font-size: 0.78rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .pipeline b {
+    color: #a1afa7;
+  }
+
+  .panel {
+    padding: 1.2rem;
+  }
+
+  .panel-heading {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panel-copy,
+  .success-copy {
+    color: #53685d;
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  .panel-copy {
+    margin: 0.9rem 0;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 25rem;
+    resize: vertical;
+    padding: 1rem;
+    border: 1px solid #c4d0c9;
+    border-radius: 0.55rem;
+    outline: none;
+    background: #18251e;
+    color: #e5f2e9;
+    font-size: 0.8rem;
+    line-height: 1.55;
+  }
+
+  textarea:focus {
+    border-color: #648e74;
+    box-shadow: 0 0 0 3px rgb(100 142 116 / 20%);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    justify-content: flex-end;
+  }
+
+  button {
+    padding: 0.68rem 0.85rem;
+    border: 1px solid #28633d;
+    border-radius: 0.55rem;
+    background: #28633d;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 750;
+  }
+
+  button:hover {
+    background: #1e4e2f;
+  }
+
+  button.secondary {
+    border-color: #c4d0c9;
+    background: #fff;
+    color: #405149;
+  }
+
+  .validation,
+  .observability-grid,
+  .defaults,
+  .ai-controls {
+    margin-top: 1rem;
+  }
+
+  .success-copy {
+    margin: 0.9rem 0 0;
+  }
+
+  .ai-error {
+    margin: 0.8rem 0 0;
+    color: #8f2929;
+    font-size: 0.9rem;
+  }
+
+  .issues {
+    display: grid;
+    gap: 0.55rem;
+    margin: 0.9rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .issues li {
+    display: grid;
+    gap: 0.3rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    background: #faecec;
+    color: #7b3333;
+    font-size: 0.9rem;
+  }
+
+  .observability-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .defaults ul {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 0;
+    padding-left: 1.2rem;
+    color: #53685d;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 48rem) {
+    main {
+      padding-top: 2rem;
+    }
+
+    .hero,
+    .observability-grid {
+      grid-template-columns: 1fr;
+    }
+
+    aside {
+      min-width: 0;
+    }
+
+    .panel-heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .actions {
+      justify-content: flex-start;
+    }
+  }
+</style>

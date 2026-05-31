@@ -1,3 +1,7 @@
 {
-  "extends": "./packages/vgc_data_wrapper/tsconfig.json"
+  "extends": "./packages/vgc_data_wrapper/tsconfig.json",
+  "include": [
+    "packages/vgc_data_wrapper/src/**/*.ts",
+    "packages/vgc_data_wrapper/test/**/*.ts"
+  ]
 }

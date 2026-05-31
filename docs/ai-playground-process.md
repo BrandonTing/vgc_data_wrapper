@@ -1,6 +1,6 @@
 # AI Playground Implementation Process (Phase 1)
 
-Status: Draft (updated 2026-05-26)
+Status: Draft (updated 2026-05-30)
 
 ## Purpose
 
@@ -27,6 +27,18 @@ This process follows the current repository contracts and docs:
 - TanStack AI tool architecture: https://tanstack.com/ai/latest/docs/tools/tool-architecture
 - TanStack `@tanstack/ai-svelte` API: https://tanstack.com/ai/latest/docs/api/ai-svelte
 - SvelteKit docs (`+page.svelte`, `+server.ts`): https://svelte.dev/docs/kit
+
+### Verified TanStack AI API shape (2026-05-30)
+
+The current TanStack AI documentation differs from earlier implementation-plan pseudocode that used Vercel AI SDK-style APIs. For Milestone D, use the current TanStack AI APIs:
+
+- server streaming: `chat(...)` and `toServerSentEventsResponse(...)` from `@tanstack/ai`;
+- OpenAI adapter: `openaiText(...)` from `@tanstack/ai-openai`;
+- tool schema definition: `toolDefinition(...)` from `@tanstack/ai`, followed by a `.server(...)` implementation;
+- Svelte client: `createChat({ connection: fetchServerSentEvents("/api/chat") })` from `@tanstack/ai-svelte`;
+- structured client-controlled request context: `forwardedProps`, not the deprecated `body` option.
+
+Do not copy older pseudocode using `streamText(...)`, `tool(...)`, `DefaultChatTransport`, or `.toDataStreamResponse()` into the application.
 
 ## Process principles
 
@@ -56,22 +68,23 @@ Additionally, phase 1 must include a visible **Tool Call Trace** section showing
 
 ## Delivery workflow
 
-### Step 1: Foundation wiring
+### Step 1: Foundation wiring (Milestone B, complete)
 
 - Create SvelteKit app workspace (`apps/ai-playground`).
 - Wire local package import of `vgc_data_wrapper` deterministic adapter exports.
-- Add server endpoint that streams model events in SvelteKit.
+- Prove the app boots and the deterministic package imports compile before adding model integration.
 
-### Step 2: Deterministic contract panels (no model yet)
+### Step 2: Deterministic contract panels (Milestone C, complete)
 
 - Implement panel 1-4 from structured JSON input.
 - Show schema errors with paths/messages.
 - Show normalized/defaulted JSON as produced by adapter.
 
-### Step 3: TanStack AI tool-calling integration
+### Step 3: TanStack AI tool-calling integration (Milestone D, complete)
 
-- Define the deterministic damage tool with strict input schema and description.
-- Integrate tool execution through TanStack AI server flow.
+- Define the deterministic damage tool with `toolDefinition(...)`, the strict input schema, the output schema, and a description.
+- Attach the deterministic implementation with `.server(...)` and integrate it through `chat(...)` plus `toServerSentEventsResponse(...)`.
+- Connect the Svelte client with `createChat(...)` plus `fetchServerSentEvents(...)`.
 - Render tool-call events and arguments in UI trace.
 - Confirm model response is produced **after** tool result inclusion.
 
@@ -124,31 +137,43 @@ Use this exact startup sequence at the beginning of the next implementation sess
 7. Confirm workspace/package shape before app work:
    - root workspace manifest exists (`package.json` with `workspaces`)
    - package is under `packages/vgc_data_wrapper`
-8. Start Milestone B execution from the checklist in this doc (scaffold `apps/ai-playground`).
+8. Confirm the completed Milestone D tool-calling slice still passes `bun test:ai-playground` and `bun check:ai-playground`.
+9. Run the CI-safe stubbed AI tool turn before any optional real-provider verification.
+10. Optionally set `OPENAI_API_KEY` and run one manual OpenAI turn to evaluate real model tool-calling reliability.
 
-### Bootstrap deliverables for first coding block
+### Next validation block: hardening + optional real-provider verification
 
-In the first focused coding block, target only:
+The next focused block should:
 
-- `apps/ai-playground` scaffold with SvelteKit + TypeScript
-- local import wiring to `vgc_data_wrapper`
-- minimal `/` route render smoke
+- add browser-level mocked/stubbed coverage for the deterministic panels and visible Tool Call Trace;
+- keep the default test path provider-key-free;
+- optionally run a manual OpenAI-key verification after the CI-safe path passes;
+- record any real-model schema ergonomics, grounding, or retry issues without weakening the deterministic adapter contract.
 
-Do **not** begin TanStack AI route/tool work until scaffold + deterministic import compile is verified.
+### Optional manual OpenAI verification
 
-### Bootstrap acceptance gate
+1. Copy `apps/ai-playground/.env.example` to `apps/ai-playground/.env`.
+2. Set `OPENAI_API_KEY` in that local ignored file.
+3. Start the app with `bun run --filter @vgc/ai-playground dev`.
+4. Run the CI-safe stub first, then click **Run optional OpenAI turn**.
+5. Inspect the visible trace: raw args, schema validation, normalized/defaulted args, state transitions, raw deterministic result, model response, and grounding notes.
 
-Before moving to Milestone C/D, confirm all are true:
+The key stays server-side and real-provider verification remains optional and non-blocking.
 
-- app workspace exists and boots
-- deterministic package imports compile in app
-- required repo checks above are still passing
+### Milestone D acceptance gate
+
+Before hardening, confirm all are true:
+
+- the stubbed AI turn invokes the deterministic tool before explanation;
+- the visible trace includes raw args, validation, normalization, state transitions, raw result, explanation, and grounding notes;
+- the real-provider route uses TanStack AI `chat(...)` and `toServerSentEventsResponse(...)`;
+- missing `OPENAI_API_KEY` fails explicitly without affecting the default stubbed flow.
 
 
 ## Next phase execution checklist (Milestone B + C + D)
 
-1. Scaffold `apps/ai-playground` with SvelteKit and TypeScript.
-2. Add deterministic state store and panel components.
-3. Add TanStack AI server route with deterministic tool definition.
-4. Add client `createChat` integration and tool-call trace rendering.
-5. Add app smoke e2e for tool-call trace + deterministic panels.
+1. ✅ Scaffold `apps/ai-playground` with SvelteKit and TypeScript (Milestone B complete).
+2. ✅ Add deterministic state store and panel components (Milestone C complete).
+3. ✅ Add TanStack AI server route with deterministic tool definition (Milestone D complete).
+4. ✅ Add client `createChat(...)` plus `fetchServerSentEvents(...)` integration and tool-call trace rendering (Milestone D complete).
+5. **Next:** add app smoke e2e for tool-call trace + deterministic panels and optionally run a manual OpenAI-key verification.

@@ -1,0 +1,28 @@
+{
+  "name": "@vgc/ai-playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "bun run build:package && vite build",
+    "check": "bun run build:package && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "build:package": "bun run --filter vgc_data_wrapper build",
+    "test": "bun run build:package && bun test ./test"
+  },
+  "dependencies": {
+    "@tanstack/ai": "^0.23.1",
+    "@tanstack/ai-openai": "^0.10.4",
+    "@tanstack/ai-svelte": "^0.11.1",
+    "vgc_data_wrapper": "workspace:*",
+    "zod-to-json-schema": "^3.25.2"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "latest",
+    "@sveltejs/kit": "latest",
+    "@sveltejs/vite-plugin-svelte": "latest",
+    "svelte": "^5.0.0",
+    "svelte-check": "latest",
+    "typescript": "^5.0.0",
+    "vite": "latest"
+  }
+}
