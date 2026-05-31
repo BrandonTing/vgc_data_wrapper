@@ -27,6 +27,9 @@ This process follows the current repository contracts and docs:
 - TanStack AI tool architecture: https://tanstack.com/ai/latest/docs/tools/tool-architecture
 - TanStack `@tanstack/ai-svelte` API: https://tanstack.com/ai/latest/docs/api/ai-svelte
 - SvelteKit docs (`+page.svelte`, `+server.ts`): https://svelte.dev/docs/kit
+- Playwright CI guide: https://playwright.dev/docs/ci
+- Playwright browser and Linux dependency installation: https://playwright.dev/docs/browsers#install-system-dependencies
+- Playwright managed web server configuration: https://playwright.dev/docs/test-webserver
 
 ### Verified TanStack AI API shape (2026-05-30)
 
@@ -94,11 +97,12 @@ Additionally, phase 1 must include a visible **Tool Call Trace** section showing
 - Flag overclaims (e.g., guaranteed OHKO mismatch).
 - Keep raw model output visible; avoid silent rewriting.
 
-### Step 5: Hardening + smoke e2e
+### Step 5: Hardening + smoke e2e (complete)
 
 - Add fixtures for valid/invalid structured inputs.
-- Add one app-level smoke e2e covering tool-call trace and deterministic panels.
-- Lock app checks in CI-friendly scripts.
+- Add one Playwright smoke e2e covering deterministic panels and the mocked TanStack tool-call trace.
+- Install Chromium plus Linux dependencies with `bun install:e2e-browser` before browser tests.
+- Run the provider-key-free browser gate with `bun e2e:ai-playground`.
 
 ## Definition of done for first runnable playground
 
@@ -138,16 +142,16 @@ Use this exact startup sequence at the beginning of the next implementation sess
    - root workspace manifest exists (`package.json` with `workspaces`)
    - package is under `packages/vgc_data_wrapper`
 8. Confirm the completed Milestone D tool-calling slice still passes `bun test:ai-playground` and `bun check:ai-playground`.
-9. Run the CI-safe mocked TanStack AI tool turn before any optional real-provider verification.
-10. Optionally set `OPENAI_API_KEY` and run one manual OpenAI turn to evaluate real model tool-calling reliability.
+9. Install the Playwright Chromium browser and Linux dependencies with `bun install:e2e-browser`.
+10. Confirm the mocked TanStack browser flow passes `bun e2e:ai-playground`.
+11. Optionally set `OPENAI_API_KEY` and run one manual OpenAI turn to evaluate real model tool-calling reliability.
 
-### Next validation block: hardening + optional real-provider verification
+### Next validation block: optional real-provider verification
 
 The next focused block should:
 
-- add browser-level mocked TanStack coverage for the deterministic panels and visible Tool Call Trace;
 - keep the default test path provider-key-free;
-- optionally run a manual OpenAI-key verification after the CI-safe path passes;
+- optionally run a manual OpenAI-key verification after the CI-safe unit and browser paths pass;
 - record any real-model schema ergonomics, grounding, or retry issues without weakening the deterministic adapter contract.
 
 ### Optional manual OpenAI verification
@@ -176,4 +180,5 @@ Before hardening, confirm all are true:
 2. ✅ Add deterministic state store and panel components (Milestone C complete).
 3. ✅ Add TanStack AI server route with deterministic tool definition (Milestone D complete).
 4. ✅ Add client `createChat(...)` plus `fetchServerSentEvents(...)` integration and tool-call trace rendering (Milestone D complete).
-5. **Next:** add app smoke e2e for tool-call trace + deterministic panels and optionally run a manual OpenAI-key verification.
+5. ✅ Add Playwright smoke e2e for tool-call trace + deterministic panels.
+6. **Next:** optionally run a manual OpenAI-key verification.

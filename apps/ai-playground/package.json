@@ -7,7 +7,9 @@
     "build": "bun run build:package && vite build",
     "check": "bun run build:package && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "build:package": "bun run --filter vgc_data_wrapper build",
-    "test": "bun run build:package && bun test ./test"
+    "test": "bun run build:package && bun test ./test",
+    "e2e": "bun run build:package && playwright test",
+    "install:e2e-browser": "playwright install --with-deps chromium"
   },
   "dependencies": {
     "@tanstack/ai": "^0.23.1",
@@ -23,6 +25,7 @@
     "svelte": "^5.0.0",
     "svelte-check": "latest",
     "typescript": "^5.0.0",
-    "vite": "latest"
+    "vite": "latest",
+    "@playwright/test": "^1.60.0"
   }
 }

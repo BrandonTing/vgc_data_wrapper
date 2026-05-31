@@ -46,7 +46,7 @@ Treat the corrected pseudocode below as a design sketch and re-check the officia
 
 ## Target outcome of the next step
 
-Milestones B, C, and D have established the runnable SvelteKit scaffold, deterministic panels, TanStack AI tool definition, SvelteKit streaming route, Svelte client integration, visible Tool Call Trace, and CI-safe mocked TanStack turn. The next step is hardening: add browser-level mocked TanStack coverage and optionally run a manual OpenAI-key verification without making the real provider a default CI dependency.
+Milestones B, C, and D have established the runnable SvelteKit scaffold, deterministic panels, TanStack AI tool definition, SvelteKit streaming route, Svelte client integration, visible Tool Call Trace, and CI-safe mocked TanStack turn. Browser-level mocked TanStack coverage now runs through Playwright in CI. The next optional step is a manual OpenAI-key verification without making the real provider a default CI dependency.
 
 ## Milestone breakdown
 
@@ -152,13 +152,14 @@ Acceptance criteria:
 - SvelteKit app can run locally (`bun run dev` in app workspace).
 - Deterministic panels 1-4 are interactive and render expected state transitions.
 - At least one model turn executes and emits a visible tool-call trace entry.
-- At least one app-level automated test exists (recommended: Playwright e2e smoke test for tool-call flow).
+- A Playwright e2e smoke test covers the provider-free mocked TanStack tool-call flow.
 - CI-friendly non-interactive app checks are defined (e.g., app typecheck + test command).
 
 ### E2E feasibility note
 
-- Yes, e2e is feasible in this environment.
-- Preferred initial approach: Playwright smoke test that:
+- Playwright e2e is configured for Chromium and runs headlessly in CI.
+- CI installs the required browser binary and Linux dependencies with `bun install:e2e-browser`.
+- The smoke test:
   1. loads `/`,
   2. pastes valid structured JSON,
   3. verifies validation panel indicates valid,

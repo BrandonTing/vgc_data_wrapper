@@ -49,4 +49,10 @@ jobs:
       - name: 'Test AI Playground'
         run: |
           bun test:ai-playground
+      - name: 'Install Playwright Chromium'
+        run: |
+          bun install:e2e-browser
+      - name: 'E2E AI Playground'
+        run: |
+          bun e2e:ai-playground
 

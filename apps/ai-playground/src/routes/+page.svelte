@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { createChat, fetchServerSentEvents } from "@tanstack/ai-svelte";
   import { buildGroundingNotes } from "vgc_data_wrapper";
   import JsonPanel from "$lib/components/JsonPanel.svelte";
@@ -19,6 +19,7 @@
   let evaluation = $state(evaluateDeterministicInput(SAMPLE_AI_DAMAGE_INPUT_TEXT));
   let aiTurn = $state<AiToolTurn | null>(null);
   let aiError = $state<string | null>(null);
+  let isHydrated = $state(false);
 
   const snapshot = $derived(evaluation.snapshot);
   const validation = $derived(
@@ -85,6 +86,10 @@
   const mockChat = createTraceChat("/api/chat/mock", "mock");
   const openAiChat = createTraceChat("/api/chat", "openai");
 
+  onMount(() => {
+    isHydrated = true;
+  });
+
   onDestroy(() => {
     mockChat.client.dispose();
     openAiChat.client.dispose();
@@ -145,7 +150,7 @@
   />
 </svelte:head>
 
-<main>
+<main data-testid="playground" data-hydrated={isHydrated}>
   <header class="hero">
     <div>
       <p class="eyebrow">Milestone D · AI tool-call observability</p>
@@ -262,10 +267,10 @@
         <h2 id="ai-tool-turn-heading">Invoke calculateAiDamage before explanation</h2>
       </div>
       <div class="actions">
-        <button type="button" data-testid="run-mock-ai" disabled={mockChat.client.isLoading} onclick={runMockAiTurn}>
+        <button type="button" data-testid="run-mock-ai" disabled={!isHydrated || mockChat.client.isLoading} onclick={runMockAiTurn}>
           {mockChat.client.isLoading ? "Running TanStack mock…" : "Run CI-safe TanStack mock"}
         </button>
-        <button class="secondary" type="button" data-testid="run-openai" disabled={openAiChat.client.isLoading} onclick={runOpenAiTurn}>
+        <button class="secondary" type="button" data-testid="run-openai" disabled={!isHydrated || openAiChat.client.isLoading} onclick={runOpenAiTurn}>
           {openAiChat.client.isLoading ? "Waiting for OpenAI…" : "Run optional OpenAI turn"}
         </button>
       </div>

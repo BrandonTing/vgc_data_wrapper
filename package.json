@@ -14,7 +14,9 @@
     "check:package": "bun run --filter vgc_data_wrapper check",
     "check:ai-playground": "bun run --filter @vgc/ai-playground check",
     "build:ai-playground": "bun run --filter @vgc/ai-playground build",
-    "test:ai-playground": "bun run --filter @vgc/ai-playground test"
+    "test:ai-playground": "bun run --filter @vgc/ai-playground test",
+    "e2e:ai-playground": "bun run --filter @vgc/ai-playground e2e",
+    "install:e2e-browser": "bun run --filter @vgc/ai-playground install:e2e-browser"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1"
