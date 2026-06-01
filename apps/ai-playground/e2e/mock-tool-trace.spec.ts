@@ -26,3 +26,21 @@ test("renders the deterministic trace produced by the mocked TanStack AI route",
     "No grounding mismatch detected.",
   );
 });
+
+test("surfaces optional OpenAI endpoint failures", async ({ page }) => {
+  await page.route("**/api/chat", async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({ error: "Optional OpenAI turn unavailable" }),
+    });
+  });
+  await page.goto("/");
+
+  await expect(page.locator("main")).toHaveAttribute("data-hydrated", "true");
+  await page.getByRole("button", { name: "Run optional OpenAI turn" }).click();
+
+  await expect(page.getByRole("alert")).toContainText(
+    "HTTP error! status: 503 Service Unavailable",
+  );
+});

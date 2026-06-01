@@ -60,6 +60,12 @@
           trace = data as CalculateAiDamageTrace;
         }
       },
+      onError(error) {
+        aiTurnState = {
+          status: "error",
+          message: error.message,
+        };
+      },
       onFinish(message) {
         if (!trace?.rawDeterministicResult) {
           aiTurnState = {
