@@ -61,7 +61,15 @@
         }
       },
       onFinish(message) {
-        if (!trace?.rawDeterministicResult) return;
+        if (!trace?.rawDeterministicResult) {
+          aiTurnState = {
+            status: "error",
+            message: trace
+              ? "The calculateAiDamage tool finished without a deterministic result. The model response is not grounded."
+              : "The model finished without calling calculateAiDamage. The model response is not grounded.",
+          };
+          return;
+        }
         const modelResponse = message.parts
           .filter((part) => part.type === "text")
           .map((part) => part.content)
