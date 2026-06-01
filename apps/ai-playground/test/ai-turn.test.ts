@@ -54,4 +54,21 @@ describe("calculateAiDamage AI tool turn", () => {
     expect(trace.rawDeterministicResult).toBeNull();
     expect(trace.stateTransitions.at(-1)).toBe("error");
   });
+
+  test("emits the validation trace before rejecting invalid tool arguments", async () => {
+    const events: Array<{ eventType: string; data: unknown }> = [];
+    const context = {
+      emitCustomEvent(eventType: string, data: unknown) {
+        events.push({ eventType, data });
+      },
+    } as Parameters<typeof calculateAiDamageTool.execute>[1];
+
+    await expect(calculateAiDamageTool.execute({}, context)).rejects.toThrow(
+      "Invalid calculateAiDamage tool arguments",
+    );
+    expect(events).toHaveLength(1);
+    expect(events[0]?.eventType).toBe(CALCULATE_AI_DAMAGE_TRACE_EVENT);
+    expect((events[0]?.data as CalculateAiDamageTrace).schemaValidation.isValid).toBe(false);
+    expect((events[0]?.data as CalculateAiDamageTrace).rawArguments).toEqual({});
+  });
 });

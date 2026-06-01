@@ -63,12 +63,9 @@ export function inspectCalculateAiDamageToolCall(
   };
 }
 
-/** Executes validated tool arguments or throws a path-aware error for the model turn. */
-export function executeCalculateAiDamageToolCall(rawArguments: unknown): {
-  trace: CalculateAiDamageTrace;
-  result: NonNullable<CalculateAiDamageTrace["rawDeterministicResult"]>;
-} {
-  const trace = inspectCalculateAiDamageToolCall(rawArguments);
+function getValidatedCalculateAiDamageResult(
+  trace: CalculateAiDamageTrace,
+): NonNullable<CalculateAiDamageTrace["rawDeterministicResult"]> {
   if (!trace.schemaValidation.isValid || !trace.rawDeterministicResult) {
     const issues = trace.schemaValidation.issues
       .map((issue) => `${issue.path}: ${issue.message}`)
@@ -76,7 +73,16 @@ export function executeCalculateAiDamageToolCall(rawArguments: unknown): {
     throw new Error(`Invalid calculateAiDamage tool arguments: ${issues}`);
   }
 
-  return { trace, result: trace.rawDeterministicResult };
+  return trace.rawDeterministicResult;
+}
+
+/** Executes validated tool arguments or throws a path-aware error for the model turn. */
+export function executeCalculateAiDamageToolCall(rawArguments: unknown): {
+  trace: CalculateAiDamageTrace;
+  result: NonNullable<CalculateAiDamageTrace["rawDeterministicResult"]>;
+} {
+  const trace = inspectCalculateAiDamageToolCall(rawArguments);
+  return { trace, result: getValidatedCalculateAiDamageResult(trace) };
 }
 
 /** JSON-schema tool contract presented to the model. */
@@ -91,8 +97,8 @@ export const calculateAiDamageDefinition = toolDefinition({
 /** Server implementation that returns raw deterministic output and emits trace evidence. */
 export const calculateAiDamageTool = calculateAiDamageDefinition.server(
   async (rawArguments, context) => {
-    const { trace, result } = executeCalculateAiDamageToolCall(rawArguments);
+    const trace = inspectCalculateAiDamageToolCall(rawArguments);
     context?.emitCustomEvent(CALCULATE_AI_DAMAGE_TRACE_EVENT, trace);
-    return result;
+    return getValidatedCalculateAiDamageResult(trace);
   },
 );

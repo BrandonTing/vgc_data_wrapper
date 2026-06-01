@@ -179,10 +179,6 @@ __script__/**/data.ts
 # SvelteKit generated files
 .svelte-kit/
 
-# Bun lockfiles are intentionally not committed
-bun.lock
-bun.lockb
-
 # Playwright generated files
 playwright-report/
 test-results/
