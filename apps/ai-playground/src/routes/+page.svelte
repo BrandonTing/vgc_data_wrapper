@@ -16,9 +16,14 @@
   } from "$lib/playground-state";
 
   let rawInputText = $state(SAMPLE_AI_DAMAGE_INPUT_TEXT);
+  // Keep the last explicit run separate from in-progress editor text.
   let evaluation = $state(evaluateDeterministicInput(SAMPLE_AI_DAMAGE_INPUT_TEXT));
-  let aiTurn = $state<AiToolTurn | null>(null);
-  let aiError = $state<string | null>(null);
+  type AiTurnState =
+    | { status: "idle" }
+    | { status: "complete"; turn: AiToolTurn }
+    | { status: "error"; message: string };
+  let aiTurnState = $state<AiTurnState>({ status: "idle" });
+  // SSR buttons stay disabled until their client-side chat handlers are attached.
   let isHydrated = $state(false);
 
   const snapshot = $derived(evaluation.snapshot);
@@ -61,14 +66,17 @@
           .filter((part) => part.type === "text")
           .map((part) => part.content)
           .join("\n");
-        aiTurn = {
-          mode,
-          trace: {
-            ...trace,
-            stateTransitions: states.length > 0 ? states : trace.stateTransitions,
+        aiTurnState = {
+          status: "complete",
+          turn: {
+            mode,
+            trace: {
+              ...trace,
+              stateTransitions: states.length > 0 ? states : trace.stateTransitions,
+            },
+            modelResponse,
+            groundingNotes: buildGroundingNotes(trace.rawDeterministicResult, modelResponse),
           },
-          modelResponse,
-          groundingNotes: buildGroundingNotes(trace.rawDeterministicResult, modelResponse),
         };
       },
     });
@@ -101,15 +109,17 @@
 
   function resetSample() {
     rawInputText = SAMPLE_AI_DAMAGE_INPUT_TEXT;
-    aiTurn = null;
-    aiError = null;
+    aiTurnState = { status: "idle" };
     runDeterministicPanels();
   }
 
   function getValidRawInput(): unknown | null {
     runDeterministicPanels();
     if (!evaluation.snapshot?.validation.isValid) {
-      aiError = "Resolve structured input validation errors before running an AI tool turn.";
+      aiTurnState = {
+        status: "error",
+        message: "Resolve structured input validation errors before running an AI tool turn.",
+      };
       return null;
     }
     return evaluation.snapshot.rawInput;
@@ -120,8 +130,7 @@
   ) {
     const rawStructuredInput = getValidRawInput();
     if (!rawStructuredInput) return;
-    aiError = null;
-    aiTurn = null;
+    aiTurnState = { status: "idle" };
     activeChat.reset();
     activeChat.client.updateForwardedProps({ rawStructuredInput });
     try {
@@ -129,7 +138,10 @@
         "Call calculateAiDamage for the provided structured state, then explain only its deterministic result.",
       );
     } catch (error) {
-      aiError = error instanceof Error ? error.message : String(error);
+      aiTurnState = {
+        status: "error",
+        message: error instanceof Error ? error.message : String(error),
+      };
     }
   }
 
@@ -150,7 +162,7 @@
   />
 </svelte:head>
 
-<main data-testid="playground" data-hydrated={isHydrated}>
+<main data-hydrated={isHydrated}>
   <header class="hero">
     <div>
       <p class="eyebrow">Milestone D · AI tool-call observability</p>
@@ -185,7 +197,6 @@
         </button>
         <button
           type="button"
-          data-testid="run-deterministic"
           onclick={runDeterministicPanels}
         >
           Run deterministic adapter
@@ -198,22 +209,21 @@
     </p>
     <textarea
       bind:value={rawInputText}
-      data-testid="raw-input"
       spellcheck="false"
       aria-label="Raw structured AI damage input"
     ></textarea>
   </section>
 
-  <section class="panel validation" data-testid="validation-panel">
+  <section class="panel validation" aria-labelledby="schema-validation-heading">
     <header class="panel-heading">
       <div>
         <p class="eyebrow">Panel 2</p>
-        <h2>Schema Validation Result</h2>
+        <h2 id="schema-validation-heading">Schema Validation Result</h2>
       </div>
       {#if validation?.isValid}
-        <strong class="status success" data-testid="schema-valid">Valid</strong>
+        <strong class="status success" role="status">Valid</strong>
       {:else}
-        <strong class="status error" data-testid="schema-invalid">Invalid</strong>
+        <strong class="status error" role="status">Invalid</strong>
       {/if}
     </header>
 
@@ -236,21 +246,21 @@
       eyebrow="Panel 3"
       title="Normalized / Defaulted Input"
       value={snapshot?.normalizedInput}
-      testId="normalized-panel"
+      panelId="normalized-panel"
     />
     <JsonPanel
       eyebrow="Panel 4"
       title="Raw DamageResult"
       value={snapshot?.result}
-      testId="result-panel"
+      panelId="result-panel"
     />
   </section>
 
   {#if snapshot?.groundingNotes.length}
-    <section class="panel defaults" data-testid="default-notes">
+    <section class="panel defaults" aria-labelledby="defaults-heading">
       <header>
         <p class="eyebrow">Adapter materialization notes</p>
-        <h2>Defaults applied before execution</h2>
+        <h2 id="defaults-heading">Defaults applied before execution</h2>
       </header>
       <ul>
         {#each snapshot.groundingNotes as note}
@@ -267,10 +277,10 @@
         <h2 id="ai-tool-turn-heading">Invoke calculateAiDamage before explanation</h2>
       </div>
       <div class="actions">
-        <button type="button" data-testid="run-mock-ai" disabled={!isHydrated || mockChat.client.isLoading} onclick={runMockAiTurn}>
+        <button type="button" disabled={!isHydrated || mockChat.client.isLoading} onclick={runMockAiTurn}>
           {mockChat.client.isLoading ? "Running TanStack mock…" : "Run CI-safe TanStack mock"}
         </button>
-        <button class="secondary" type="button" data-testid="run-openai" disabled={!isHydrated || openAiChat.client.isLoading} onclick={runOpenAiTurn}>
+        <button class="secondary" type="button" disabled={!isHydrated || openAiChat.client.isLoading} onclick={runOpenAiTurn}>
           {openAiChat.client.isLoading ? "Waiting for OpenAI…" : "Run optional OpenAI turn"}
         </button>
       </div>
@@ -278,10 +288,10 @@
     <p class="panel-copy">
       The default mock runs through TanStack AI chat orchestration and executes the deterministic tool without a provider key. The optional OpenAI turn uses the server-only <code>OPENAI_API_KEY</code> when configured.
     </p>
-    {#if aiError}<p class="ai-error" data-testid="ai-error">{aiError}</p>{/if}
+    {#if aiTurnState.status === "error"}<p class="ai-error" role="alert">{aiTurnState.message}</p>{/if}
   </section>
 
-  <ToolCallTrace turn={aiTurn} />
+  <ToolCallTrace turn={aiTurnState.status === "complete" ? aiTurnState.turn : null} />
 </main>
 
 <style>

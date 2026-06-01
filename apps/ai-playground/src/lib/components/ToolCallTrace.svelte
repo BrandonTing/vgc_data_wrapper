@@ -5,10 +5,10 @@
   let { turn }: { turn: AiToolTurn | null } = $props();
 </script>
 
-<section class="trace" data-testid="tool-trace">
+<section class="trace" aria-labelledby="tool-call-trace-heading">
   <header>
     <p class="eyebrow">Tool Call Trace</p>
-    <h2>AI ↔ deterministic contract</h2>
+    <h2 id="tool-call-trace-heading">AI ↔ deterministic contract</h2>
     <p>
       {#if turn}
         <strong>{turn.mode === "mock" ? "CI-safe TanStack mock" : "OpenAI"}</strong>
@@ -27,21 +27,21 @@
       {/each}
     </div>
     <div class="grid">
-      <JsonPanel eyebrow="Tool arguments" title="Raw Tool-Call Arguments" value={turn.trace.rawArguments} testId="trace-raw-args" />
-      <JsonPanel eyebrow="Tool validation" title="Schema Validation Result" value={turn.trace.schemaValidation} testId="trace-validation" />
-      <JsonPanel eyebrow="Tool normalization" title="Normalized / Defaulted Arguments" value={turn.trace.normalizedArguments} testId="trace-normalized" />
-      <JsonPanel eyebrow="Tool result" title="Raw Deterministic Result Returned to Model" value={turn.trace.rawDeterministicResult} testId="trace-result" />
+      <JsonPanel eyebrow="Tool arguments" title="Raw Tool-Call Arguments" value={turn.trace.rawArguments} panelId="trace-raw-args" />
+      <JsonPanel eyebrow="Tool validation" title="Schema Validation Result" value={turn.trace.schemaValidation} panelId="trace-validation" />
+      <JsonPanel eyebrow="Tool normalization" title="Normalized / Defaulted Arguments" value={turn.trace.normalizedArguments} panelId="trace-normalized" />
+      <JsonPanel eyebrow="Tool result" title="Raw Deterministic Result Returned to Model" value={turn.trace.rawDeterministicResult} panelId="trace-result" />
     </div>
     <div class="response">
       <p class="eyebrow">Model response after tool execution</p>
-      <p data-testid="ai-explanation">{turn.modelResponse}</p>
+      <p>{turn.modelResponse}</p>
     </div>
     <div class="response">
       <p class="eyebrow">Grounding mismatch notes</p>
       {#if turn.groundingNotes.length}
         <ul>{#each turn.groundingNotes as note}<li>{note}</li>{/each}</ul>
       {:else}
-        <p data-testid="grounding-clear">No grounding mismatch detected.</p>
+        <p>No grounding mismatch detected.</p>
       {/if}
     </div>
   {/if}

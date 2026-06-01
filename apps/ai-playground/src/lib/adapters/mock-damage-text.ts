@@ -17,6 +17,7 @@ function findDeterministicResult(messages: ModelMessage[]): AiDamageCalcOutput |
   const toolMessage = messages.findLast(
     (message) => message.role === "tool" && message.toolCallId === TOOL_CALL_ID,
   );
+  // Tool content can be non-text; only JSON text is valid deterministic output.
   if (typeof toolMessage?.content !== "string") return null;
 
   try {

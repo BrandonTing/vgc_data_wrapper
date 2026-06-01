@@ -3,13 +3,13 @@
     title,
     eyebrow,
     value,
-    testId,
+    panelId,
     emptyMessage = "Unavailable until the structured input is valid.",
   }: {
     title: string;
     eyebrow: string;
     value: unknown;
-    testId: string;
+    panelId: string;
     emptyMessage?: string;
   } = $props();
 
@@ -18,10 +18,10 @@
   );
 </script>
 
-<section class="panel" data-testid={testId}>
+<section class="panel" aria-labelledby={`${panelId}-heading`}>
   <header>
     <p class="eyebrow">{eyebrow}</p>
-    <h2>{title}</h2>
+    <h2 id={`${panelId}-heading`}>{title}</h2>
   </header>
 
   {#if formattedValue}

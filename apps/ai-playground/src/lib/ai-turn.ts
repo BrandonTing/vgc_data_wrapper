@@ -5,5 +5,6 @@ export type AiToolTurn = {
   mode: "mock" | "openai";
   trace: CalculateAiDamageTrace;
   modelResponse: string;
+  /** Locally derived checks comparing the model response with deterministic output. */
   groundingNotes: string[];
 };

@@ -54,6 +54,7 @@ export function evaluateDeterministicInput(
   rawInputText: string,
 ): DeterministicEvaluation {
   try {
+    // The package snapshot owns Zod validation so the UI can display schema issues.
     const rawInput: unknown = JSON.parse(rawInputText);
     return {
       rawInputText,
