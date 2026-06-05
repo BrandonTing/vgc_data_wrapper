@@ -2,7 +2,7 @@ import type { Pokemon } from "../pokemon";
 import type { Ability } from "../pokemon/typeHelper";
 import type { TemporalFactor } from "./battle";
 import type { BattleFieldStatus, Move } from "./config";
-import { checkTeraWIthTypeMatch } from "./utils";
+import { checkTeraWIthTypeMatch, isGrounded } from "./utils";
 
 export function getBasePower(
 	attacker: Pokemon,
@@ -12,10 +12,11 @@ export function getBasePower(
 ): TemporalFactor {
 	// ====== Terrain Related
 	if (
+		isGrounded(attacker) &&
 		// Psyblade
-		(move.id === 876 && field?.terrain === "Electric") ||
-		// Misty Explosion
-		(move.id === 802 && field?.terrain === "Misty")
+		((move.id === 876 && field?.terrain === "Electric") ||
+			// Misty Explosion
+			(move.id === 802 && field?.terrain === "Misty"))
 	) {
 		return {
 			operator: move.base * 1.5,
@@ -28,7 +29,11 @@ export function getBasePower(
 	}
 
 	// earthquake & bulldoze
-	if ((move.id === 89 || move.id === 523) && field?.terrain === "Grassy") {
+	if (
+		(move.id === 89 || move.id === 523) &&
+		field?.terrain === "Grassy" &&
+		isGrounded(defender)
+	) {
 		return {
 			operator: move.base / 2,
 			factors: {
@@ -39,7 +44,7 @@ export function getBasePower(
 		};
 	}
 	// terrain pulse
-	if (move.id === 805 && field?.terrain) {
+	if (move.id === 805 && field?.terrain && isGrounded(attacker)) {
 		return {
 			operator: 100,
 			factors: {

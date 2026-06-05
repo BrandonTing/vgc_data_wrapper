@@ -2,8 +2,8 @@ import { getBasePower } from "./basePower";
 import { createFactorHelper, type TemporalFactor } from "./battle";
 import type { BattleStatus } from "./config";
 import {
-	checkMatchType,
 	checkTeraWIthTypeMatch,
+	isGrounded,
 	mergeFactorList,
 	pipeModifierHelper,
 } from "./utils";
@@ -236,7 +236,7 @@ function modifyByMoveEffect({
 	field,
 }: BattleStatus): TemporalFactor {
 	// Expanding Force
-	if (move.id === 797 && field?.terrain === "Psychic") {
+	if (move.id === 797 && field?.terrain === "Psychic" && isGrounded(attacker)) {
 		return {
 			operator: 1.5,
 			factors: {
@@ -286,17 +286,11 @@ function modifyByMoveEffect({
 		};
 	}
 	// Rising Voltage
-	if (move.id === 804 && field?.terrain === "Electric") {
-		if (checkMatchType(defender, "Flying")) {
-			return {
-				operator: 1,
-				factors: {
-					defender: {
-						isTera: true,
-					},
-				},
-			};
-		}
+	if (
+		move.id === 804 &&
+		field?.terrain === "Electric" &&
+		isGrounded(defender)
+	) {
 		return { operator: 2, factors: { field: { terrain: true } } };
 	}
 	return { operator: 1 };
@@ -377,22 +371,29 @@ function modifyByCharge({
 }
 
 function modifyByTerrain({
+	attacker,
+	defender,
 	move,
 	field,
-}: Pick<BattleStatus, "move" | "field">): TemporalFactor {
+}: BattleStatus): TemporalFactor {
 	const getFactor = createFactorHelper({
 		field: {
 			terrain: true,
 		},
 	});
 	if (
-		(move.type === "Electric" && field?.terrain === "Electric") ||
-		(move.type === "Psychic" && field?.terrain === "Psychic") ||
-		(move.type === "Grass" && field?.terrain === "Grassy")
+		isGrounded(attacker) &&
+		((move.type === "Electric" && field?.terrain === "Electric") ||
+			(move.type === "Psychic" && field?.terrain === "Psychic") ||
+			(move.type === "Grass" && field?.terrain === "Grassy"))
 	) {
 		return getFactor(1.3);
 	}
-	if (move.type === "Dragon" && field?.terrain === "Misty") {
+	if (
+		move.type === "Dragon" &&
+		field?.terrain === "Misty" &&
+		isGrounded(defender)
+	) {
 		return getFactor(0.5);
 	}
 	return { operator: 1 };
