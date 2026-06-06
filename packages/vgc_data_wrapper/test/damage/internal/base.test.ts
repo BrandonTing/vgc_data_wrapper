@@ -402,3 +402,111 @@ test("base power of Power Trip & Stored Power", () => {
 	expect(basePowerPowerTrip.operator).toBe(expected);
 	expect(basePowerStoredPower.operator).toBe(expected);
 });
+
+test("terrain base power changes require the relevant Pokemon to be grounded", () => {
+	const groundedAttacker = genTestMon();
+	const flyingAttacker = genTestMon({ types: ["Flying"] });
+	const levitateAttacker = genTestMon({ ability: "Levitate" });
+	const ironBallFlyingAttacker = genTestMon({
+		types: ["Flying"],
+		item: "Iron Ball",
+	});
+	const teraFlyingAttacker = genTestMon({
+		types: ["Normal"],
+		specialForm: "Tera",
+		teraType: "Flying",
+	});
+	const flyingTeraNormalAttacker = genTestMon({
+		types: ["Flying"],
+		specialForm: "Tera",
+		teraType: "Normal",
+	});
+	const defender = genTestMon();
+	const psyblade = createMove({ id: 876, base: 80 });
+	const terrainPulse = createMove({ id: 805, base: 50 });
+	const mistyExplosion = createMove({ id: 802, base: 100 });
+
+	expect(
+		getBasePower(groundedAttacker, defender, psyblade, {
+			terrain: "Electric",
+		}).operator,
+	).toBe(120);
+	expect(
+		getBasePower(flyingAttacker, defender, psyblade, { terrain: "Electric" })
+			.operator,
+	).toBe(80);
+	expect(
+		getBasePower(levitateAttacker, defender, psyblade, { terrain: "Electric" })
+			.operator,
+	).toBe(80);
+	expect(
+		getBasePower(ironBallFlyingAttacker, defender, psyblade, {
+			terrain: "Electric",
+		}).operator,
+	).toBe(120);
+	expect(
+		getBasePower(teraFlyingAttacker, defender, terrainPulse, {
+			terrain: "Grassy",
+		}).operator,
+	).toBe(50);
+	expect(
+		getBasePower(flyingTeraNormalAttacker, defender, terrainPulse, {
+			terrain: "Grassy",
+		}).operator,
+	).toBe(100);
+	expect(
+		getBasePower(groundedAttacker, defender, mistyExplosion, {
+			terrain: "Misty",
+		}).operator,
+	).toBe(150);
+});
+
+test("Grassy Terrain Earthquake and Bulldoze reductions require grounded targets", () => {
+	const attacker = genTestMon();
+	const groundedDefender = genTestMon();
+	const flyingDefender = genTestMon({ types: ["Flying"] });
+	const levitateDefender = genTestMon({ ability: "Levitate" });
+	const ironBallFlyingDefender = genTestMon({
+		types: ["Flying"],
+		item: "Iron Ball",
+	});
+	const teraFlyingDefender = genTestMon({
+		types: ["Normal"],
+		specialForm: "Tera",
+		teraType: "Flying",
+	});
+	const flyingTeraNormalDefender = genTestMon({
+		types: ["Flying"],
+		specialForm: "Tera",
+		teraType: "Normal",
+	});
+	const earthquake = createMove({ id: 89, base: 100 });
+	const bulldoze = createMove({ id: 523, base: 60 });
+	const field = { terrain: "Grassy" as const };
+
+	expect(
+		getBasePower(attacker, groundedDefender, earthquake, field).operator,
+	).toBe(50);
+	expect(
+		getBasePower(attacker, flyingDefender, earthquake, field).operator,
+	).toBe(100);
+	expect(
+		getBasePower(attacker, levitateDefender, earthquake, field).operator,
+	).toBe(100);
+	expect(
+		getBasePower(attacker, ironBallFlyingDefender, earthquake, field).operator,
+	).toBe(50);
+	expect(
+		getBasePower(attacker, teraFlyingDefender, earthquake, field).operator,
+	).toBe(100);
+	expect(
+		getBasePower(attacker, flyingTeraNormalDefender, earthquake, field)
+			.operator,
+	).toBe(50);
+	expect(
+		getBasePower(attacker, groundedDefender, bulldoze, field).operator,
+	).toBe(30);
+	expect(getBasePower(attacker, flyingDefender, bulldoze, field).operator).toBe(
+		60,
+	);
+});

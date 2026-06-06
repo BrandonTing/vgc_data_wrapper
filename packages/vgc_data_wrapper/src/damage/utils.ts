@@ -24,6 +24,22 @@ export function checkMatchType(pokemon: Pokemon, type: Type): boolean {
 	return getPokemonCurrentType(pokemon).includes(type);
 }
 
+export function isGrounded(pokemon: Pokemon): boolean {
+	if (pokemon.item === "Iron Ball") {
+		return true;
+	}
+
+	if (pokemon.ability === "Levitate") {
+		return false;
+	}
+
+	if (checkMatchType(pokemon, "Flying")) {
+		return false;
+	}
+
+	return true;
+}
+
 export function getPokemonCurrentType(pokemon: Pokemon): Array<TeraTypes> {
 	return pokemon.isTera() ? [pokemon.teraType] : pokemon.types;
 }

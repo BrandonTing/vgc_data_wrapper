@@ -1,0 +1,196 @@
+import { expect, test } from "bun:test";
+import { Battle, createMove } from "../../src";
+import { genTestMon, getDamangeNumberFromResult } from "./utils";
+
+test("Electric Terrain damage boost changes when a Flying attacker is grounded by Iron Ball", () => {
+	const defender = genTestMon({
+		types: ["Water"],
+		baseStat: {
+			hp: 100,
+			specialDefense: 100,
+		},
+	});
+	const move = createMove({
+		base: 90,
+		type: "Electric",
+		category: "Special",
+	});
+	const field = { terrain: "Electric" as const };
+	const ungroundedBattle = new Battle({
+		attacker: genTestMon({
+			types: ["Electric", "Flying"],
+			baseStat: { specialAttack: 100 },
+		}),
+		defender,
+		move,
+		field,
+	});
+	const groundedBattle = new Battle({
+		attacker: genTestMon({
+			types: ["Electric", "Flying"],
+			baseStat: { specialAttack: 100 },
+			item: "Iron Ball",
+		}),
+		defender,
+		move,
+		field,
+	});
+
+	const ungroundedDamage = getDamangeNumberFromResult(
+		ungroundedBattle.getDamage(),
+	);
+	const groundedDamage = getDamangeNumberFromResult(groundedBattle.getDamage());
+
+	expect(ungroundedDamage).toEqual([
+		102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116, 120, 120,
+		122,
+	]);
+	expect(groundedDamage).toEqual([
+		134, 134, 138, 138, 140, 140, 144, 144, 146, 146, 150, 150, 152, 152, 156,
+		158,
+	]);
+	expect(groundedDamage).not.toEqual(ungroundedDamage);
+});
+
+test("Rising Voltage damage changes when a Flying defender is grounded by Iron Ball", () => {
+	const attacker = genTestMon({
+		types: ["Electric"],
+		baseStat: { specialAttack: 100 },
+	});
+	const move = createMove({
+		id: 804,
+		base: 70,
+		type: "Electric",
+		category: "Special",
+	});
+	const field = { terrain: "Electric" as const };
+	const ungroundedBattle = new Battle({
+		attacker,
+		defender: genTestMon({
+			types: ["Flying"],
+			baseStat: { hp: 100, specialDefense: 100 },
+		}),
+		move,
+		field,
+	});
+	const groundedBattle = new Battle({
+		attacker,
+		defender: genTestMon({
+			types: ["Flying"],
+			baseStat: { hp: 100, specialDefense: 100 },
+			item: "Iron Ball",
+		}),
+		move,
+		field,
+	});
+
+	const ungroundedDamage = getDamangeNumberFromResult(
+		ungroundedBattle.getDamage(),
+	);
+	const groundedDamage = getDamangeNumberFromResult(groundedBattle.getDamage());
+
+	expect(ungroundedDamage).toEqual([
+		104, 108, 108, 108, 110, 110, 114, 114, 116, 116, 116, 120, 120, 122, 122,
+		126,
+	]);
+	expect(groundedDamage).toEqual([
+		206, 210, 212, 216, 216, 218, 222, 224, 228, 230, 230, 234, 236, 240, 242,
+		246,
+	]);
+	expect(groundedDamage).not.toEqual(ungroundedDamage);
+});
+
+test("Grassy Terrain Earthquake damage reduction changes when a Levitate defender is grounded by Iron Ball", () => {
+	const attacker = genTestMon({
+		types: ["Ground"],
+		baseStat: { attack: 100 },
+	});
+	const move = createMove({
+		id: 89,
+		base: 100,
+		type: "Ground",
+		category: "Physical",
+	});
+	const field = { terrain: "Grassy" as const };
+	const ungroundedBattle = new Battle({
+		attacker,
+		defender: genTestMon({
+			types: ["Normal"],
+			ability: "Levitate",
+			baseStat: { hp: 100, defense: 100 },
+		}),
+		move,
+		field,
+	});
+	const groundedBattle = new Battle({
+		attacker,
+		defender: genTestMon({
+			types: ["Normal"],
+			ability: "Levitate",
+			baseStat: { hp: 100, defense: 100 },
+			item: "Iron Ball",
+		}),
+		move,
+		field,
+	});
+
+	const ungroundedDamage = getDamangeNumberFromResult(
+		ungroundedBattle.getDamage(),
+	);
+	const groundedDamage = getDamangeNumberFromResult(groundedBattle.getDamage());
+
+	expect(ungroundedDamage).toEqual([
+		58, 58, 60, 60, 60, 61, 61, 63, 63, 64, 64, 66, 66, 67, 67, 69,
+	]);
+	expect(groundedDamage).toEqual([
+		30, 30, 30, 31, 31, 31, 31, 33, 33, 33, 33, 34, 34, 34, 34, 36,
+	]);
+	expect(groundedDamage).not.toEqual(ungroundedDamage);
+});
+
+test("Psyblade damage changes when a Flying attacker is grounded by Iron Ball", () => {
+	const defender = genTestMon({
+		types: ["Fighting"],
+		baseStat: { hp: 100, defense: 100 },
+	});
+	const move = createMove({
+		id: 876,
+		base: 80,
+		type: "Psychic",
+		category: "Physical",
+	});
+	const field = { terrain: "Electric" as const };
+	const ungroundedBattle = new Battle({
+		attacker: genTestMon({
+			types: ["Psychic", "Flying"],
+			baseStat: { attack: 100 },
+		}),
+		defender,
+		move,
+		field,
+	});
+	const groundedBattle = new Battle({
+		attacker: genTestMon({
+			types: ["Psychic", "Flying"],
+			baseStat: { attack: 100 },
+			item: "Iron Ball",
+		}),
+		defender,
+		move,
+		field,
+	});
+
+	const ungroundedDamage = getDamangeNumberFromResult(
+		ungroundedBattle.getDamage(),
+	);
+	const groundedDamage = getDamangeNumberFromResult(groundedBattle.getDamage());
+
+	expect(ungroundedDamage).toEqual([
+		92, 92, 96, 96, 96, 98, 98, 102, 102, 102, 104, 104, 104, 108, 108, 110,
+	]);
+	expect(groundedDamage).toEqual([
+		134, 138, 138, 140, 144, 144, 146, 146, 150, 150, 152, 152, 156, 156, 158,
+		162,
+	]);
+	expect(groundedDamage).not.toEqual(ungroundedDamage);
+});
