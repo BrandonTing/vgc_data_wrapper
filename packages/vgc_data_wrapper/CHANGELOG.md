@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.4.4
+
+### Patch Changes
+
+- 2f63c94: Fix terrain-related damage modifiers to respect grounded status, including Flying, Levitate, Iron Ball, and tera typing interactions.
+
 ## 0.4.3
 
 ### Patch Changes
