@@ -31,7 +31,8 @@
 		"test-damage": "bun test **/damage/*.test.ts",
 		"test-pokemon": "bun test **/pokemon/*.test.ts",
 		"knip": "bunx knip",
-		"build": "tsup ./src/index.ts --format esm --dts "
+		"build": "tsup ./src/index.ts --format esm --dts ",
+		"check": "bunx tsc --build ./tsconfig.typecheck.json"
 	},
 	"type": "module",
 	"types": "dist/index.d.ts",

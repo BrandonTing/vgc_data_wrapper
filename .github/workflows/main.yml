@@ -14,16 +14,19 @@ jobs:
           bun-version: latest
       - name: 'Install Dependencies'
         run: |
-          bun install
+          bun install --frozen-lockfile
       - name: 'Lint'
         run: |
           bun lint  
       - name: 'Knip'
         run: |
           bun knip 
-      - name: 'TSC'
+      - name: 'Check Package'
         run: |
-          bunx tsc 
+          bun check:package
+      - name: 'Check AI Playground'
+        run: |
+          bun check:ai-playground
 
   test:
     runs-on: ubuntu-latest
@@ -36,11 +39,20 @@ jobs:
           bun-version: latest
       - name: 'Install Dependencies'
         run: |
-          bun install
+          bun install --frozen-lockfile
       - name: 'Test Pokemon'
         run: |
           bun test-pokemon
       - name: 'Test Damage'
         run: |
           bun test-damage
+      - name: 'Test AI Playground'
+        run: |
+          bun test:ai-playground
+      - name: 'Install Playwright Chromium'
+        run: |
+          bun install:e2e-browser
+      - name: 'E2E AI Playground'
+        run: |
+          bun e2e:ai-playground
 

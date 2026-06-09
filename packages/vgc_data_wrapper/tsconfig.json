@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"lib": ["ESNext"],
+		"lib": ["ESNext", "DOM"],
 		"target": "ESNext",
 		"module": "ESNext",
 		"moduleDetection": "force",
@@ -19,5 +19,6 @@
 		"noUncheckedIndexedAccess": true,
 		"noErrorTruncation": true
 	},
+	"include": ["src/**/*.ts", "test/**/*.ts"],
 	"exclude": ["__script__"]
 }

@@ -1,3 +1,6 @@
 {
-  "extends": "./packages/vgc_data_wrapper/tsconfig.json"
+  "files": [],
+  "references": [
+    { "path": "./packages/vgc_data_wrapper/tsconfig.typecheck.json" }
+  ]
 }

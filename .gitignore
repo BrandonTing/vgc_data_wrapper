@@ -175,3 +175,10 @@ dist
 .DS_Store
 
 __script__/**/data.ts
+
+# SvelteKit generated files
+.svelte-kit/
+
+# Playwright generated files
+playwright-report/
+test-results/

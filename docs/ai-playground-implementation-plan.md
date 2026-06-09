@@ -1,7 +1,7 @@
 # AI Playground Implementation Plan (Phase 1)
 
-Status: Planned (next execution cycle)
-Date: 2026-05-26
+Status: Milestones B/C/D complete; hardening and optional real-provider verification are next
+Date: 2026-05-30
 
 ## Planning inputs
 
@@ -9,7 +9,7 @@ Date: 2026-05-26
 
 - Deterministic adapter contract exists and is production-ready for phase-1 substrate in `packages/vgc_data_wrapper/src/aiDamage.ts`.
 - Adapter supports required schema, normalization defaults, deterministic execution, and safe parsing.
-- Repository currently has no SvelteKit app directory; only core package and tests are present.
+- Milestone B added the `apps/ai-playground` SvelteKit scaffold and proved local `vgc_data_wrapper` imports compile through the workspace package contract.
 
 ### Documentation findings
 
@@ -20,14 +20,33 @@ Date: 2026-05-26
 
 - TanStack AI Svelte quick-start and SSE server pattern:
   - https://tanstack.com/ai/latest/docs/getting-started/quick-start-svelte
-- TanStack AI docs overview:
-  - https://tanstack.com/ai/latest/docs
+- TanStack AI tools guide:
+  - https://tanstack.com/ai/latest/docs/tools/tools
+- TanStack AI tool architecture:
+  - https://tanstack.com/ai/latest/docs/tools/tool-architecture
+- TanStack `@tanstack/ai-svelte` API:
+  - https://tanstack.com/ai/latest/docs/api/ai-svelte
 - SvelteKit project structure/routing (`+page.svelte`, `+server.ts`) docs:
   - https://svelte.dev/docs/kit
 
-## Target outcome of this next step
+### Verified TanStack AI API correction (2026-05-30)
 
-Create the first **runnable** SvelteKit playground vertical slice that proves AI tool-calling integration with deterministic damage tooling, including explicit tool-call trace visibility and workspace migration safety checks.
+Earlier pseudocode in this plan used Vercel AI SDK-style APIs. The current TanStack AI documentation uses a different integration shape:
+
+| Concern | Stale sketch | Current TanStack AI API |
+| --- | --- | --- |
+| server chat stream | `streamText(...)` | `chat(...)` |
+| SSE response | `.toDataStreamResponse()` | `toServerSentEventsResponse(stream)` |
+| tool declaration | `tool(...)` | `toolDefinition(...)` followed by `.server(...)` or `.client(...)` |
+| OpenAI adapter | `createOpenAI(...)` from `@ai-sdk/openai` | `openaiText(...)` from `@tanstack/ai-openai` |
+| Svelte transport | `DefaultChatTransport` | `fetchServerSentEvents(...)` passed as the `connection` option to `createChat(...)` |
+| client request context | message `metadata` / legacy body-shaped context | `forwardedProps` (`body` remains deprecated compatibility behavior) |
+
+Treat the corrected pseudocode below as a design sketch and re-check the official docs immediately before Milestone D implementation because TanStack AI is still evolving.
+
+## Target outcome of the next step
+
+Milestones B, C, and D have established the runnable SvelteKit scaffold, deterministic panels, TanStack AI tool definition, SvelteKit streaming route, Svelte client integration, visible Tool Call Trace, and CI-safe mocked TanStack turn. Browser-level mocked TanStack coverage now runs through Playwright in CI. The next optional step is a manual OpenAI-key verification without making the real provider a default CI dependency.
 
 ## Milestone breakdown
 
@@ -122,7 +141,7 @@ Acceptance criteria:
 ### Core package regression gate
 
 - Passes:
-  - `bunx tsc`
+  - `bun check:package`
   - `bun knip`
   - `bun lint`
   - `bun test-pokemon`
@@ -133,13 +152,14 @@ Acceptance criteria:
 - SvelteKit app can run locally (`bun run dev` in app workspace).
 - Deterministic panels 1-4 are interactive and render expected state transitions.
 - At least one model turn executes and emits a visible tool-call trace entry.
-- At least one app-level automated test exists (recommended: Playwright e2e smoke test for tool-call flow).
+- A Playwright e2e smoke test covers the provider-free mocked TanStack tool-call flow.
 - CI-friendly non-interactive app checks are defined (e.g., app typecheck + test command).
 
 ### E2E feasibility note
 
-- Yes, e2e is feasible in this environment.
-- Preferred initial approach: Playwright smoke test that:
+- Playwright e2e is configured for Chromium and runs headlessly in CI.
+- CI installs the required browser binary and Linux dependencies with `bun install:e2e-browser`.
+- The smoke test:
   1. loads `/`,
   2. pastes valid structured JSON,
   3. verifies validation panel indicates valid,
@@ -156,11 +176,14 @@ Pseudo code:
 
 ```txt
 create apps/ai-playground/
-  package.json (sveltekit, vite, @tanstack/ai-svelte, playwright)
+  package.json (sveltekit, vite)
   svelte.config.js
   vite.config.ts
   src/routes/+page.svelte
+
+# Deferred until Milestone D:
   src/routes/api/chat/+server.ts
+  @tanstack/ai, @tanstack/ai-svelte, @tanstack/ai-openai
 ```
 
 ```ts
@@ -210,35 +233,47 @@ export function buildDeterministicPanels(rawInput: unknown): DeterministicPanels
 Pseudo code:
 
 ```ts
-// routes/api/chat/+server.ts
-import { createOpenAI } from '@ai-sdk/openai';
-import { streamText, tool } from 'ai';
-import { AiDamageCalcInputSchema, safeCalculateAiDamage } from 'vgc_data_wrapper';
+// lib/tools/calculate-ai-damage.ts
+import { toolDefinition, type JSONSchema } from '@tanstack/ai';
+import { zodToJsonSchema } from 'zod-to-json-schema';
+import {
+  AiDamageCalcInputSchema,
+  AiDamageCalcOutputSchema,
+  buildAiPlaygroundSnapshot,
+} from 'vgc_data_wrapper';
 
-const calculateAiDamageTool = tool({
+export const calculateAiDamageDef = toolDefinition({
+  name: 'calculateAiDamage',
   description: 'Execute deterministic damage calculation from structured input',
-  inputSchema: AiDamageCalcInputSchema,
-  execute: async (args) => {
-    const result = safeCalculateAiDamage(args);
-    return {
-      tool: 'calculateAiDamage',
-      validatedInput: args,
-      result,
-    };
-  },
+  inputSchema: zodToJsonSchema(AiDamageCalcInputSchema) as JSONSchema,
+  outputSchema: zodToJsonSchema(AiDamageCalcOutputSchema) as JSONSchema,
 });
 
+export const calculateAiDamageTool = calculateAiDamageDef.server(async (args) => {
+  const snapshot = buildAiPlaygroundSnapshot(args);
+  if (!snapshot.validation.isValid || !snapshot.result) throw new Error('Invalid tool arguments');
+  return snapshot.result;
+});
+```
+
+```ts
+// routes/api/chat/+server.ts
+import { chat, chatParamsFromRequest, toServerSentEventsResponse } from '@tanstack/ai';
+import { openaiText } from '@tanstack/ai-openai';
+import { calculateAiDamageTool } from '$lib/tools/calculate-ai-damage';
+
 export async function POST({ request }) {
-  const { messages, rawStructuredInput } = await request.json();
-  return streamText({
-    model: openai('gpt-4.1-mini'),
-    system: `Use tool for deterministic claims. No unsupported guarantees.`,
-    messages,
-    tools: { calculateAiDamage: calculateAiDamageTool },
-    // include rawStructuredInput as context for tool call
-  }).toDataStreamResponse();
+  const params = await chatParamsFromRequest(request);
+  const stream = chat({
+    adapter: openaiText('gpt-4o-mini'),
+    messages: params.messages,
+    tools: [calculateAiDamageTool],
+  });
+  return toServerSentEventsResponse(stream);
 }
 ```
+
+The Milestone D implementation must also preserve the raw tool arguments, validation result, normalized/defaulted arguments, tool state transitions, raw deterministic result, model response, and grounding mismatch notes for the visible trace. The deterministic adapter remains the source of truth; trace recording is additive around that call.
 
 ### 4) TanStack AI client integration + tool-call trace
 
@@ -246,19 +281,22 @@ Pseudo code:
 
 ```ts
 // +page.svelte
+import { createChat, fetchServerSentEvents } from '@tanstack/ai-svelte';
+
 const chat = createChat({
-  transport: new DefaultChatTransport({ api: '/api/chat' }),
+  connection: fetchServerSentEvents('/api/chat'),
 });
 
 async function runToolCallAndExplain() {
-  await chat.sendMessage({
-    role: 'user',
-    content: 'Call the deterministic damage tool for this structured state, then explain strictly from tool output.',
-    metadata: { rawStructuredInput: JSON.parse(rawInputText) },
+  chat.updateForwardedProps({
+    rawStructuredInput: JSON.parse(rawInputText),
   });
+  await chat.sendMessage(
+    'Call the deterministic damage tool for this structured state, then explain strictly from tool output.',
+  );
 }
 
-$: toolCalls = extractToolCalls(chat.messages);
+const toolCalls = $derived(extractToolCalls(chat.messages));
 ```
 
 ```ts
@@ -266,7 +304,8 @@ $: toolCalls = extractToolCalls(chat.messages);
 for each toolCall in toolCalls:
   render toolCall.name
   render toolCall.args (raw JSON)
-  render toolCall.state (requested/running/success/error)
+  render toolCall.state (awaiting-input/input-streaming/input-complete/approval-requested/approval-responded)
+  render toolCall.resultState (streaming/complete/error)
   render toolCall.result (raw JSON)
 ```
 
@@ -284,8 +323,8 @@ test('deterministic panel + tool trace smoke', async ({ page }) => {
   await expect(page.getByTestId('normalized-panel')).toBeVisible();
   await expect(page.getByTestId('result-panel')).toBeVisible();
 
-  // stub /api/chat response with one tool-call trace entry
-  await page.click('[data-testid="ask-ai"]');
+  // /api/chat/mock runs TanStack chat with a provider-free model adapter
+  await page.click('[data-testid="run-mock-ai"]');
   await expect(page.getByTestId('tool-trace')).toContainText('calculateAiDamage');
 });
 ```
@@ -294,5 +333,13 @@ test('deterministic panel + tool trace smoke', async ({ page }) => {
 
 - App has explicit `typecheck`, `test`, and `e2e` scripts.
 - Tool-call trace includes raw args and raw result payload.
-- Smoke e2e runs without real provider key (mock/stub mode).
+- Smoke e2e runs without a real provider key through the mocked TanStack adapter.
 - Optional real-provider integration test is non-blocking/nightly only.
+
+### 7) Optional manual OpenAI verification
+
+1. Copy `apps/ai-playground/.env.example` to `apps/ai-playground/.env`.
+2. Set `OPENAI_API_KEY` in that local ignored file.
+3. Start the SvelteKit app and run the CI-safe mocked TanStack tool turn first.
+4. Click **Run optional OpenAI turn** and inspect the visible trace.
+5. Record model schema, retry, and grounding issues separately from deterministic adapter behavior.
