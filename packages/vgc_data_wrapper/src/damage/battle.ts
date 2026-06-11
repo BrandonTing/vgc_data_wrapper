@@ -580,11 +580,12 @@ function getTypeModifier({
 	}
 	// use original type when tera stellar
 	if (checkTeraWIthTypeMatch(defender, "Stellar")) {
+		const effectiveMoveType = getEffectiveMoveType(attacker, move);
 		return {
-			operator: getEffectivenessOnPokemon(
-				getEffectiveMoveType(attacker, move),
-				defender.types,
-			),
+			operator:
+				effectiveMoveType === "Stellar"
+					? 1
+					: getEffectivenessOnPokemon(effectiveMoveType, defender.types),
 		};
 	}
 
@@ -616,11 +617,15 @@ function getTypeModifier({
 					},
 		};
 	}
+	const effectiveMoveType = getEffectiveMoveType(attacker, move);
 	return {
-		operator: getEffectivenessOnPokemon(
-			getEffectiveMoveType(attacker, move),
-			getPokemonCurrentType(defender),
-		),
+		operator:
+			effectiveMoveType === "Stellar"
+				? 1
+				: getEffectivenessOnPokemon(
+						effectiveMoveType,
+						getPokemonCurrentType(defender),
+					),
 		factors: defender.isTera()
 			? {
 					defender: {
@@ -822,10 +827,14 @@ function modifyByDefenderAbility({
 	}
 
 	// Solid Rock && Filter
-	const effectiveness = getEffectivenessOnPokemon(
-		getEffectiveMoveType(attacker, move),
-		defender.isTera() ? [defender.teraType] : defender.types,
-	);
+	const effectiveMoveType = getEffectiveMoveType(attacker, move);
+	const effectiveness =
+		effectiveMoveType === "Stellar"
+			? 1
+			: getEffectivenessOnPokemon(
+					effectiveMoveType,
+					defender.isTera() ? [defender.teraType] : defender.types,
+				);
 	if (
 		(defender.ability === "Solid Rock" || defender.ability === "Filter") &&
 		effectiveness > 1

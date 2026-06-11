@@ -1,6 +1,6 @@
 import type { Pokemon } from "../pokemon";
 import type { Ability } from "../pokemon/typeHelper";
-import type { Move, Type } from "./config";
+import type { Move, TeraTypes, Type } from "./config";
 
 const SKIN_ABILITY_TYPES: Partial<Record<Ability, Type>> = {
 	Pixilate: "Fairy",
@@ -10,8 +10,11 @@ const SKIN_ABILITY_TYPES: Partial<Record<Ability, Type>> = {
 	Galvanize: "Electric",
 };
 
-export function getEffectiveMoveType(attacker: Pokemon, move: Move): Type {
-	return getSkinAbilityMoveType(attacker, move) ?? move.type;
+export function getEffectiveMoveType(attacker: Pokemon, move: Move): TeraTypes {
+	const skinAbilityMoveType = getSkinAbilityMoveType(attacker, move);
+	if (skinAbilityMoveType) return skinAbilityMoveType;
+	if (move.type === "Stellar") return "Stellar";
+	return move.type;
 }
 
 export function getSkinAbilityMoveType(
