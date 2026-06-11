@@ -237,21 +237,34 @@ test("Pixilate Normal move triggers Filter when the effective Fairy type is supe
 		baseStat: { hp: 91, specialDefense: 100 },
 		ability: "Filter",
 	});
+	const nonFilterDefender = genTestMon({
+		types: ["Dragon", "Flying"],
+		baseStat: { hp: 91, specialDefense: 100 },
+	});
 	const move = createMove({
 		base: 90,
 		type: "Normal",
 		category: "Special",
 		target: "allAdjacentFoes",
 	});
-	const battle = new Battle({ attacker, defender, move });
-	const damage = battle.getDamage();
-	const actual = getDamangeNumberFromResult(damage);
-	const expected = [
+	const nonFilterDamage = new Battle({
+		attacker,
+		defender: nonFilterDefender,
+		move,
+	}).getDamage();
+	const filterDamage = new Battle({ attacker, defender, move }).getDamage();
+
+	expect(getDamangeNumberFromResult(nonFilterDamage)).toEqual([
+		102, 102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116,
+		120,
+	]);
+	expect(getDamangeNumberFromResult(filterDamage)).toEqual([
 		76, 76, 76, 78, 78, 81, 81, 81, 82, 82, 85, 85, 85, 87, 87, 90,
-	];
-	expect(actual).toEqual(expected);
-	expect(damage.factors.attacker.ability).toEqual(true);
-	expect(damage.factors.defender.ability).toEqual(true);
+	]);
+	expect(nonFilterDamage.factors.attacker.ability).toEqual(true);
+	expect(nonFilterDamage.factors.defender.ability).toBeUndefined();
+	expect(filterDamage.factors.attacker.ability).toEqual(true);
+	expect(filterDamage.factors.defender.ability).toEqual(true);
 });
 
 test("Adaptability", () => {
