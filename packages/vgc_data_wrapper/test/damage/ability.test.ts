@@ -226,6 +226,34 @@ test("Dragonize", () => {
 	expect(damage.factors.attacker.ability).toEqual(true);
 });
 
+test("Pixilate Normal move triggers Filter when the effective Fairy type is super effective", () => {
+	const attacker = genTestMon({
+		types: ["Fairy"],
+		baseStat: { specialAttack: 110 },
+		ability: "Pixilate",
+	});
+	const defender = genTestMon({
+		types: ["Dragon", "Flying"],
+		baseStat: { hp: 91, specialDefense: 100 },
+		ability: "Filter",
+	});
+	const move = createMove({
+		base: 90,
+		type: "Normal",
+		category: "Special",
+		target: "allAdjacentFoes",
+	});
+	const battle = new Battle({ attacker, defender, move });
+	const damage = battle.getDamage();
+	const actual = getDamangeNumberFromResult(damage);
+	const expected = [
+		76, 76, 76, 78, 78, 81, 81, 81, 82, 82, 85, 85, 85, 87, 87, 90,
+	];
+	expect(actual).toEqual(expected);
+	expect(damage.factors.attacker.ability).toEqual(true);
+	expect(damage.factors.defender.ability).toEqual(true);
+});
+
 test("Adaptability", () => {
 	const attacker = genTestMon({
 		types: ["Poison"],

@@ -790,9 +790,10 @@ function modifyByAttackerAbility({
 }
 
 function modifyByDefenderAbility({
+	attacker,
 	defender,
 	move,
-}: Pick<BattleStatus, "defender" | "move">): TemporalFactor {
+}: Pick<BattleStatus, "attacker" | "defender" | "move">): TemporalFactor {
 	const getFactor = createFactorHelper({
 		defender: {
 			ability: true,
@@ -822,7 +823,7 @@ function modifyByDefenderAbility({
 
 	// Solid Rock && Filter
 	const effectiveness = getEffectivenessOnPokemon(
-		move.type,
+		getEffectiveMoveType(attacker, move),
 		defender.isTera() ? [defender.teraType] : defender.types,
 	);
 	if (
