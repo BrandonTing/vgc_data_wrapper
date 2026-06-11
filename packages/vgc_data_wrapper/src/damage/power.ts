@@ -2,6 +2,10 @@ import { getBasePower } from "./basePower";
 import { createFactorHelper, type TemporalFactor } from "./battle";
 import type { BattleStatus } from "./config";
 import {
+	getEffectiveMoveType,
+	getSkinAbilityMoveType,
+} from "./effectiveMoveType";
+import {
 	checkTeraWIthTypeMatch,
 	isGrounded,
 	mergeFactorList,
@@ -87,19 +91,7 @@ function modifyByAttackerAbility({
 		return getFactor(1 + 0.1 * 3);
 	}
 	// skins
-	if (
-		// Refrigerate
-		(attacker.ability === "Refrigerate" ||
-			// Pixilate
-			attacker.ability === "Pixilate" ||
-			// Dragonize
-			attacker.ability === "Dragonize" ||
-			// Aerilate
-			attacker.ability === "Aerilate" ||
-			// Galvanize
-			attacker.ability === "Galvanize") &&
-		move.type === "Normal"
-	) {
+	if (getSkinAbilityMoveType(attacker, move)) {
 		return getFactor(1.2);
 	}
 	// iron fist
@@ -381,16 +373,17 @@ function modifyByTerrain({
 			terrain: true,
 		},
 	});
+	const effectiveMoveType = getEffectiveMoveType(attacker, move);
 	if (
 		isGrounded(attacker) &&
-		((move.type === "Electric" && field?.terrain === "Electric") ||
-			(move.type === "Psychic" && field?.terrain === "Psychic") ||
-			(move.type === "Grass" && field?.terrain === "Grassy"))
+		((effectiveMoveType === "Electric" && field?.terrain === "Electric") ||
+			(effectiveMoveType === "Psychic" && field?.terrain === "Psychic") ||
+			(effectiveMoveType === "Grass" && field?.terrain === "Grassy"))
 	) {
 		return getFactor(1.3);
 	}
 	if (
-		move.type === "Dragon" &&
+		effectiveMoveType === "Dragon" &&
 		field?.terrain === "Misty" &&
 		isGrounded(defender)
 	) {
@@ -404,12 +397,10 @@ function modifyByAura({
 	field,
 	attacker,
 }: Pick<BattleStatus, "move" | "field" | "attacker">): TemporalFactor {
+	const effectiveMoveType = getEffectiveMoveType(attacker, move);
 	const auraAffected =
-		(move.type === "Dark" && field?.aura?.includes("Dark")) ||
-		(move.type === "Fairy" && field?.aura?.includes("Fairy")) ||
-		(move.type === "Normal" &&
-			attacker.ability === "Pixilate" &&
-			field?.aura?.includes("Fairy"));
+		(effectiveMoveType === "Dark" && field?.aura?.includes("Dark")) ||
+		(effectiveMoveType === "Fairy" && field?.aura?.includes("Fairy"));
 	const isAuraBreak = field?.aura?.includes("Aura Break");
 	return auraAffected
 		? {

@@ -194,3 +194,73 @@ test("Psyblade damage changes when a Flying attacker is grounded by Iron Ball", 
 	]);
 	expect(groundedDamage).not.toEqual(ungroundedDamage);
 });
+
+test("Dragonize Normal move is reduced by Misty Terrain against a grounded defender", () => {
+	const attacker = genTestMon({
+		types: ["Water"],
+		ability: "Dragonize",
+		baseStat: { specialAttack: 100 },
+	});
+	const defender = genTestMon({
+		types: ["Normal"],
+		baseStat: { hp: 100, specialDefense: 100 },
+	});
+	const move = createMove({
+		base: 100,
+		type: "Normal",
+		category: "Special",
+	});
+	const noTerrainDamage = getDamangeNumberFromResult(
+		new Battle({ attacker, defender, move }).getDamage(),
+	);
+	const mistyTerrainDamage = getDamangeNumberFromResult(
+		new Battle({
+			attacker,
+			defender,
+			move,
+			field: { terrain: "Misty" },
+		}).getDamage(),
+	);
+
+	expect(noTerrainDamage).toEqual([
+		45, 46, 46, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 54,
+	]);
+	expect(mistyTerrainDamage).toEqual([
+		23, 24, 24, 24, 24, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 28,
+	]);
+});
+
+test("Galvanize Normal move is boosted by Electric Terrain from a grounded attacker", () => {
+	const attacker = genTestMon({
+		types: ["Normal"],
+		ability: "Galvanize",
+		baseStat: { specialAttack: 100 },
+	});
+	const defender = genTestMon({
+		types: ["Normal"],
+		baseStat: { hp: 100, specialDefense: 100 },
+	});
+	const move = createMove({
+		base: 100,
+		type: "Normal",
+		category: "Special",
+	});
+	const noTerrainDamage = getDamangeNumberFromResult(
+		new Battle({ attacker, defender, move }).getDamage(),
+	);
+	const electricTerrainDamage = getDamangeNumberFromResult(
+		new Battle({
+			attacker,
+			defender,
+			move,
+			field: { terrain: "Electric" },
+		}).getDamage(),
+	);
+
+	expect(noTerrainDamage).toEqual([
+		67, 69, 69, 70, 72, 72, 73, 73, 75, 75, 76, 76, 78, 78, 79, 81,
+	]);
+	expect(electricTerrainDamage).toEqual([
+		88, 90, 90, 91, 93, 94, 94, 96, 97, 97, 99, 100, 100, 102, 103, 105,
+	]);
+});
