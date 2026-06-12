@@ -1,5 +1,4 @@
 import type { Pokemon } from "../pokemon";
-import type { Ability } from "../pokemon/typeHelper";
 import { isTerapagosStellar } from "../pokemon/utils";
 import type { RecursivePartial } from "../typeUtils";
 import { getAttack } from "./attack";
@@ -8,9 +7,12 @@ import type {
 	BattleStatus,
 	DamageResult,
 	Move,
-	Type,
 } from "./config";
 import { getDefense } from "./defense";
+import {
+	getEffectiveMoveType,
+	getSkinAbilityMoveType,
+} from "./effectiveMoveType";
 import { getPower } from "./power";
 import { getEffectivenessOnPokemon } from "./type";
 import {
@@ -19,14 +21,6 @@ import {
 	mergeFactorList,
 	pipeModifierHelper,
 } from "./utils";
-
-const SKIN_ABILITIES: Partial<Record<Ability, Type>> = {
-	Pixilate: "Fairy",
-	Refrigerate: "Ice",
-	Aerilate: "Flying",
-	Dragonize: "Dragon",
-	Galvanize: "Electric",
-};
 
 interface IBattle extends Partial<BattleStatus> {
 	getDamage: () => DamageResult;
@@ -341,10 +335,8 @@ function modifyBySameType(
 		}
 	}
 	// skin abilities (Pixilate/Refrigerate/Aerilate/Dragonize/Galvanize)
-	const skinType = attacker.ability
-		? SKIN_ABILITIES[attacker.ability]
-		: undefined;
-	if (skinType && move.type === "Normal") {
+	const skinType = getSkinAbilityMoveType(attacker, move);
+	if (skinType) {
 		factors = mergeFactorList(factors, {
 			attacker: {
 				ability: true,
@@ -487,10 +479,8 @@ function getTypeModifier({
 		};
 	}
 	// skins (Pixilate/Refrigerate/Aerilate/Dragonize/Galvanize)
-	const skinType = attacker.ability
-		? SKIN_ABILITIES[attacker.ability]
-		: undefined;
-	if (skinType && move.type === "Normal") {
+	const skinType = getSkinAbilityMoveType(attacker, move);
+	if (skinType) {
 		if (!defender.isTera() || defender.teraType === "Stellar") {
 			// use original type
 			return {
@@ -590,7 +580,13 @@ function getTypeModifier({
 	}
 	// use original type when tera stellar
 	if (checkTeraWIthTypeMatch(defender, "Stellar")) {
-		return { operator: getEffectivenessOnPokemon(move.type, defender.types) };
+		const effectiveMoveType = getEffectiveMoveType(attacker, move);
+		return {
+			operator:
+				effectiveMoveType === "Stellar"
+					? 1
+					: getEffectivenessOnPokemon(effectiveMoveType, defender.types),
+		};
 	}
 
 	// Scrappy ability makes Normal and Fighting moves hit Ghost types
@@ -621,11 +617,15 @@ function getTypeModifier({
 					},
 		};
 	}
+	const effectiveMoveType = getEffectiveMoveType(attacker, move);
 	return {
-		operator: getEffectivenessOnPokemon(
-			move.type,
-			getPokemonCurrentType(defender),
-		),
+		operator:
+			effectiveMoveType === "Stellar"
+				? 1
+				: getEffectivenessOnPokemon(
+						effectiveMoveType,
+						getPokemonCurrentType(defender),
+					),
 		factors: defender.isTera()
 			? {
 					defender: {
@@ -795,9 +795,10 @@ function modifyByAttackerAbility({
 }
 
 function modifyByDefenderAbility({
+	attacker,
 	defender,
 	move,
-}: Pick<BattleStatus, "defender" | "move">): TemporalFactor {
+}: Pick<BattleStatus, "attacker" | "defender" | "move">): TemporalFactor {
 	const getFactor = createFactorHelper({
 		defender: {
 			ability: true,
@@ -826,10 +827,14 @@ function modifyByDefenderAbility({
 	}
 
 	// Solid Rock && Filter
-	const effectiveness = getEffectivenessOnPokemon(
-		move.type,
-		defender.isTera() ? [defender.teraType] : defender.types,
-	);
+	const effectiveMoveType = getEffectiveMoveType(attacker, move);
+	const effectiveness =
+		effectiveMoveType === "Stellar"
+			? 1
+			: getEffectivenessOnPokemon(
+					effectiveMoveType,
+					defender.isTera() ? [defender.teraType] : defender.types,
+				);
 	if (
 		(defender.ability === "Solid Rock" || defender.ability === "Filter") &&
 		effectiveness > 1
