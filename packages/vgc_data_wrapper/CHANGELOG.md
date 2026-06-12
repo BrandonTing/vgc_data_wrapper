@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.4.5
+
+### Patch Changes
+
+- 0344902: Fix skin ability effective move type interactions with terrain, aura, type effectiveness, and defensive Filter/Solid Rock modifiers.
+
 ## 0.4.4
 
 ### Patch Changes
