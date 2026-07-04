@@ -626,3 +626,178 @@ test("Scrappy: Normal move against Tera Ghost deals neutral damage", () => {
 	expect(damage.factors.attacker.ability).toEqual(true);
 	expect(damage.factors.defender.isTera).toEqual(true);
 });
+
+test("Unaware attacker ignores defender defensive stat stages", () => {
+	const attacker = genTestMon({
+		types: ["Water"],
+		stats: { attack: 120 },
+		ability: "Unaware",
+	});
+	const defender = genTestMon({
+		types: ["Fire"],
+		stats: { hp: 170, defense: 110 },
+	});
+	const move = createMove({ type: "Water", base: 80, category: "Physical" });
+	const battle = new Battle({ attacker, defender, move });
+
+	const expected = getDamangeNumberFromResult(battle.getDamage());
+
+	defender.statStage.defense = 2;
+	let damage = battle.getDamage();
+	expect(getDamangeNumberFromResult(damage)).toEqual(expected);
+	expect(damage.factors.attacker.ability).toBe(true);
+
+	defender.statStage.defense = -2;
+	damage = battle.getDamage();
+	expect(getDamangeNumberFromResult(damage)).toEqual(expected);
+	expect(damage.factors.attacker.ability).toBe(true);
+});
+
+test("Unaware defender ignores attacker offensive stat stages", () => {
+	const attacker = genTestMon({
+		types: ["Electric"],
+		stats: { specialAttack: 155 },
+	});
+	const defender = genTestMon({
+		types: ["Water"],
+		stats: { hp: 170, specialDefense: 110 },
+		ability: "Unaware",
+	});
+	const move = createMove({ type: "Electric", base: 90, category: "Special" });
+	const battle = new Battle({ attacker, defender, move });
+
+	const expected = getDamangeNumberFromResult(battle.getDamage());
+
+	attacker.statStage.specialAttack = 2;
+	let damage = battle.getDamage();
+	expect(getDamangeNumberFromResult(damage)).toEqual(expected);
+	expect(damage.factors.defender.ability).toBe(true);
+
+	attacker.statStage.specialAttack = -2;
+	damage = battle.getDamage();
+	expect(getDamangeNumberFromResult(damage)).toEqual(expected);
+	expect(damage.factors.defender.ability).toBe(true);
+});
+
+test("Unaware defender ignores Body Press attacker's Defense stages", () => {
+	const attacker = genTestMon({
+		types: ["Fighting"],
+		stats: { defense: 150 },
+	});
+	const defender = genTestMon({
+		types: ["Normal"],
+		stats: { hp: 170, defense: 110 },
+		ability: "Unaware",
+	});
+	const bodyPress = createMove({
+		type: "Fighting",
+		base: 80,
+		category: "Physical",
+		id: 776,
+	});
+	const battle = new Battle({ attacker, defender, move: bodyPress });
+	const expected = getDamangeNumberFromResult(battle.getDamage());
+
+	attacker.statStage.defense = 2;
+	let damage = battle.getDamage();
+	expect(getDamangeNumberFromResult(damage)).toEqual(expected);
+	expect(damage.factors.defender.ability).toBe(true);
+	expect(damage.factors.attacker.atk).toBe("defense");
+
+	attacker.statStage.defense = -2;
+	damage = battle.getDamage();
+	expect(getDamangeNumberFromResult(damage)).toEqual(expected);
+	expect(damage.factors.defender.ability).toBe(true);
+});
+
+test("Unaware Foul Play user ignores target Attack stages", () => {
+	const attacker = genTestMon({
+		types: ["Dark"],
+		stats: { attack: 80 },
+		ability: "Unaware",
+	});
+	const defender = genTestMon({
+		types: ["Psychic"],
+		stats: { hp: 170, attack: 150, defense: 110 },
+	});
+	const foulPlay = createMove({
+		type: "Dark",
+		base: 95,
+		category: "Physical",
+		id: 492,
+	});
+	const battle = new Battle({ attacker, defender, move: foulPlay });
+	const expected = getDamangeNumberFromResult(battle.getDamage());
+
+	defender.statStage.attack = 2;
+	let damage = battle.getDamage();
+	expect(getDamangeNumberFromResult(damage)).toEqual(expected);
+	expect(damage.factors.attacker.ability).toBe(true);
+	expect(damage.factors.attacker.statFrom).toBe("Defender");
+
+	defender.statStage.attack = -2;
+	damage = battle.getDamage();
+	expect(getDamangeNumberFromResult(damage)).toEqual(expected);
+	expect(damage.factors.attacker.ability).toBe(true);
+});
+
+test("Unaware remains compatible with critical-hit stage ignoring", () => {
+	const attacker = genTestMon({
+		types: ["Fairy"],
+		stats: { specialAttack: 155 },
+		statStage: { specialAttack: -2 },
+		ability: "Unaware",
+	});
+	const defender = genTestMon({
+		types: ["Dark"],
+		stats: { hp: 170, specialDefense: 110 },
+		statStage: { specialDefense: 2 },
+		ability: "Unaware",
+	});
+	const critMoonblast = createMove({
+		type: "Fairy",
+		base: 95,
+		category: "Special",
+		flags: { isCriticalHit: true },
+	});
+	const battle = new Battle({ attacker, defender, move: critMoonblast });
+	const boostedDefender = getDamangeNumberFromResult(battle.getDamage());
+
+	defender.statStage.specialDefense = -2;
+	const droppedDefenderDamage = battle.getDamage();
+	expect(getDamangeNumberFromResult(droppedDefenderDamage)).toEqual(
+		boostedDefender,
+	);
+	expect(droppedDefenderDamage.factors.defender.ability).toBe(true);
+	expect(droppedDefenderDamage.factors.move.isCriticalHit).toBe(true);
+});
+
+test("Unaware remains compatible with Sacred Sword defense-stage ignoring", () => {
+	const attacker = genTestMon({
+		types: ["Fighting"],
+		stats: { attack: 170 },
+		ability: "Unaware",
+	});
+	const defender = genTestMon({
+		types: ["Dark"],
+		stats: { hp: 170, defense: 110 },
+	});
+	const sacredSword = createMove({
+		type: "Fighting",
+		base: 90,
+		category: "Physical",
+		id: 533,
+	});
+	const battle = new Battle({ attacker, defender, move: sacredSword });
+	const expected = getDamangeNumberFromResult(battle.getDamage());
+
+	defender.statStage.defense = 6;
+	let damage = battle.getDamage();
+	expect(getDamangeNumberFromResult(damage)).toEqual(expected);
+	expect(damage.factors.attacker.ability).toBe(true);
+
+	defender.statStage.defense = -6;
+	damage = battle.getDamage();
+	expect(getDamangeNumberFromResult(damage)).toEqual(expected);
+	expect(damage.factors.attacker.ability).toBe(true);
+});

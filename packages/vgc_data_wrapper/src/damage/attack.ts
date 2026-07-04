@@ -9,11 +9,23 @@ import {
 export function getAttack(option: BattleStatus): TemporalFactor {
 	const { attacker, defender, move } = option;
 
-	function checkCountStages(stageChange: number) {
+	function checkCountStages(
+		stageChange: number,
+		statOwner: "attacker" | "defender",
+	) {
+		if (doesUnawareIgnoreStages(statOwner)) {
+			return false;
+		}
 		if (move.flags?.isCriticalHit && stageChange < 0) {
 			return false;
 		}
 		return true;
+	}
+	function doesUnawareIgnoreStages(statOwner: "attacker" | "defender") {
+		return (
+			(statOwner === "attacker" && defender.ability === "Unaware") ||
+			(statOwner === "defender" && attacker.ability === "Unaware")
+		);
 	}
 	const isPhysicalMove = move.category === "Physical";
 	let atkKey: "attack" | "specialAttack" | "defense" = isPhysicalMove
@@ -21,7 +33,7 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 		: "specialAttack";
 	let atkStat = attacker.getStat(
 		atkKey,
-		checkCountStages(attacker.statStage[atkKey]),
+		checkCountStages(attacker.statStage[atkKey], "attacker"),
 	);
 	let factors: TemporalFactor["factors"] = {
 		attacker: {
@@ -37,25 +49,43 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 		atkKey = "defense";
 		atkStat = attacker.getStat(
 			"defense",
-			checkCountStages(attacker.statStage.defense),
+			checkCountStages(attacker.statStage.defense, "attacker"),
 		);
 		factors = mergeFactorList(factors, {
 			attacker: {
 				atk: "defense",
 			},
 		});
+		if (
+			doesUnawareIgnoreStages("attacker") &&
+			attacker.statStage.defense !== 0
+		) {
+			factors = mergeFactorList(factors, { defender: { ability: true } });
+		}
+	} else if (
+		move.id !== 492 &&
+		doesUnawareIgnoreStages("attacker") &&
+		attacker.statStage[atkKey] !== 0
+	) {
+		factors = mergeFactorList(factors, { defender: { ability: true } });
 	}
 	// foul play
 	if (move.id === 492) {
 		atkStat = defender.getStat(
 			"attack",
-			checkCountStages(defender.statStage.attack),
+			checkCountStages(defender.statStage.attack, "defender"),
 		);
 		factors = mergeFactorList(factors, {
 			attacker: {
 				statFrom: "Defender",
 			},
 		});
+		if (
+			doesUnawareIgnoreStages("defender") &&
+			defender.statStage.attack !== 0
+		) {
+			factors = mergeFactorList(factors, { attacker: { ability: true } });
+		}
 	}
 	const operator = pipeModifierHelper(
 		{ operator: 4096, factors } as TemporalFactor,

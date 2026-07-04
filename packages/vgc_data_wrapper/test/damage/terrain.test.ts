@@ -264,3 +264,120 @@ test("Galvanize Normal move is boosted by Electric Terrain from a grounded attac
 		88, 90, 90, 91, 93, 94, 94, 96, 97, 97, 99, 100, 100, 102, 103, 105,
 	]);
 });
+
+const terrainPulseCases = [
+	{ terrain: "Electric" as const, type: "Electric" as const },
+	{ terrain: "Grassy" as const, type: "Grass" as const },
+	{ terrain: "Misty" as const, type: "Fairy" as const },
+	{ terrain: "Psychic" as const, type: "Psychic" as const },
+];
+
+for (const { terrain, type } of terrainPulseCases) {
+	test(`Terrain Pulse becomes ${type} on ${terrain} Terrain for grounded attackers`, () => {
+		const attacker = genTestMon({
+			types: [type],
+			baseStat: { specialAttack: 100 },
+		});
+		const defender = genTestMon({
+			types: ["Water"],
+			baseStat: { hp: 100, specialDefense: 100 },
+		});
+		const field = { terrain };
+		const terrainPulse = createMove({
+			id: 805,
+			base: 50,
+			type: "Normal",
+			category: "Special",
+		});
+		const convertedMove = createMove({
+			base: 100,
+			type,
+			category: "Special",
+		});
+
+		expect(
+			getDamangeNumberFromResult(
+				new Battle({
+					attacker,
+					defender,
+					move: terrainPulse,
+					field,
+				}).getDamage(),
+			),
+		).toEqual(
+			getDamangeNumberFromResult(
+				new Battle({
+					attacker,
+					defender,
+					move: convertedMove,
+					field,
+				}).getDamage(),
+			),
+		);
+	});
+}
+
+test("Terrain Pulse remains Normal without active terrain", () => {
+	const attacker = genTestMon({
+		types: ["Electric"],
+		baseStat: { specialAttack: 100 },
+	});
+	const defender = genTestMon({
+		types: ["Water"],
+		baseStat: { hp: 100, specialDefense: 100 },
+	});
+	const terrainPulse = createMove({
+		id: 805,
+		base: 50,
+		type: "Normal",
+		category: "Special",
+	});
+	const normalMove = createMove({
+		base: 50,
+		type: "Normal",
+		category: "Special",
+	});
+
+	expect(
+		getDamangeNumberFromResult(
+			new Battle({ attacker, defender, move: terrainPulse }).getDamage(),
+		),
+	).toEqual(
+		getDamangeNumberFromResult(
+			new Battle({ attacker, defender, move: normalMove }).getDamage(),
+		),
+	);
+});
+
+test("Terrain Pulse remains Normal on active terrain when the attacker is not grounded", () => {
+	const attacker = genTestMon({
+		types: ["Electric", "Flying"],
+		baseStat: { specialAttack: 100 },
+	});
+	const defender = genTestMon({
+		types: ["Water"],
+		baseStat: { hp: 100, specialDefense: 100 },
+	});
+	const field = { terrain: "Electric" as const };
+	const terrainPulse = createMove({
+		id: 805,
+		base: 50,
+		type: "Normal",
+		category: "Special",
+	});
+	const normalMove = createMove({
+		base: 50,
+		type: "Normal",
+		category: "Special",
+	});
+
+	expect(
+		getDamangeNumberFromResult(
+			new Battle({ attacker, defender, move: terrainPulse, field }).getDamage(),
+		),
+	).toEqual(
+		getDamangeNumberFromResult(
+			new Battle({ attacker, defender, move: normalMove, field }).getDamage(),
+		),
+	);
+});

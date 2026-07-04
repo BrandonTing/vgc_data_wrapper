@@ -18,6 +18,7 @@ import { getEffectivenessOnPokemon } from "./type";
 import {
 	checkTeraWIthTypeMatch,
 	getPokemonCurrentType,
+	isGrounded,
 	mergeFactorList,
 	pipeModifierHelper,
 } from "./utils";
@@ -308,10 +309,12 @@ function modifyByRandomNum(
 
 function modifyBySameType(
 	value: TemporalFactor,
-	{ move, attacker }: Pick<BattleStatus, "move" | "attacker">,
+	{ move, attacker, field }: Pick<BattleStatus, "move" | "attacker" | "field">,
 ): TemporalFactor {
 	let modifier = 1;
 	let factors: TemporalFactor["factors"] = {};
+	const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
+	const stabMoveType = move.id === 805 ? effectiveMoveType : move.type;
 	// Protean
 	if (attacker.ability === "Protean") {
 		factors = mergeFactorList(factors, {
@@ -377,14 +380,17 @@ function modifyBySameType(
 				isTera: true,
 			},
 		});
-		if (attacker.types.includes(move.type)) {
+		if (stabMoveType !== "Stellar" && attacker.types.includes(stabMoveType)) {
 			modifier = 2;
 		} else {
 			modifier = 1.2;
 		}
-	} else if (attacker.types.includes(move.type)) {
+	} else if (
+		stabMoveType !== "Stellar" &&
+		attacker.types.includes(stabMoveType)
+	) {
 		// Normal stab
-		if (checkTeraWIthTypeMatch(attacker, move.type)) {
+		if (checkTeraWIthTypeMatch(attacker, stabMoveType)) {
 			factors = mergeFactorList(factors, {
 				attacker: {
 					isTera: true,
@@ -412,7 +418,7 @@ function modifyBySameType(
 				modifier = 1.5;
 			}
 		}
-	} else if (checkTeraWIthTypeMatch(attacker, move.type)) {
+	} else if (checkTeraWIthTypeMatch(attacker, stabMoveType)) {
 		factors = mergeFactorList(factors, {
 			attacker: {
 				isTera: true,
@@ -440,7 +446,11 @@ function getTypeModifier({
 	move,
 	attacker,
 	defender,
-}: Pick<BattleStatus, "move" | "attacker" | "defender">): TemporalFactor {
+	field,
+}: Pick<
+	BattleStatus,
+	"move" | "attacker" | "defender" | "field"
+>): TemporalFactor {
 	// tera blast from Stellar tera mon on tera mon is 2x
 	if (
 		checkTeraWIthTypeMatch(attacker, "Stellar") &&
@@ -580,7 +590,7 @@ function getTypeModifier({
 	}
 	// use original type when tera stellar
 	if (checkTeraWIthTypeMatch(defender, "Stellar")) {
-		const effectiveMoveType = getEffectiveMoveType(attacker, move);
+		const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
 		return {
 			operator:
 				effectiveMoveType === "Stellar"
@@ -617,7 +627,7 @@ function getTypeModifier({
 					},
 		};
 	}
-	const effectiveMoveType = getEffectiveMoveType(attacker, move);
+	const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
 	return {
 		operator:
 			effectiveMoveType === "Stellar"
@@ -798,7 +808,11 @@ function modifyByDefenderAbility({
 	attacker,
 	defender,
 	move,
-}: Pick<BattleStatus, "attacker" | "defender" | "move">): TemporalFactor {
+	field,
+}: Pick<
+	BattleStatus,
+	"attacker" | "defender" | "move" | "field"
+>): TemporalFactor {
 	const getFactor = createFactorHelper({
 		defender: {
 			ability: true,
@@ -827,7 +841,7 @@ function modifyByDefenderAbility({
 	}
 
 	// Solid Rock && Filter
-	const effectiveMoveType = getEffectiveMoveType(attacker, move);
+	const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
 	const effectiveness =
 		effectiveMoveType === "Stellar"
 			? 1
@@ -986,6 +1000,8 @@ function modifyOption(originalOpt: BattleStatus): {
 				weather: true,
 			};
 		}
+	} else if (newMove.id === 805 && field?.terrain && isGrounded(attacker)) {
+		newMove.type = getEffectiveMoveType(attacker, newMove, field);
 	}
 
 	return {

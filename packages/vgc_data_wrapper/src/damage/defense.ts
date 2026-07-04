@@ -10,8 +10,12 @@ import {
 export function getDefense(
 	option: Pick<BattleStatus, "attacker" | "defender" | "move">,
 ): TemporalFactor {
-	const { move, defender } = option;
+	const { attacker, move, defender } = option;
+	const doesUnawareIgnoreStages = attacker.ability === "Unaware";
 	function checkCountStages(stageChange: number) {
+		if (doesUnawareIgnoreStages) {
+			return false;
+		}
 		if (move.flags?.isCriticalHit && stageChange > 0) {
 			return false;
 		}
@@ -31,7 +35,13 @@ export function getDefense(
 		checkCountStages(defender.statStage[key]),
 	);
 	const operator = pipeModifierHelper(
-		{ operator: 4096, factors: {} } as TemporalFactor,
+		{
+			operator: 4096,
+			factors:
+				doesUnawareIgnoreStages && defender.statStage[key] !== 0
+					? { attacker: { ability: true } }
+					: {},
+		} as TemporalFactor,
 		[modifyByWeather, modifyByDefenderAbility, modifyByItem, modifyByRuin],
 		(pre, cur) => {
 			const { operator, factors } = cur(option);
