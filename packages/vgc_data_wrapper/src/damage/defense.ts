@@ -11,8 +11,9 @@ export function getDefense(
 	option: Pick<BattleStatus, "attacker" | "defender" | "move">,
 ): TemporalFactor {
 	const { attacker, move, defender } = option;
+	const doesUnawareIgnoreStages = attacker.ability === "Unaware";
 	function checkCountStages(stageChange: number) {
-		if (attacker.ability === "Unaware") {
+		if (doesUnawareIgnoreStages) {
 			return false;
 		}
 		if (move.flags?.isCriticalHit && stageChange > 0) {
@@ -37,7 +38,7 @@ export function getDefense(
 		{
 			operator: 4096,
 			factors:
-				attacker.ability === "Unaware" && defender.statStage[key] !== 0
+				doesUnawareIgnoreStages && defender.statStage[key] !== 0
 					? { attacker: { ability: true } }
 					: {},
 		} as TemporalFactor,

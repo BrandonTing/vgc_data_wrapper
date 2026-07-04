@@ -13,16 +13,19 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 		stageChange: number,
 		statOwner: "attacker" | "defender",
 	) {
-		if (
-			(statOwner === "attacker" && defender.ability === "Unaware") ||
-			(statOwner === "defender" && attacker.ability === "Unaware")
-		) {
+		if (doesUnawareIgnoreStages(statOwner)) {
 			return false;
 		}
 		if (move.flags?.isCriticalHit && stageChange < 0) {
 			return false;
 		}
 		return true;
+	}
+	function doesUnawareIgnoreStages(statOwner: "attacker" | "defender") {
+		return (
+			(statOwner === "attacker" && defender.ability === "Unaware") ||
+			(statOwner === "defender" && attacker.ability === "Unaware")
+		);
 	}
 	const isPhysicalMove = move.category === "Physical";
 	let atkKey: "attack" | "specialAttack" | "defense" = isPhysicalMove
@@ -53,12 +56,15 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 				atk: "defense",
 			},
 		});
-		if (defender.ability === "Unaware" && attacker.statStage.defense !== 0) {
+		if (
+			doesUnawareIgnoreStages("attacker") &&
+			attacker.statStage.defense !== 0
+		) {
 			factors = mergeFactorList(factors, { defender: { ability: true } });
 		}
 	} else if (
 		move.id !== 492 &&
-		defender.ability === "Unaware" &&
+		doesUnawareIgnoreStages("attacker") &&
 		attacker.statStage[atkKey] !== 0
 	) {
 		factors = mergeFactorList(factors, { defender: { ability: true } });
@@ -74,7 +80,10 @@ export function getAttack(option: BattleStatus): TemporalFactor {
 				statFrom: "Defender",
 			},
 		});
-		if (attacker.ability === "Unaware" && defender.statStage.attack !== 0) {
+		if (
+			doesUnawareIgnoreStages("defender") &&
+			defender.statStage.attack !== 0
+		) {
 			factors = mergeFactorList(factors, { attacker: { ability: true } });
 		}
 	}
