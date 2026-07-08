@@ -258,10 +258,10 @@ test("Galvanize Normal move is boosted by Electric Terrain from a grounded attac
 	);
 
 	expect(noTerrainDamage).toEqual([
-		45, 46, 46, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 54,
+		67, 69, 69, 70, 72, 72, 73, 73, 75, 75, 76, 76, 78, 78, 79, 81,
 	]);
 	expect(electricTerrainDamage).toEqual([
-		59, 60, 60, 61, 62, 63, 63, 64, 65, 65, 66, 67, 67, 68, 69, 70,
+		88, 90, 90, 91, 93, 94, 94, 96, 97, 97, 99, 100, 100, 102, 103, 105,
 	]);
 });
 

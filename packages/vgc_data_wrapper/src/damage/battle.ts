@@ -313,7 +313,8 @@ function modifyBySameType(
 	let modifier = 1;
 	let factors: TemporalFactor["factors"] = {};
 	const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
-	const stabMoveType = effectiveMoveType;
+	const skinType = getSkinAbilityMoveType(attacker, move);
+	const stabMoveType = skinType ? move.type : effectiveMoveType;
 	// Protean
 	if (attacker.ability === "Protean") {
 		factors = mergeFactorList(factors, {
@@ -337,7 +338,6 @@ function modifyBySameType(
 		}
 	}
 	// skin abilities (Pixilate/Refrigerate/Aerilate/Dragonize/Galvanize)
-	const skinType = getSkinAbilityMoveType(attacker, move);
 	if (skinType) {
 		factors = mergeFactorList(factors, {
 			attacker: {
