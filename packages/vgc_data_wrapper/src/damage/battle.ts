@@ -308,10 +308,12 @@ function modifyByRandomNum(
 
 function modifyBySameType(
 	value: TemporalFactor,
-	{ move, attacker }: Pick<BattleStatus, "move" | "attacker">,
+	{ move, attacker, field }: Pick<BattleStatus, "move" | "attacker" | "field">,
 ): TemporalFactor {
 	let modifier = 1;
 	let factors: TemporalFactor["factors"] = {};
+	const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
+	const stabMoveType = effectiveMoveType;
 	// Protean
 	if (attacker.ability === "Protean") {
 		factors = mergeFactorList(factors, {
@@ -377,14 +379,14 @@ function modifyBySameType(
 				isTera: true,
 			},
 		});
-		if (attacker.types.includes(move.type)) {
+		if (attacker.types.includes(stabMoveType)) {
 			modifier = 2;
 		} else {
 			modifier = 1.2;
 		}
-	} else if (attacker.types.includes(move.type)) {
+	} else if (attacker.types.includes(stabMoveType)) {
 		// Normal stab
-		if (checkTeraWIthTypeMatch(attacker, move.type)) {
+		if (checkTeraWIthTypeMatch(attacker, stabMoveType)) {
 			factors = mergeFactorList(factors, {
 				attacker: {
 					isTera: true,
@@ -412,7 +414,7 @@ function modifyBySameType(
 				modifier = 1.5;
 			}
 		}
-	} else if (checkTeraWIthTypeMatch(attacker, move.type)) {
+	} else if (checkTeraWIthTypeMatch(attacker, stabMoveType)) {
 		factors = mergeFactorList(factors, {
 			attacker: {
 				isTera: true,
@@ -440,7 +442,11 @@ function getTypeModifier({
 	move,
 	attacker,
 	defender,
-}: Pick<BattleStatus, "move" | "attacker" | "defender">): TemporalFactor {
+	field,
+}: Pick<
+	BattleStatus,
+	"move" | "attacker" | "defender" | "field"
+>): TemporalFactor {
 	// tera blast from Stellar tera mon on tera mon is 2x
 	if (
 		checkTeraWIthTypeMatch(attacker, "Stellar") &&
@@ -580,7 +586,7 @@ function getTypeModifier({
 	}
 	// use original type when tera stellar
 	if (checkTeraWIthTypeMatch(defender, "Stellar")) {
-		const effectiveMoveType = getEffectiveMoveType(attacker, move);
+		const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
 		return {
 			operator:
 				effectiveMoveType === "Stellar"
@@ -591,8 +597,9 @@ function getTypeModifier({
 
 	// Scrappy ability makes Normal and Fighting moves hit Ghost types
 	const isScrappy = attacker.ability === "Scrappy";
+	const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
 	const isNormalOrFightMove =
-		move.type === "Normal" || move.type === "Fighting";
+		effectiveMoveType === "Normal" || effectiveMoveType === "Fighting";
 	const defenderTypes = getPokemonCurrentType(defender);
 	const isDefenderGhost = defenderTypes.includes("Ghost");
 	if (isScrappy && isNormalOrFightMove && isDefenderGhost) {
@@ -600,7 +607,10 @@ function getTypeModifier({
 			(type) => type !== "Ghost",
 		);
 		return {
-			operator: getEffectivenessOnPokemon(move.type, defenderTypeExcludeGhost),
+			operator: getEffectivenessOnPokemon(
+				effectiveMoveType,
+				defenderTypeExcludeGhost,
+			),
 			factors: defender.isTera()
 				? {
 						defender: {
@@ -617,7 +627,6 @@ function getTypeModifier({
 					},
 		};
 	}
-	const effectiveMoveType = getEffectiveMoveType(attacker, move);
 	return {
 		operator:
 			effectiveMoveType === "Stellar"
@@ -638,7 +647,7 @@ function getTypeModifier({
 
 function modifyByType(
 	value: TemporalFactor,
-	option: Pick<BattleStatus, "move" | "attacker" | "defender">,
+	option: Pick<BattleStatus, "move" | "attacker" | "defender" | "field">,
 ): TemporalFactor {
 	const { operator, factors } = getTypeModifier(option);
 	return {
@@ -744,11 +753,17 @@ function modifyByWall({
 }
 
 function modifyByMove({
+	attacker,
 	defender,
 	move,
-}: Pick<BattleStatus, "defender" | "move">): TemporalFactor {
+	field,
+}: Pick<
+	BattleStatus,
+	"attacker" | "defender" | "move" | "field"
+>): TemporalFactor {
+	const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
 	const effectiveness = getEffectivenessOnPokemon(
-		move.type,
+		effectiveMoveType === "Stellar" ? "Normal" : effectiveMoveType,
 		defender.isTera() && defender.teraType === "Stellar"
 			? defender.types
 			: getPokemonCurrentType(defender),
@@ -769,7 +784,11 @@ function modifyByAttackerAbility({
 	attacker,
 	defender,
 	move,
-}: Pick<BattleStatus, "attacker" | "defender" | "move">): TemporalFactor {
+	field,
+}: Pick<
+	BattleStatus,
+	"attacker" | "defender" | "move" | "field"
+>): TemporalFactor {
 	const getFactor = createFactorHelper({
 		attacker: {
 			ability: true,
@@ -781,8 +800,9 @@ function modifyByAttackerAbility({
 	}
 
 	// Tinted Lens
+	const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
 	const effectiveness = getEffectivenessOnPokemon(
-		move.type,
+		effectiveMoveType === "Stellar" ? "Normal" : effectiveMoveType,
 		getPokemonCurrentType(defender),
 	);
 	if (attacker.ability === "Tinted Lens" && effectiveness < 1) {
@@ -798,7 +818,11 @@ function modifyByDefenderAbility({
 	attacker,
 	defender,
 	move,
-}: Pick<BattleStatus, "attacker" | "defender" | "move">): TemporalFactor {
+	field,
+}: Pick<
+	BattleStatus,
+	"attacker" | "defender" | "move" | "field"
+>): TemporalFactor {
 	const getFactor = createFactorHelper({
 		defender: {
 			ability: true,
@@ -827,7 +851,7 @@ function modifyByDefenderAbility({
 	}
 
 	// Solid Rock && Filter
-	const effectiveMoveType = getEffectiveMoveType(attacker, move);
+	const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
 	const effectiveness =
 		effectiveMoveType === "Stellar"
 			? 1
@@ -866,15 +890,23 @@ function modifyByAttackerItem({
 	attacker,
 	defender,
 	move,
-}: Pick<BattleStatus, "attacker" | "defender" | "move">): TemporalFactor {
+	field,
+}: Pick<
+	BattleStatus,
+	"attacker" | "defender" | "move" | "field"
+>): TemporalFactor {
 	const getFactor = createFactorHelper({
 		attacker: {
 			item: true,
 		},
 	});
+	const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
 	if (
 		attacker.item === "Expert Belt" &&
-		getEffectivenessOnPokemon(move.type, getPokemonCurrentType(defender)) > 1
+		getEffectivenessOnPokemon(
+			effectiveMoveType === "Stellar" ? "Normal" : effectiveMoveType,
+			getPokemonCurrentType(defender),
+		) > 1
 	) {
 		return getFactor(1.2);
 	}
@@ -888,12 +920,21 @@ function modifyByAttackerItem({
 	return { operator: 1 };
 }
 function modifyByDefenderItem({
+	attacker,
 	defender,
 	move,
-}: Pick<BattleStatus, "defender" | "move">): TemporalFactor {
+	field,
+}: Pick<
+	BattleStatus,
+	"attacker" | "defender" | "move" | "field"
+>): TemporalFactor {
+	const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
 	if (
 		defender.item === "Type Berry" &&
-		getEffectivenessOnPokemon(move.type, getPokemonCurrentType(defender)) > 1
+		getEffectivenessOnPokemon(
+			effectiveMoveType === "Stellar" ? "Normal" : effectiveMoveType,
+			getPokemonCurrentType(defender),
+		) > 1
 	) {
 		return {
 			operator: 0.5,
@@ -963,6 +1004,11 @@ function modifyOption(originalOpt: BattleStatus): {
 		factors.attacker = {
 			ability: true,
 		};
+	} else if (newMove.id === 805) {
+		const effectiveMoveType = getEffectiveMoveType(attacker, newMove, field);
+		if (effectiveMoveType !== newMove.type) {
+			newMove.type = effectiveMoveType;
+		}
 	} else if (newMove.id === 311) {
 		// weatherball
 		const effectiveWeather =
