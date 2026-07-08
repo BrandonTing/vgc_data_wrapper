@@ -48,7 +48,10 @@ export function getPower(option: BattleStatus): TemporalFactor {
 	);
 	factors = modifierAfterModification.factors;
 	if (
-		checkTeraWIthTypeMatch(option.attacker, option.move.type) &&
+		checkTeraWIthTypeMatch(
+			option.attacker,
+			getEffectiveMoveType(option.attacker, option.move, option.field),
+		) &&
 		result < 60 &&
 		!option.move.flags?.isMultihit &&
 		!option.move.flags?.isPriority &&
@@ -345,8 +348,11 @@ function modifyBySteelySpirit({
 function modifyByCharge({
 	attacker,
 	move,
-}: Pick<BattleStatus, "attacker" | "move">): TemporalFactor {
-	const charged = attacker.flags?.charge && move.type === "Electric";
+	field,
+}: BattleStatus): TemporalFactor {
+	const charged =
+		attacker.flags?.charge &&
+		getEffectiveMoveType(attacker, move, field) === "Electric";
 	if (charged) {
 		return {
 			operator: 2,
@@ -373,7 +379,7 @@ function modifyByTerrain({
 			terrain: true,
 		},
 	});
-	const effectiveMoveType = getEffectiveMoveType(attacker, move);
+	const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
 	if (
 		isGrounded(attacker) &&
 		((effectiveMoveType === "Electric" && field?.terrain === "Electric") ||
@@ -397,7 +403,7 @@ function modifyByAura({
 	field,
 	attacker,
 }: Pick<BattleStatus, "move" | "field" | "attacker">): TemporalFactor {
-	const effectiveMoveType = getEffectiveMoveType(attacker, move);
+	const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
 	const auraAffected =
 		(effectiveMoveType === "Dark" && field?.aura?.includes("Dark")) ||
 		(effectiveMoveType === "Fairy" && field?.aura?.includes("Fairy"));

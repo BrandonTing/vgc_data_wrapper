@@ -264,3 +264,110 @@ test("Galvanize Normal move is boosted by Electric Terrain from a grounded attac
 		88, 90, 90, 91, 93, 94, 94, 96, 97, 97, 99, 100, 100, 102, 103, 105,
 	]);
 });
+
+test("Terrain Pulse damage uses terrain-converted types for grounded attackers", () => {
+	const terrainPulse = createMove({
+		id: 805,
+		base: 50,
+		type: "Normal",
+		category: "Special",
+	});
+	const cases = [
+		{
+			terrain: "Electric" as const,
+			attackerTypes: ["Electric"] as const,
+			defenderTypes: ["Water"] as const,
+			expected: [
+				150, 150, 152, 152, 156, 158, 158, 162, 162, 164, 168, 168, 170, 170,
+				174, 176,
+			],
+		},
+		{
+			terrain: "Grassy" as const,
+			attackerTypes: ["Grass"] as const,
+			defenderTypes: ["Water"] as const,
+			expected: [
+				150, 150, 152, 152, 156, 158, 158, 162, 162, 164, 168, 168, 170, 170,
+				174, 176,
+			],
+		},
+		{
+			terrain: "Misty" as const,
+			attackerTypes: ["Fairy"] as const,
+			defenderTypes: ["Dragon"] as const,
+			expected: [
+				116, 116, 120, 120, 120, 122, 122, 126, 126, 128, 128, 132, 132, 134,
+				134, 138,
+			],
+		},
+		{
+			terrain: "Psychic" as const,
+			attackerTypes: ["Psychic"] as const,
+			defenderTypes: ["Fighting"] as const,
+			expected: [
+				150, 150, 152, 152, 156, 158, 158, 162, 162, 164, 168, 168, 170, 170,
+				174, 176,
+			],
+		},
+	];
+
+	for (const { terrain, attackerTypes, defenderTypes, expected } of cases) {
+		const damage = getDamangeNumberFromResult(
+			new Battle({
+				attacker: genTestMon({
+					types: [...attackerTypes],
+					baseStat: { specialAttack: 100 },
+				}),
+				defender: genTestMon({
+					types: [...defenderTypes],
+					baseStat: { hp: 100, specialDefense: 100 },
+				}),
+				move: terrainPulse,
+				field: { terrain },
+			}).getDamage(),
+		);
+
+		expect(damage).toEqual(expected);
+	}
+});
+
+test("Terrain Pulse damage stays Normal without terrain or when attacker is not grounded", () => {
+	const terrainPulse = createMove({
+		id: 805,
+		base: 50,
+		type: "Normal",
+		category: "Special",
+	});
+	const defender = genTestMon({
+		types: ["Rock"],
+		baseStat: { hp: 100, specialDefense: 100 },
+	});
+	const noTerrainDamage = getDamangeNumberFromResult(
+		new Battle({
+			attacker: genTestMon({
+				types: ["Normal"],
+				baseStat: { specialAttack: 100 },
+			}),
+			defender,
+			move: terrainPulse,
+		}).getDamage(),
+	);
+	const ungroundedDamage = getDamangeNumberFromResult(
+		new Battle({
+			attacker: genTestMon({
+				types: ["Normal", "Flying"],
+				baseStat: { specialAttack: 100 },
+			}),
+			defender,
+			move: terrainPulse,
+			field: { terrain: "Electric" },
+		}).getDamage(),
+	);
+
+	expect(noTerrainDamage).toEqual([
+		15, 15, 15, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 18,
+	]);
+	expect(ungroundedDamage).toEqual([
+		15, 15, 15, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 18,
+	]);
+});
