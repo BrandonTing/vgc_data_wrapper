@@ -1,5 +1,12 @@
 # vgc_data_wrapper
 
+## 0.4.6
+
+### Patch Changes
+
+- 50cb6d7: Add Unaware support to damage calculations, including stat-stage ignoring for attackers and defenders, Body Press, Foul Play, critical hits, and Sacred Sword-style interactions.
+- 418f3a6: Fix skin ability STAB calculation to use the converted move type, preventing converted Normal moves from retaining Normal-type STAB while preserving STAB for matching converted types like Pixilate Fairy attacks.
+
 ## 0.4.5
 
 ### Patch Changes
