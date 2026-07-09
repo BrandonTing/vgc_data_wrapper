@@ -128,6 +128,50 @@ test("Pixilate", () => {
 	expect(nonNormalDamage.factors.attacker.ability).toBeUndefined();
 });
 
+test("Pixilate Normal move uses converted Fairy type for STAB", () => {
+	const defender = genTestMon({
+		types: ["Dragon", "Flying"],
+		baseStat: { hp: 91, specialDefense: 100 },
+	});
+	const move = createMove({
+		base: 90,
+		type: "Normal",
+		category: "Special",
+		target: "allAdjacentFoes",
+	});
+	const normalTypeAttacker = genTestMon({
+		types: ["Normal"],
+		baseStat: { specialAttack: 110 },
+		ability: "Pixilate",
+	});
+	const fairyTypeAttacker = genTestMon({
+		types: ["Fairy"],
+		baseStat: { specialAttack: 110 },
+		ability: "Pixilate",
+	});
+
+	const normalTypeDamage = new Battle({
+		attacker: normalTypeAttacker,
+		defender,
+		move,
+	}).getDamage();
+	const fairyTypeDamage = new Battle({
+		attacker: fairyTypeAttacker,
+		defender,
+		move,
+	}).getDamage();
+
+	expect(getDamangeNumberFromResult(normalTypeDamage)).toEqual([
+		68, 68, 68, 70, 70, 72, 72, 72, 74, 74, 76, 76, 76, 78, 78, 80,
+	]);
+	expect(getDamangeNumberFromResult(fairyTypeDamage)).toEqual([
+		102, 102, 102, 104, 104, 108, 108, 108, 110, 110, 114, 114, 114, 116, 116,
+		120,
+	]);
+	expect(normalTypeDamage.factors.attacker.ability).toEqual(true);
+	expect(fairyTypeDamage.factors.attacker.ability).toEqual(true);
+});
+
 test("Refrigerate", () => {
 	const megaGlalie = genTestMon({
 		types: ["Ice"],
