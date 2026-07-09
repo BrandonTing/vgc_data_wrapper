@@ -314,7 +314,7 @@ function modifyBySameType(
 	let factors: TemporalFactor["factors"] = {};
 	const effectiveMoveType = getEffectiveMoveType(attacker, move, field);
 	const skinType = getSkinAbilityMoveType(attacker, move);
-	const stabMoveType = skinType ? move.type : effectiveMoveType;
+	const stabMoveType = effectiveMoveType;
 	// Protean
 	if (attacker.ability === "Protean") {
 		factors = mergeFactorList(factors, {
