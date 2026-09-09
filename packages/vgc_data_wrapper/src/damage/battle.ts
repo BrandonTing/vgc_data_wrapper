@@ -9,6 +9,7 @@ import type {
 	Move,
 } from "./config";
 import { getDefense } from "./defense";
+import { getEffectiveMoveTarget } from "./effectiveMoveTarget";
 import {
 	getEffectiveMoveType,
 	getSkinAbilityMoveType,
@@ -195,12 +196,14 @@ function getBasicDamage(option: BattleStatus): TemporalFactor {
 
 function modifyBySpreadDamage(
 	value: TemporalFactor,
-	{ move, field }: Pick<BattleStatus, "move" | "field" | "attacker">,
+	{ move, field, attacker }: Pick<BattleStatus, "move" | "field" | "attacker">,
 ): TemporalFactor {
 	let modifier = 1;
 	let factors: TemporalFactor["factors"];
+	const effectiveTarget = getEffectiveMoveTarget(attacker, move, field);
 	if (
-		(move.target === "allAdjacent" || move.target === "allAdjacentFoes") &&
+		(effectiveTarget === "allAdjacent" ||
+			effectiveTarget === "allAdjacentFoes") &&
 		field?.isDouble
 	) {
 		modifier = 0.75;
@@ -973,7 +976,6 @@ function modifyOption(originalOpt: BattleStatus): {
 			newMove.category = "Physical";
 		}
 		newMove.type = "Stellar";
-		newMove.target = "allAdjacentFoes";
 		factors.attacker = {
 			isTera: true,
 		};
