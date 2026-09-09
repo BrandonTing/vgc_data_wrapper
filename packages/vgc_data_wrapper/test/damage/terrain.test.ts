@@ -2,6 +2,105 @@ import { expect, test } from "bun:test";
 import { Battle, createMove } from "../../src";
 import { genTestMon, getDamangeNumberFromResult } from "./utils";
 
+const expandingForce = createMove({
+	id: 797,
+	base: 80,
+	type: "Psychic",
+	category: "Special",
+});
+
+const expandingForceDefender = genTestMon({
+	types: ["Normal"],
+	baseStat: { hp: 100, specialDefense: 100 },
+});
+
+const expandingForceSingleTargetDamage = [
+	46, 46, 48, 48, 48, 49, 49, 51, 51, 51, 52, 52, 52, 54, 54, 55,
+];
+
+const boostedExpandingForceSingleTargetDamage = [
+	88, 90, 90, 91, 93, 94, 94, 96, 97, 97, 99, 100, 100, 102, 103, 105,
+];
+
+function getExpandingForceDamage({
+	isDouble,
+	terrain,
+	attackerTypes = ["Psychic"],
+}: {
+	isDouble: boolean;
+	terrain?: "Psychic";
+	attackerTypes?: ["Psychic"] | ["Psychic", "Flying"];
+}) {
+	return new Battle({
+		attacker: genTestMon({
+			types: attackerTypes,
+			baseStat: { specialAttack: 100 },
+		}),
+		defender: expandingForceDefender,
+		move: expandingForce,
+		field: { isDouble, terrain },
+	}).getDamage();
+}
+
+test("Expanding Force becomes a spread move for a grounded attacker in Psychic Terrain doubles", () => {
+	const singleDamage = getExpandingForceDamage({
+		isDouble: false,
+		terrain: "Psychic",
+	});
+	const doubleDamage = getExpandingForceDamage({
+		isDouble: true,
+		terrain: "Psychic",
+	});
+
+	expect(getDamangeNumberFromResult(singleDamage)).toEqual(
+		boostedExpandingForceSingleTargetDamage,
+	);
+	expect(getDamangeNumberFromResult(doubleDamage)).toEqual([
+		66, 66, 67, 67, 69, 69, 70, 70, 72, 72, 73, 73, 75, 75, 76, 78,
+	]);
+	expect(doubleDamage.factors.field.terrain).toBe(true);
+	expect(doubleDamage.factors.field.isDouble).toBe(true);
+	expect(getDamangeNumberFromResult(doubleDamage)).not.toEqual(
+		getDamangeNumberFromResult(singleDamage),
+	);
+});
+
+test("Expanding Force remains single-target without Psychic Terrain", () => {
+	const singleDamage = getExpandingForceDamage({ isDouble: false });
+	const doubleDamage = getExpandingForceDamage({ isDouble: true });
+
+	expect(getDamangeNumberFromResult(singleDamage)).toEqual(
+		expandingForceSingleTargetDamage,
+	);
+	expect(getDamangeNumberFromResult(doubleDamage)).toEqual(
+		expandingForceSingleTargetDamage,
+	);
+	expect(doubleDamage.factors.field.isDouble).toBeUndefined();
+});
+
+test("Expanding Force remains single-target for an ungrounded attacker in Psychic Terrain", () => {
+	const attackerTypes: ["Psychic", "Flying"] = ["Psychic", "Flying"];
+	const singleDamage = getExpandingForceDamage({
+		isDouble: false,
+		terrain: "Psychic",
+		attackerTypes,
+	});
+	const doubleDamage = getExpandingForceDamage({
+		isDouble: true,
+		terrain: "Psychic",
+		attackerTypes,
+	});
+
+	expect(getDamangeNumberFromResult(singleDamage)).toEqual(
+		expandingForceSingleTargetDamage,
+	);
+	expect(getDamangeNumberFromResult(doubleDamage)).toEqual(
+		expandingForceSingleTargetDamage,
+	);
+	expect(doubleDamage.factors.field.terrain).toBeUndefined();
+	expect(doubleDamage.factors.field.isDouble).toBeUndefined();
+});
+
 test("Electric Terrain damage boost changes when a Flying attacker is grounded by Iron Ball", () => {
 	const defender = genTestMon({
 		types: ["Water"],
