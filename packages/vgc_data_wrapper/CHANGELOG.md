@@ -1,5 +1,11 @@
 # vgc_data_wrapper
 
+## 0.4.7
+
+### Patch Changes
+
+- 2794e3b: Fix Expanding Force to use spread damage in double battles when a grounded attacker uses it under Psychic Terrain.
+
 ## 0.4.6
 
 ### Patch Changes
